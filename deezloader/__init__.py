@@ -107,6 +107,8 @@ class Login:
                   fo.write(data)
                   i += 1
           infos = login()
+          while not "MD5_ORIGIN" in str(infos):
+              infos = login()
           song['md5'] = infos['results']['MD5_ORIGIN']
           song['media_version'] = infos['results']['MEDIA_VERSION']
           try:
@@ -131,20 +133,20 @@ class Login:
           year = []
           genre = []
           ar_album = []
-          if "?" in URL:
-           URL,a = URL.split("?")
+          if "?utm" in URL:
+           URL,a = URL.split("?utm")
           URL = "http://www.deezer.com/track/" + URL.split("/")[-1]
-          try: 
+          try:
              url = json.loads(requests.get("http://api.deezer.com/track/" + URL.split("/")[-1]).text)
           except:
-             url = json.loads(requests.get("http://api.deezer.com/track/" + URL.split("/")[-1]).text)
+             url = json.loads(requests.get("http://api.deezer.com/track/" + URL.split("/")[-1]).text)             
           try:
              if url['error']['message'] == "Quota limit exceeded":
               raise QuotaExceeded("Too much requests limit yourself")
           except KeyError:
              None
           try:
-             if url['error']['message'] == "no data" or url['error']['message'] == "Invalid query":
+             if "error" in str(url):
               raise InvalidLink("Invalid link ;)")
           except KeyError:
              None
@@ -157,8 +159,8 @@ class Login:
               raise QuotaExceeded("Too much requests limit yourself")
           except KeyError:
              None
-          try:   
-             image = url['album']['cover_xl'].replace("1000", "1200")   
+          try:
+             image = url['album']['cover_xl'].replace("1000", "1200")
           except:
              try:
                 image = requests.get(URL).text
@@ -228,7 +230,7 @@ class Login:
                      break
              except IndexError:
                 try:
-                   try: 
+                   try:
                       url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[0].replace("#", "").split(" ")[0] + " + " + artist[0].replace("#", "")).text)
                    except:
                       url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[0].replace("#", "").split(" ")[0] + " + " + artist[0].replace("#", "")).text)
@@ -244,11 +246,11 @@ class Login:
                 except IndexError:
                    raise TrackNotFound("Track not found: " + song)
              self.download(URL, dir)
-          try:   
+          try:
              os.rename(dir + URL.split("/")[-1] + ".mp3" , dir + name)
           except FileNotFoundError:
              None
-          try:   
+          try:
              image = requests.get(image).content
           except:
              image = requests.get(image).content
@@ -288,10 +290,10 @@ class Login:
           ar_album = []
           urls = []
           names = []
-          if "?" in URL:
-           URL,a = URL.split("?")
+          if "?utm" in URL:
+           URL,a = URL.split("?utm")
           URL = "http://www.deezer.com/album/" + URL.split("/")[-1]
-          try: 
+          try:
              url = json.loads(requests.get("http://api.deezer.com/album/" + URL.split("/")[-1], headers=header).text)
           except:
              url = json.loads(requests.get("http://api.deezer.com/album/" + URL.split("/")[-1], headers=header).text)
@@ -301,7 +303,7 @@ class Login:
           except KeyError:
              None
           try:
-             if url['error']['message'] == "no data" or url['error']['message'] == "Invalid query":
+             if "error" in str(url):
               raise InvalidLink("Invalid link ;)")
           except KeyError:
              None
@@ -356,7 +358,7 @@ class Login:
               os.makedirs(dir)
           except:
              None
-          try:   
+          try:
              image = requests.get(image).content
           except:
              image = requests.get(image).content
@@ -389,7 +391,7 @@ class Login:
                          break
                  except IndexError:
                     try:
-                       try: 
+                       try:
                           url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "").split(" ")[0] + " + " + artist[a].replace("#", "")).text)
                        except:
                           url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "").split(" ")[0] + " + " + artist[a].replace("#", "")).text)
@@ -434,9 +436,9 @@ class Login:
           return names
       def download_playlistdee(self, URL, output=localdir + "/Songs/", check=True):
           array = []
-          if "?" in URL:
-           URL,a = URL.split("?")
-          try: 
+          if "?utm" in URL:
+           URL,a = URL.split("?utm")
+          try:
              url = json.loads(requests.get("https://api.deezer.com/playlist/" + URL.split("/")[-1] + "/tracks").text)
           except:
              url = json.loads(requests.get("https://api.deezer.com/playlist/" + URL.split("/")[-1] + "/tracks").text)
@@ -446,7 +448,7 @@ class Login:
           except KeyError:
              None
           try:
-             if url['error']['message'] == "no data" or url['error']['message'] == "Invalid query":
+             if "error" in str(url):
               raise InvalidLink("Invalid link ;)")
           except KeyError:
              None
@@ -467,13 +469,13 @@ class Login:
           year = []
           genre = []
           ar_album = []
-          if not len(URL) == 53:
+          if "?" in URL:
            URL,a = URL.split("?")
-          if len(URL) != 53:
-           raise InvalidLink("Invalid link ;)")
           try:
              url = spo.track(URL)
-          except:
+          except Exception as a:
+             if not "The access token expired" in str(a):
+              raise InvalidLink("Invalid link ;)")
              token = generate_token()
              spo = spotipy.Spotify(auth=token)
              url = spo.track(URL)
@@ -492,7 +494,7 @@ class Login:
           year.append(url['album']['release_date'])
           for a in url['album']['artists']:
               ar_album.append(a['name'])
-          try:    
+          try:
              url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[0].replace("#", "") + " + " + artist[0].replace("#", "")).text)
           except:
              url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[0].replace("#", "") + " + " + artist[0].replace("#", "")).text)
@@ -629,13 +631,13 @@ class Login:
           ar_album = []
           urls = []
           names = []
-          if not len(URL) == 53:
+          if "?" in URL:
            URL,a = URL.split("?")
-          if len(URL) != 53: 
-           raise InvalidLink("Invalid link ;)")
           try:
              tracks = spo.album(URL)
-          except:
+          except Exception as a:
+             if not "The access token expired" in str(a):
+              raise InvalidLink("Invalid link ;)")
              token = generate_token()
              spo = spotipy.Spotify(auth=token)
              tracks = spo.album(URL)
@@ -656,6 +658,7 @@ class Login:
                      break
           year.append(tracks['release_date'])
           image = tracks['images'][0]['url']
+          artis = tracks['artists'][0]['name']
           for a in range(tracks['total_tracks'] // 50):
               try:
                  tracks = spo.next(tracks['tracks'])
@@ -675,14 +678,13 @@ class Login:
                          artist.append(", ".join(array))
                          del array[:]
                          break
-          artis = tracks['artists'][0]['name']
           dir = str(output) + "/" + album[0].replace("/", "") + "/"
           try:
              if not os.path.isdir(dir):
               os.makedirs(dir)
           except:
              None
-          try:   
+          try:
              url = json.loads(requests.get('https://api.deezer.com/search/?q=artist:"' + artis.replace("#", "") + '" album:"' + album[0].replace("#", "") + '"').text)
           except:
              url = json.loads(requests.get('https://api.deezer.com/search/?q=artist:"' + artis.replace("#", "") + '" album:"' + album[0].replace("#", "") + '"').text)
@@ -698,7 +700,7 @@ class Login:
                   break
           except IndexError:
              raise AlbumNotFound("Album not found: " + album[0])
-          try:   
+          try:
              url = json.loads(requests.get("https://api.deezer.com/album/" + URL, headers=header).text)
           except:
              url = json.loads(requests.get("https://api.deezer.com/album/" + URL, headers=header).text)
@@ -714,10 +716,10 @@ class Login:
                  genre.append(a['name'])
           except KeyError:
              None
-          try:   
+          try:
              image = requests.get(image).content
           except:
-             image = requests.get(image).content   
+             image = requests.get(image).content
           if len(urls) < len(music):
            idk = len(urls)
           elif len(urls) > len(music):
@@ -753,7 +755,7 @@ class Login:
                          break
                  except IndexError:
                     try:
-                       try: 
+                       try:
                           url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "").split(" ")[0] + " + " + artist[a].replace("#", "")).text)
                        except:
                           url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "").split(" ")[0] + " + " + artist[a].replace("#", "")).text)
@@ -799,14 +801,14 @@ class Login:
       def download_playlistspo(self, URL, output=localdir + "/Songs/", check=True):
           global spo
           array = []
-          if not len(URL) == 87 and not len(URL) == 69:
+          if "?" in URL:
            URL,a = URL.split("?")
-          if len(URL) != 87 and len(URL) != 69:
-           raise InvalidLink("Invalid link ;)")
           URL = URL.split("/")
           try:
              tracks = spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
-          except:
+          except Exception as a:
+             if not "The access token expired" in str(a):
+              raise InvalidLink("Invalid link ;)")
              token = generate_token()
              spo = spotipy.Spotify(auth=token)
              tracks = spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
