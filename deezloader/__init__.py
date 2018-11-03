@@ -197,13 +197,12 @@ class Login:
           for a in url1['contributors']:
               if a['role'] == "Main":
                ar_album.append(a['name'])
-          dir = str(output) + "/" + artist[0].replace("/", "") + "/"
+          dir = str(output) + "/" + artist[0].replace("/", "").replace("$", "S") + "/"
           try:
-             if not os.path.isdir(dir):
-              os.makedirs(dir)
+             os.makedirs(dir)
           except:
              None
-          name = artist[0].replace("/", "") + " " + music[0].replace("/", "") + ".mp3"
+          name = artist[0].replace("/", "").replace("$", "S") + " " + music[0].replace("/", "").replace("$", "S") + ".mp3"
           if os.path.isfile(dir + name):
            if check == False:
             return dir + name
@@ -352,10 +351,9 @@ class Login:
           for a in url['contributors']:
               if a['role'] == "Main":
                ar_album.append(a['name'])
-          dir = str(output) + "/" + album[0].replace("/", "") + "/"
+          dir = str(output) + "/" + album[0].replace("/", "").replace("$", "S") + "/"
           try:
-             if not os.path.isdir(dir):
-              os.makedirs(dir)
+             os.makedirs(dir)
           except:
              None
           try:
@@ -363,7 +361,7 @@ class Login:
           except:
              image = requests.get(image).content
           for a in tqdm(range(len(urls))):
-              name = artist[a].replace("/", "") + " " + music[a].replace("/", "") + ".mp3"
+              name = artist[a].replace("/", "").replace("$", "S") + " " + music[a].replace("/", "").replace("$", "S") + ".mp3"
               names.append(dir + name)
               if os.path.isfile(dir + name):
                if check == False:
@@ -439,9 +437,9 @@ class Login:
           if "?utm" in URL:
            URL,a = URL.split("?utm")
           try:
-             url = json.loads(requests.get("https://api.deezer.com/playlist/" + URL.split("/")[-1] + "/tracks").text)
+             url = json.loads(requests.get("https://api.deezer.com/playlist/" + URL.split("/")[-1]).text)
           except:
-             url = json.loads(requests.get("https://api.deezer.com/playlist/" + URL.split("/")[-1] + "/tracks").text)
+             url = json.loads(requests.get("https://api.deezer.com/playlist/" + URL.split("/")[-1]).text)
           try:
              if url['error']['message'] == "Quota limit exceeded":
               raise QuotaExceeded("Too much requests limit yourself")
@@ -452,8 +450,12 @@ class Login:
               raise InvalidLink("Invalid link ;)")
           except KeyError:
              None
-          for a in url['data']:
-              array.append(self.download_trackdee(a['link'], output, check))
+          for a in url['tracks']['data']:
+              try:
+                 array.append(self.download_trackdee(a['link'], output, check))
+              except TrackNotFound:
+                 print("\nTrack not found " + a['title'])
+                 array.append(output + a['title'] + "/" + a['title'] + ".mp3")   
           return array
       def download_trackspo(self, URL, output=localdir + "/Songs/", check=True, playlist=False):
           global spo
@@ -536,13 +538,12 @@ class Login:
                  genre.append(a['name'])
           except KeyError:
              None
-          dir = str(output) + "/" + artist[0].replace("/", "") + "/"
+          dir = str(output) + "/" + artist[0].replace("/", "").replace("$", "S") + "/"
           try:
-             if not os.path.isdir(dir):
-              os.makedirs(dir)
+             os.makedirs(dir)
           except:
              None
-          name = artist[0].replace("/", "") + " " + music[0].replace("/", "") + ".mp3"
+          name = artist[0].replace("/", "").replace("$", "S") + " " + music[0].replace("/", "").replace("$", "S") + ".mp3"
           if os.path.isfile(dir + name):
            if check == False:
             return dir + name
@@ -652,10 +653,9 @@ class Login:
                          artist.append(", ".join(array))
                          del array[:]
                          break               
-          dir = str(output) + "/" + album[0].replace("/", "") + "/"
+          dir = str(output) + "/" + album[0].replace("/", "").replace("$", "S") + "/"
           try:
-             if not os.path.isdir(dir):
-              os.makedirs(dir)
+             os.makedirs(dir)
           except:
              None
           try:
@@ -707,7 +707,7 @@ class Login:
           except:
              image = requests.get(image).content
           for a in tqdm(range(len(urls))):
-              name = artist[a].replace("/", "") + " " + music[a].replace("/", "") + ".mp3"
+              name = artist[a].replace("/", "").replace("$", "S") + " " + music[a].replace("/", "").replace("$", "S") + ".mp3"
               names.append(dir + name)
               if os.path.isfile(dir + name):
                if check == False:
@@ -797,7 +797,7 @@ class Login:
                  array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, True))
               except KeyError:
                  print("\nTrack not found " + a['track']['name'])
-                 array.append(localdir + "/Songs/" + a['track']['name'] + "/" + a['track']['name'] + ".mp3")
+                 array.append(output + a['track']['name'] + "/" + a['track']['name'] + ".mp3")
           for a in range(tracks['total'] // 100):
               try:
                  tracks = spo.next(tracks)
@@ -810,7 +810,7 @@ class Login:
                      array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, True))
                   except KeyError:
                      print("\nTrack not found " + a['track']['name'])
-                     array.append(localdir + "/Songs/" + a['track']['name'] + "/" + a['track']['name'] + ".mp3")
+                     array.append(output + a['track']['name'] + "/" + a['track']['name'] + ".mp3")
           return array
       def download_name(self, artist, song, output=localdir + "/Songs/", check=True):
           global spo
