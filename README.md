@@ -11,46 +11,67 @@ Download track by Spotify link
 ```python
 import deezloader
 downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD")
-downloa.download_trackspo("Insert the Spotify link of the track to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True, quality="MP3_128" ) #Or check=False for not check if song already exist
+downloa.download_trackspo("Insert the Spotify link of the track to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True, quality="MP3_128", recursive=True)
+#check=False for not check if song already exist
+#quality can be FLAC, MP3_320, MP3_256 or MP3_128
+#recursive=False for download the song if quality seletecd chose doesn't exist
 ```
 Download track by Deezer link
 ```python
 import deezloader
 downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD")
-downloa.download_trackdee("Insert the Deezer link of the track to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True) #Or check=False for not check if song already exist
+downloa.download_trackdee("Insert the Deezer link of the track to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True, quality="MP3_128", recursive=True)
+#check=False for not check if song already exist
+#quality can be FLAC, MP3_320, MP3_256 or MP3_128
+#recursive=False for download the song if quality seletecd chose doesn't exist
 ```
 ### Download album
 Download album by Spotify link
 ```python
 import deezloader
 downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD")
-downloa.download_albumspo("Insert the Spotify link of the album to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True) #Or check=False for not check if song already exist
+downloa.download_albumspo("Insert the Spotify link of the album to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True, quality="MP3_128", recursive=True)
+#check=False for not check if song already exist
+#quality can be FLAC, MP3_320, MP3_256 or MP3_128
+#recursive=False for download the song if quality seletecd chose doesn't exist
 ```
 Download album from Deezer link
 ```python
 import deezloader
 downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD")
-downloa.download_albumdee("Insert the Deezer link of the album to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True) #Or check=False for not check if song already exist
+downloa.download_albumdee("Insert the Deezer link of the album to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True, quality="MP3_128", recursive=True)
+#check=False for not check if song already exist
+#quality can be FLAC, MP3_320, MP3_256 or MP3_128
+#recursive=False for download the song if quality seletecd chose doesn't exist
 ```
 ### Download playlist
 Download playlist by Spotify link
 ```python
 import deezloader
 downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD")
-downloa.download_playlistspo("Insert the Spotify link of the playlist to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True) #Or check=False for not check if song already exist
+downloa.download_playlistspo("Insert the Spotify link of the playlist to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True, quality="MP3_128", recursive=True)
+#check=False for not check if song already exist
+#quality can be FLAC, MP3_320, MP3_256 or MP3_128
+#recursive=False for download the song if quality seletecd chose doesn't exist
 ```
 Download playlist from Deezer link
 ```python
 import deezloader
 downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD")
-downloa.download_playlistdee("Insert the Deezer link of the playlist to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True) #Or check=False for not check if song already exist
+downloa.download_playlistdee("Insert the Deezer link of the playlist to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True, quality="MP3_128", recursive=True)
+#check=False for not check if song already exist
+#quality can be FLAC, MP3_320, MP3_256 or MP3_128
+#recursive=False for download the song if quality seletecd chose doesn't exist
 ```
 ### Download name
 Download by name
 ```python
 import deezloader
 downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD")
-downloa.download_name(artist="Eminem", song="Berzerk", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True) #Or check=False for not check if song already exist
+downloa.download_name(artist="Eminem", song="Berzerk", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True, quality="MP3_128", recursive=True)
+#check=False for not check if song already exist
+#quality can be FLAC, MP3_320, MP3_256 or MP3_128
+#recursive=False for download the song if quality seletecd chose doesn't exist
 ```
 # Disclaimer
 - I am not responsible for the usage of this program by other people.
