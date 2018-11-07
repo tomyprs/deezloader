@@ -11,7 +11,7 @@ Download track by Spotify link
 ```python
 import deezloader
 downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD")
-downloa.download_trackspo("Insert the Spotify link of the track to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True) #Or check=False for not check if song already exist
+downloa.download_trackspo("Insert the Spotify link of the track to download", output="SELECT THE PATH WHERE SAVE YOUR SONGS", check=True, quality="MP3_128" ) #Or check=False for not check if song already exist
 ```
 Download track by Deezer link
 ```python

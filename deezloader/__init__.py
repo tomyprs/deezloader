@@ -11,6 +11,7 @@ import spotipy.oauth2 as oauth2
 from mutagen.id3 import ID3, APIC
 from mutagen.easyid3 import EasyID3
 from binascii import a2b_hex, b2a_hex
+from mutagen.flac import FLAC, Picture
 from Crypto.Cipher import AES, Blowfish
 req = requests.Session()
 localdir = os.getcwd()
@@ -44,6 +45,9 @@ class BadCredentials(Exception):
 class QuotaExceeded(Exception):
       def __init__(self, message):
           super().__init__(message)
+class QualityNotFound(Exception):
+      def __init__(self, message):
+          super().__init__(message)
 class Login:
       def __init__(self, mail, password):
           check = json.loads(req.post("http://www.deezer.com/ajax/gw-light.php", params).text)['results']['checkFormLogin']
@@ -58,7 +62,7 @@ class Login:
            print("Success, you are in")
           else:
               raise BadCredentials("Invalid password or username")
-      def download(self, track, location):
+      def download(self, track, location, quality, check):
           song = {}
           ids = track.split("/")[-1]
           name = ids + ".mp3"
@@ -82,8 +86,8 @@ class Login:
               h = MD5.new()
               h.update(data)
               return b2a_hex(h.digest())
-          def genurl():
-              data = b"\xa4".join(a.encode() for a in [song['md5'], "1", str(ids), str(song['media_version'])])
+          def genurl(quality):
+              data = b"\xa4".join(a.encode() for a in [song['md5'], quality, str(ids), str(song['media_version'])])
               data = b"\xa4".join([md5hex(data), data]) + b"\xa4"
               if len(data) % 16:
                data += b"\x00" * (16 - len(data) % 16)
@@ -107,20 +111,33 @@ class Login:
                   fo.write(data)
                   i += 1
           infos = login()
-          while not "MD5_ORIGIN" in str(infos):
-              infos = login()
           song['md5'] = infos['results']['MD5_ORIGIN']
           song['media_version'] = infos['results']['MEDIA_VERSION']
           try:
-             fh = requests.get(genurl())
+             if int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "FLAC":
+              quality = "9"
+             elif int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "MP3_320":
+              quality = "3"
+             elif int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "MP3_256":
+              quality = "5"
+             elif int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "MP3_128":
+              quality = "1"
+             else:
+                 if check == True:
+                  raise QualityNotFound("The quality chose can't be downloaded")
+                 quality = "1"
+          except KeyError:
+             raise QualityNotFound("The quality chose can't be downloaded")
+          try:
+             fh = requests.get(genurl(quality))
           except:
-             fh = requests.get(genurl())
+             fh = requests.get(genurl(quality))
           if len(fh.content) == 0:
            raise TrackNotFound("")
           open(location + name, "wb").write(fh.content)
           fo = open(location + name, "wb")
           decryptfile(fh.iter_content(2048), calcbfkey(ids), fo)
-      def download_trackdee(self, URL, output=localdir + "/Songs/", check=True):
+      def download_trackdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_128", recursive=True):
           if output == localdir + "/Songs":
            if not os.path.isdir("Songs"):
             os.makedirs("Songs")
@@ -211,7 +228,7 @@ class Login:
             return
           print("\nDownloading:" + song)
           try:
-             self.download(URL, dir)
+             self.download(URL, dir, quality, recursive)
           except TrackNotFound:
              try:
                 url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[0].replace("#", "") + " + " + artist[0].replace("#", "")).text)
@@ -244,7 +261,7 @@ class Login:
                         break
                 except IndexError:
                    raise TrackNotFound("Track not found: " + song)
-             self.download(URL, dir)
+             self.download(URL, dir, quality, recursive)
           try:
              os.rename(dir + URL.split("/")[-1] + ".mp3" , dir + name)
           except FileNotFoundError:
@@ -257,8 +274,16 @@ class Login:
              tag = EasyID3(dir + name)
              tag.delete()
           except mutagen.id3.ID3NoHeaderError:
-             tag = mutagen.File(dir + name, easy=True)
-             tag.add_tags()
+             try:
+                tag = mutagen.File(dir + name, easy=True)
+                tag.add_tags()
+             except mutagen.flac.FLACVorbisError:
+                tag = FLAC(dir + name)
+                tag.delete()
+                images = Picture()
+                images.type = 3
+                images.data = image
+                tag.add_picture(images)
           except:
              return dir + name
           tag['artist'] = artist[0]
@@ -269,12 +294,15 @@ class Login:
           tag['discnumber'] = str(discnum[0])
           tag['genre'] = " & ".join(genre)
           tag['albumartist'] = ", ".join(ar_album)
-          tag.save(v2_version=3)
-          audio = ID3(dir + name)
-          audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
-          audio.save()
+          tag.save()
+          try:
+             audio = ID3(dir + name)
+             audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
+             audio.save()
+          except:
+             None
           return dir + name
-      def download_albumdee(self, URL, output=localdir + "/Songs/", check=True):
+      def download_albumdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_128", recursive=True):
           if output == localdir + "/Songs":
            if not os.path.isdir("Songs"):
             os.makedirs("Songs")
@@ -371,7 +399,7 @@ class Login:
                if not ans == "y":
                 return
               try:
-                 self.download(urls[a], dir)
+                 self.download(urls[a], dir, quality, recursive)
               except TrackNotFound:
                  try:
                     url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "") + " + " + artist[a].replace("#", "")).text)
@@ -405,7 +433,7 @@ class Login:
                     except IndexError:
                        print("\nTrack not found: " + music[a] + " - " + artist[a])
                        continue
-                 self.download(URL, dir)
+                 self.download(URL, dir, quality, recursive)
                  urls[a] = URL
               try:
                  os.rename(dir + urls[a].split("/")[-1] + ".mp3", dir + name)
@@ -415,10 +443,18 @@ class Login:
                  tag = EasyID3(dir + name)
                  tag.delete()
               except mutagen.id3.ID3NoHeaderError:
-                 tag = mutagen.File(dir + name, easy=True)
-                 tag.add_tags()
+                 try:
+                    tag = mutagen.File(dir + name, easy=True)
+                    tag.add_tags()
+                 except mutagen.flac.FLACVorbisError:
+                    tag = FLAC(dir + name)
+                    tag.delete()
+                    images = Picture()
+                    images.type = 3
+                    images.data = image
+                    tag.add_picture(images)
               except:
-                 continue
+                 return dir + name
               tag['artist'] = artist[a]
               tag['title'] = music[a]
               tag['date'] = year[0]
@@ -427,12 +463,15 @@ class Login:
               tag['discnumber'] = str(discnum[a])
               tag['genre'] = " & ".join(genre)
               tag['albumartist'] = ", ".join(ar_album)
-              tag.save(v2_version=3)
-              audio = ID3(dir + name)
-              audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
-              audio.save()
+              tag.save()
+              try:
+                 audio = ID3(dir + name)
+                 audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
+                 audio.save()
+              except:
+                 None
           return names
-      def download_playlistdee(self, URL, output=localdir + "/Songs/", check=True):
+      def download_playlistdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_128", recursive=True):
           array = []
           if "?utm" in URL:
            URL,a = URL.split("?utm")
@@ -452,12 +491,12 @@ class Login:
              None
           for a in url['tracks']['data']:
               try:
-                 array.append(self.download_trackdee(a['link'], output, check))
+                 array.append(self.download_trackdee(a['link'], output, check, quality, recursive))
               except TrackNotFound:
                  print("\nTrack not found " + a['title'])
                  array.append(output + a['title'] + "/" + a['title'] + ".mp3")   
           return array
-      def download_trackspo(self, URL, output=localdir + "/Songs/", check=True, playlist=False):
+      def download_trackspo(self, URL, output=localdir + "/Songs/", check=True, playlist=False, quality="MP3_128", recursive=True):
           global spo
           if output == localdir + "/Songs":
            if not os.path.isdir("Songs"):
@@ -516,15 +555,6 @@ class Login:
            URL = url['link']
           song = music[0] + " - " + artist[0]
           try:
-             url = json.loads(requests.get("http://api.deezer.com/track/" + URL.split("/")[-1]).text)
-          except:
-             url = json.loads(requests.get("http://api.deezer.com/track/" + URL.split("/")[-1]).text)
-          try:
-             if url['error']['message'] == "Quota limit exceeded":
-              raise QuotaExceeded("Too much requests limit yourself")
-          except KeyError:
-             None
-          try:
              url1 = json.loads(requests.get("http://api.deezer.com/album/" + str(url['album']['id']), headers=header).text)
           except:
              url1 = json.loads(requests.get("http://api.deezer.com/album/" + str(url['album']['id']), headers=header).text)
@@ -552,7 +582,7 @@ class Login:
             return
           print("\nDownloading:" + song)
           try:
-             self.download(URL, dir)
+             self.download(URL, dir, quality, recursive)
           except TrackNotFound:
              if playlist == True:
               raise KeyError
@@ -570,8 +600,16 @@ class Login:
              tag = EasyID3(dir + name)
              tag.delete()
           except mutagen.id3.ID3NoHeaderError:
-             tag = mutagen.File(dir + name, easy=True)
-             tag.add_tags()
+             try:
+                tag = mutagen.File(dir + name, easy=True)
+                tag.add_tags()
+             except mutagen.flac.FLACVorbisError:
+                tag = FLAC(dir + name)
+                tag.delete()
+                images = Picture()
+                images.type = 3
+                images.data = image
+                tag.add_picture(images)
           except:
              return dir + name
           tag['artist'] = artist[0]
@@ -582,12 +620,15 @@ class Login:
           tag['discnumber'] = str(discnum[0])
           tag['genre'] = " & ".join(genre)
           tag['albumartist'] = ", ".join(ar_album)
-          tag.save(v2_version=3)
-          audio = ID3(dir + name)
-          audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
-          audio.save()
+          tag.save()
+          try:
+             audio = ID3(dir + name)
+             audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
+             audio.save()
+          except:
+             None
           return dir + name
-      def download_albumspo(self, URL, output=localdir + "/Songs/", check=True):
+      def download_albumspo(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_128", recursive=True):
           global spo
           if output == localdir + "/Songs":
            if not os.path.isdir("Songs"):
@@ -717,7 +758,7 @@ class Login:
                if not ans == "y":
                 return
               try:
-                 self.download(urls[a], dir)
+                 self.download(urls[a], dir, quality, recursive)
               except TrackNotFound:
                  try:
                     url = json.loads(requests.get("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "") + " + " + artist[a].replace("#", "")).text)
@@ -751,7 +792,7 @@ class Login:
                     except IndexError:
                        print("\nTrack not found: " + music[a] + " - " + artist[a])
                        continue
-                 self.download(URL, dir)
+                 self.download(URL, dir, quality, recursive)
                  urls[a] = URL
               try:
                  os.rename(dir + urls[a].split("/")[-1] + ".mp3", dir + name)
@@ -761,10 +802,18 @@ class Login:
                  tag = EasyID3(dir + name)
                  tag.delete()
               except mutagen.id3.ID3NoHeaderError:
-                 tag = mutagen.File(dir + name, easy=True)
-                 tag.add_tags()
+                 try:
+                    tag = mutagen.File(dir + name, easy=True)
+                    tag.add_tags()
+                 except mutagen.flac.FLACVorbisError:
+                    tag = FLAC(dir + name)
+                    tag.delete()
+                    images = Picture()
+                    images.type = 3
+                    images.data = image
+                    tag.add_picture(images)
               except:
-                 continue
+                 return dir + name
               tag['artist'] = artist[a]
               tag['title'] = music[a]
               tag['date'] = year[0]
@@ -773,12 +822,15 @@ class Login:
               tag['discnumber'] = str(discnum[a])
               tag['genre'] = " & ".join(genre)
               tag['albumartist'] = ", ".join(ar_album)
-              tag.save(v2_version=3)
-              audio = ID3(dir + name)
-              audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
-              audio.save()
+              tag.save()
+              try:
+                 audio = ID3(dir + name)
+                 audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
+                 audio.save()
+              except:
+                 None
           return names
-      def download_playlistspo(self, URL, output=localdir + "/Songs/", check=True):
+      def download_playlistspo(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_128", recursive=True):
           global spo
           array = []
           if "?" in URL:
@@ -794,7 +846,7 @@ class Login:
              tracks = spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
           for a in tracks['items']:
               try:
-                 array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, True))
+                 array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, True, quality, recursive))
               except KeyError:
                  print("\nTrack not found " + a['track']['name'])
                  array.append(output + a['track']['name'] + "/" + a['track']['name'] + ".mp3")
@@ -807,12 +859,12 @@ class Login:
                  tracks = spo.next(tracks)
               for a in tracks['items']:
                   try:
-                     array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, True))
+                     array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, True, quality, recursive))
                   except KeyError:
                      print("\nTrack not found " + a['track']['name'])
                      array.append(output + a['track']['name'] + "/" + a['track']['name'] + ".mp3")
           return array
-      def download_name(self, artist, song, output=localdir + "/Songs/", check=True):
+      def download_name(self, artist, song, output=localdir + "/Songs/", check=True, quality="MP3_128", recursive=True):
           global spo
           try:
              search = spo.search(q="track:" + song + " artist:" + artist)
@@ -821,6 +873,6 @@ class Login:
              spo = spotipy.Spotify(auth=token)
              search = spo.search(q="track:" + song + " artist:" + artist)
           try:
-             return self.download_trackspo(search['tracks']['items'][0]['external_urls']['spotify'], output, check)
+             return self.download_trackspo(search['tracks']['items'][0]['external_urls']['spotify'], output, check, quality=quality, recursive=recursive)
           except IndexError:
              raise TrackNotFound("Track not found: " + artist + " - " + song)
