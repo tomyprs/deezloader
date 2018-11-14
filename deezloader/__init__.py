@@ -494,7 +494,7 @@ class Login:
                  array.append(self.download_trackdee(a['link'], output, check, quality, recursive))
               except TrackNotFound:
                  print("\nTrack not found " + a['title'])
-                 array.append(output + a['title'] + "/" + a['title'] + ".mp3")   
+                 array.append(output + a['title'] + "/" + a['title'] + ".mp3")
           return array
       def download_trackspo(self, URL, output=localdir + "/Songs/", check=True, playlist=False, quality="MP3_128", recursive=True):
           global spo
@@ -675,25 +675,26 @@ class Login:
           year.append(tracks['release_date'])
           image = tracks['images'][0]['url']
           artis = tracks['artists'][0]['name']
-          for a in range(tracks['total_tracks'] // 50):
-              try:
-                 tracks = spo.next(tracks['tracks'])
-              except:
-                 token = generate_token()
-                 spo = spotipy.Spotify(auth=token)
-                 tracks = spo.next(tracks)['items']
-              for track in tracks['items']:
-                  music.append(track['name'])
-                  tracknum.append(track['track_number'])
-                  discnum.append(track['disc_number'])
-              for artists in tracks['items']:
-                  for a in range(20):
-                      try:
-                         array.append(artists['artists'][a]['name'])
-                      except IndexError:
-                         artist.append(", ".join(array))
-                         del array[:]
-                         break               
+          if tracks['total_tracks'] != 50:
+           for a in range(tracks['total_tracks'] // 50):
+               try:
+                  tracks = spo.next(tracks['tracks'])
+               except:
+                  token = generate_token()
+                  spo = spotipy.Spotify(auth=token)
+                  tracks = spo.next(tracks)['items']
+               for track in tracks['items']:
+                   music.append(track['name'])
+                   tracknum.append(track['track_number'])
+                   discnum.append(track['disc_number'])
+               for artists in tracks['items']:
+                   for a in range(20):
+                       try:
+                          array.append(artists['artists'][a]['name'])
+                       except IndexError:
+                          artist.append(", ".join(array))
+                          del array[:]
+                          break
           dir = str(output) + "/" + album[0].replace("/", "").replace("$", "S") + "/"
           try:
              os.makedirs(dir)
@@ -850,19 +851,20 @@ class Login:
               except KeyError:
                  print("\nTrack not found " + a['track']['name'])
                  array.append(output + a['track']['name'] + "/" + a['track']['name'] + ".mp3")
-          for a in range(tracks['total'] // 100):
-              try:
-                 tracks = spo.next(tracks)
-              except:
-                 token = generate_token()
-                 spo = spotipy.Spotify(auth=token)
-                 tracks = spo.next(tracks)
-              for a in tracks['items']:
-                  try:
-                     array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, True, quality, recursive))
-                  except KeyError:
-                     print("\nTrack not found " + a['track']['name'])
-                     array.append(output + a['track']['name'] + "/" + a['track']['name'] + ".mp3")
+          if tracks['total'] != 100:
+           for a in range(tracks['total'] // 100):
+               try:
+                  tracks = spo.next(tracks)
+               except:
+                  token = generate_token()
+                  spo = spotipy.Spotify(auth=token)
+                  tracks = spo.next(tracks)
+               for a in tracks['items']:
+                   try:
+                      array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, True, quality, recursive))
+                   except KeyError:
+                      print("\nTrack not found " + a['track']['name'])
+                      array.append(output + a['track']['name'] + "/" + a['track']['name'] + ".mp3")
           return array
       def download_name(self, artist, song, output=localdir + "/Songs/", check=True, quality="MP3_128", recursive=True):
           global spo
