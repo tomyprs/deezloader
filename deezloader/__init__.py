@@ -111,6 +111,8 @@ class Login:
                   fo.write(data)
                   i += 1
           infos = login()
+          while not "MD5_ORIGIN" in str(infos):
+              infos = login()
           song['md5'] = infos['results']['MD5_ORIGIN']
           song['media_version'] = infos['results']['MEDIA_VERSION']
           try:
@@ -209,7 +211,7 @@ class Login:
           try:
              for a in url1['genres']['data']:
                  genre.append(a['name'])
-          except KeyError:
+          except:
              None
           for a in url1['contributors']:
               if a['role'] == "Main":
@@ -374,7 +376,7 @@ class Login:
           try:
              for a in url['genres']['data']:
                  genre.append(a['name'])
-          except KeyError:
+          except:
              None
           for a in url['contributors']:
               if a['role'] == "Main":
@@ -566,7 +568,7 @@ class Login:
           try:
              for a in url1['genres']['data']:
                  genre.append(a['name'])
-          except KeyError:
+          except:
              None
           dir = str(output) + "/" + artist[0].replace("/", "").replace("$", "S") + "/"
           try:
@@ -742,7 +744,7 @@ class Login:
           try:
              for a in url['genres']['data']:
                  genre.append(a['name'])
-          except KeyError:
+          except:
              None
           try:
              image = requests.get(image).content

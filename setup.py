@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(
       name = "deezloader",
-      version = "2.3",
+      version = "2.5",
       description = "Downloads songs, albums or playlists from deezer",
       license = "Apache-2.0",
       author = "An0nimia",
