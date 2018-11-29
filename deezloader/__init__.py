@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import spotipy.oauth2 as oauth2
 from mutagen.id3 import ID3, APIC
 from mutagen.easyid3 import EasyID3
+from collections import OrderedDict
 from binascii import a2b_hex, b2a_hex
 from mutagen.flac import FLAC, Picture
 from Crypto.Cipher import AES, Blowfish
@@ -56,8 +57,7 @@ class Login:
                        "password": password,
                        "checkFormLogin": check
           }
-          sign = req.post("https://www.deezer.com/ajax/action.php", post_data).text
-          if "success" in sign:
+          if "success" == req.post("https://www.deezer.com/ajax/action.php", post_data).text:
            print("Success, you are in")
           else:
               raise BadCredentials("Invalid password or username")
@@ -196,7 +196,7 @@ class Login:
                        del array[b]
                    except IndexError:
                       break
-          artist.append(", ".join(array))
+          artist.append(", ".join(OrderedDict.fromkeys(array)))
           album.append(url['album']['title'])
           tracknum.append(url['track_position'])
           discnum.append(url['disk_number'])
@@ -369,7 +369,7 @@ class Login:
                            del array[b]
                        except IndexError:
                           break
-              artist.append(", ".join(array))
+              artist.append(", ".join(OrderedDict.fromkeys(array)))
           album.append(url['title'])
           year.append(url['release_date'])
           try:
