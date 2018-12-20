@@ -188,6 +188,10 @@ class Login:
            except:
               image = requests.get(URL).text
            image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("120", "1200")
+          try:
+             image = requests.get(image).content
+          except:
+             image = requests.get(image).content
           music.append(url['title'])
           for a in url['contributors']:
               array.append(a['name'])
@@ -340,6 +344,10 @@ class Login:
            except:
               image = requests.get(URL).text
            image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("200", "1200")
+          try:
+             image = requests.get(image).content
+          except:
+             image = requests.get(image).content
           for a in url['tracks']['data']:
               del array[:]
               music.append(a['title'])
