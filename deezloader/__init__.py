@@ -181,13 +181,14 @@ class Login:
               raise QuotaExceeded("Too much requests limit yourself")
           except KeyError:
              None
-          image = url['album']['cover_xl'].replace("1000", "1200")
-          if image == "":
-           try:
-              image = requests.get(URL).text
-           except:
-              image = requests.get(URL).text
-           image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("120", "1200")
+          try:
+             image = url['album']['cover_xl'].replace("1000", "1200")
+          except AttributeError:
+             try:
+                image = requests.get(URL).text
+             except:
+                image = requests.get(URL).text
+             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("120", "1200")
           try:
              image = requests.get(image).content
           except:
@@ -337,13 +338,14 @@ class Login:
               raise InvalidLink("Invalid link ;)")
           except KeyError:
              None
-          image = url['cover_xl'].replace("1000", "1200")
-          if image == "":
-           try:
-              image = requests.get(URL).text
-           except:
-              image = requests.get(URL).text
-           image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("200", "1200")
+          try:
+             image = url['cover_xl'].replace("1000", "1200")
+          except AttributeError:
+             try:
+                image = requests.get(URL).text
+             except:
+                image = requests.get(URL).text
+             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("200", "1200")
           try:
              image = requests.get(image).content
           except:
