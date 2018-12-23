@@ -9,7 +9,6 @@ from Crypto.Hash import MD5
 from bs4 import BeautifulSoup
 import spotipy.oauth2 as oauth2
 from mutagen.id3 import ID3, APIC
-from mutagen.easyid3 import EasyID3
 from collections import OrderedDict
 from binascii import a2b_hex, b2a_hex
 from mutagen.flac import FLAC, Picture
@@ -266,26 +265,19 @@ class Login:
                 except IndexError:
                    raise TrackNotFound("Track not found: " + song)
              self.download(URL, dir, quality, recursive, extension)
+          os.rename(dir + URL.split("/")[-1] + extension , dir + name)
           try:
-             os.rename(dir + URL.split("/")[-1] + extension , dir + name)
-          except FileNotFoundError:
-             None
-          try:
-             tag = EasyID3(dir + name)
+             tag = mutagen.File(dir + name, easy=True)
+             tag.add_tags()
+          except mutagen.id3._util.ID3NoHeaderError:
+             tag = FLAC(dir + name)
              tag.delete()
-          except mutagen.id3.ID3NoHeaderError:
-             try:
-                tag = mutagen.File(dir + name, easy=True)
-                tag.add_tags()
-             except mutagen.flac.FLACVorbisError:
-                tag = FLAC(dir + name)
-                tag.delete()
-                images = Picture()
-                images.type = 3
-                images.data = image
-                tag.add_picture(images)
-          except:
-             return dir + name
+             images = Picture()
+             images.type = 3
+             images.data = image
+             tag.add_picture(images)
+          except mutagen.id3._util.error:
+             None
           tag['artist'] = artist[0]
           tag['title'] = music[0]
           tag['date'] = year[0]
@@ -295,12 +287,9 @@ class Login:
           tag['genre'] = " & ".join(genre)
           tag['albumartist'] = ", ".join(ar_album)
           tag.save()
-          try:
-             audio = ID3(dir + name)
-             audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
-             audio.save()
-          except:
-             None
+          audio = ID3(dir + name)
+          audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
+          audio.save()
           return dir + name
       def download_albumdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
           if output == localdir + "/Songs":
@@ -433,26 +422,19 @@ class Login:
                        continue
                  self.download(URL, dir, quality, recursive, extension)
                  urls[a] = URL
+              os.rename(dir + urls[a].split("/")[-1] + extension, dir + name)
               try:
-                 os.rename(dir + urls[a].split("/")[-1] + extension, dir + name)
-              except FileNotFoundError:
-                 None
-              try:
-                 tag = EasyID3(dir + name)
+                 tag = mutagen.File(dir + name, easy=True)
+                 tag.add_tags()
+              except mutagen.id3._util.ID3NoHeaderError:
+                 tag = FLAC(dir + name)
                  tag.delete()
-              except mutagen.id3.ID3NoHeaderError:
-                 try:
-                    tag = mutagen.File(dir + name, easy=True)
-                    tag.add_tags()
-                 except mutagen.flac.FLACVorbisError:
-                    tag = FLAC(dir + name)
-                    tag.delete()
-                    images = Picture()
-                    images.type = 3
-                    images.data = image
-                    tag.add_picture(images)
-              except:
-                 return dir + name
+                 images = Picture()
+                 images.type = 3
+                 images.data = image
+                 tag.add_picture(images)
+              except mutagen.id3._util.error:
+                 None
               tag['artist'] = artist[a]
               tag['title'] = music[a]
               tag['date'] = year[0]
@@ -462,12 +444,9 @@ class Login:
               tag['genre'] = " & ".join(genre)
               tag['albumartist'] = ", ".join(ar_album)
               tag.save()
-              try:
-                 audio = ID3(dir + name)
-                 audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
-                 audio.save()
-              except:
-                 None
+              audio = ID3(dir + name)
+              audio['APIC'] = APIC(encoding=3, mime='image/jpeg', type=3, desc=u'Cover', data=image)
+              audio.save()
           return names
       def download_playlistdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
           array = []
@@ -497,6 +476,9 @@ class Login:
               try:
                  array.append(self.download_trackdee(a['link'], output, check, quality, recursive))
               except TrackNotFound:
+                 print("\nTrack not found " + a['title'])
+                 array.append(output + a['title'] + "/" + a['title'] + extension)
+              except InvalidLink:
                  print("\nTrack not found " + a['title'])
                  array.append(output + a['title'] + "/" + a['title'] + extension)
           return array
