@@ -197,10 +197,10 @@ class Login:
                for b in array:
                    if a in b and a != b:
                     array.remove(b)
+          while len(", ".join(array)) + len(music[0]) >= 240:
+              del array[-1]
           if len(array) == 0:
            array.append("Unknown")
-          while len(", ".join(array)) >= 200:
-              del array[-1]
           artist.append(", ".join(OrderedDict.fromkeys(array)))
           album.append(url['album']['title'])
           tracknum.append(url['track_position'])
@@ -321,7 +321,7 @@ class Login:
              image = url['cover_xl'].replace("1000", "1200")
           except AttributeError:
              image = self.request(URL1).text
-             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("200", "1200")
+             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("120", "1200")
           image = self.request(image).content
           if len(image) == 13:
            image = self.request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
@@ -344,10 +344,10 @@ class Login:
                    for b in array:
                        if a in b and a != b:
                         array.remove(b)
+              while len(", ".join(array)) + len(max(music)) >= 240:
+                  del array[-1]
               if len(array) == 0:
                array.append("Unknown")
-              while len(", ".join(array)) >= 200:
-                  del array[-1]
               artist.append(", ".join(OrderedDict.fromkeys(array)))
           album.append(url['title'])
           year.append(url['release_date'])
