@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# Thanks Radeox for have showed me how does less exceptions ahahahaha
 import os
 import mutagen
 import spotipy
@@ -95,7 +94,7 @@ class Login:
                data += b"\x00" * (16 - len(data) % 16)
               c = AES.new("jo6aey6haid2Teih", AES.MODE_ECB)
               c = b2a_hex(c.encrypt(data)).decode()
-              return "https://e-cdns-proxy-8.dzcdn.net/mobile/1/" + c
+              return "https://e-cdns-proxy-%s.dzcdn.net/mobile/1/%s" % (md5[0], c)
           def calcbfkey(songid):
               h = md5hex(b"%d" % int(songid))
               key = b"g4el58wc0zvf9na1"
@@ -140,10 +139,7 @@ class Login:
               raise QualityNotFound("The quality chose can't be downloaded")
              quality = "1"
              qualit = "MP3_128"
-          try:
-             crypt = self.request(genurl(infos['results']['MD5_ORIGIN'], quality, infos['results']['MEDIA_VERSION']))
-          except:
-             crypt = self.request(genurl(infos['results']['MD5_ORIGIN'], quality, infos['results']['MEDIA_VERSION']))
+          crypt = self.request(genurl(infos['results']['MD5_ORIGIN'], quality, infos['results']['MEDIA_VERSION']))
           if len(crypt.content) == 0:
            raise TrackNotFound("")
           open(location + ids, "wb").write(crypt.content)
