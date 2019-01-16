@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# Thanks Radeox for have showed me how does less exceptions ahahahaha
 import os
 import mutagen
 import spotipy
@@ -122,13 +123,13 @@ class Login:
               qualit = "FLAC"
              elif int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "MP3_320":
               quality = "3"
-              qualit = "MP3_320"
+              qualit = "320"
              elif int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "MP3_256":
               quality = "5"
-              qualit = "MP3_256"
+              qualit = "256"
              elif int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "MP3_128":
               quality = "1"
-              qualit = "MP3_128"
+              qualit = "128"
              else:
                  if check == True:
                   raise QualityNotFound("The quality chose can't be downloaded")
