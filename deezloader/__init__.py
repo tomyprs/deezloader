@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# Thanks Radeox for have showed me how does less exceptions ahahahaha
 import os
 import mutagen
 import spotipy
@@ -19,9 +18,7 @@ def generate_token():
     return token
 token = generate_token()
 spo = spotipy.Spotify(auth=token)
-header = {
-          "Accept-Language": "en-US,en;q=0.5"
-}
+header = {"Accept-Language": "en-US,en;q=0.5"}
 params = {
           "api_version": "1.0",
           "api_token": "null",
@@ -60,12 +57,56 @@ class Login:
            print("Success, you are in")
           else:
               raise BadCredentials("Invalid password or username")
-      def request(self, url):
+      def request(self, url, control=False):
           try:
              thing = requests.get(url, headers=header)
           except:
              thing = requests.get(url, headers=header)
+          if control == True:
+           try:
+              if thing.json()['error']:
+               raise InvalidLink("Invalid link ;)")
+           except KeyError:
+              pass
+           try:
+              if thing.json()['error']['message'] == "Quota limit exceeded":
+               raise QuotaExceeded("Too much requests limit yourself")
+           except KeyError:
+              pass
+           try:
+              if thing.json()['error']['message'] == "no data":
+               raise TrackNotFound("Track not found: " + song)
+           except KeyError:
+              pass
           return thing
+      def write_tags(self, song, data):
+          try:
+             tag = mutagen.File(song, easy=True)
+             tag.add_tags()
+          except mutagen.flac.FLACVorbisError:
+             tag = FLAC(song)
+             tag.delete()
+             images = Picture()
+             images.type = 3
+             images.data = image
+             tag.add_picture(images)
+          except mutagen.id3._util.error:
+             pass
+          tag['artist'] = data['artist']
+          tag['title'] = data['music']
+          tag['date'] = data['year']
+          tag['album'] = data['album']
+          tag['tracknumber'] = data['tracknum']
+          tag['discnumber'] = data['discnum']
+          tag['genre'] = " & ".join(data['genre'])
+          tag['albumartist'] = data['ar_album']
+          tag.save()
+          try:
+             audio = ID3(song)
+             audio['APIC'] = APIC(encoding=3, mime="image/jpeg", type=3, desc=u"Cover", data=data['image'])
+             audio.save()
+          except mutagen.id3._util.ID3NoHeaderError:
+             pass
       def download(self, track, location, quality, check):
           ids = track.split("/")[-1]
           def login():
@@ -148,45 +189,24 @@ class Login:
           decryptfile(crypt.iter_content(2048), calcbfkey(ids), decry)
           return extension, qualit
       def download_trackdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
+          datas = {}
           array = []
-          music = []
-          artist = []
-          album = []
-          tracknum = []
-          discnum = []
-          year = []
-          genre = []
-          ar_album = []
           if "?utm" in URL:
            URL, a = URL.split("?utm")
           URL1 = "https://www.deezer.com/track/" + URL.split("/")[-1]
           URL2 = "https://api.deezer.com/track/" + URL.split("/")[-1]
-          url = self.request(URL2).json()
+          url = self.request(URL2, True).json()
+          url1 = self.request("http://api.deezer.com/album/" + str(url['album']['id']), True).json()
           try:
-             if url['error']['message'] == "Quota limit exceeded":
-              raise QuotaExceeded("Too much requests limit yourself")
-          except KeyError:
-             None
-          try:
-             if url['error']:
-              raise InvalidLink("Invalid link ;)")
-          except KeyError:
-             None
-          url1 = self.request("http://api.deezer.com/album/" + str(url['album']['id'])).json()
-          try:
-             if url1['error']['message'] == "Quota limit exceeded":
-              raise QuotaExceeded("Too much requests limit yourself")
-          except KeyError:
-             None
-          try:
-             image = url['album']['cover_xl'].replace("1000", "1200")
+             image = url['album']['cover_xl'].replace("1000x1000", "1200x1200")
           except AttributeError:
              image = self.request(URL1).text
-             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("120", "1200")
+             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("120x120", "1200x1200")
           image = self.request(image).content
           if len(image) == 13:
            image = self.request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
-          music.append(url['title'])
+          datas['image'] = image
+          datas['music'] = url['title']
           for a in url['contributors']:
               array.append(a['name'])
           if len(array) > 1:
@@ -194,33 +214,29 @@ class Login:
                for b in array:
                    if a in b and a != b:
                     array.remove(b)
-          while len(", ".join(array)) + len(music[0]) >= 240:
+          while len(", ".join(array)) + len(datas['music']) >= 240:
               del array[-1]
           if len(array) == 0:
            array.append("Unknown")
-          artist.append(", ".join(OrderedDict.fromkeys(array)))
-          album.append(url['album']['title'])
-          tracknum.append(url['track_position'])
-          discnum.append(url['disk_number'])
-          year.append(url['album']['release_date'])
-          song = music[0] + " - " + artist[0]
-          try:
-             if url1['error']['message'] == "no data":
-              raise TrackNotFound("Track not found: " + song)
-          except KeyError:
-             None
+          datas['artist'] = ", ".join(OrderedDict.fromkeys(array))
+          datas['album'] = url1['title']
+          datas['tracknum'] = str(url['track_position'])
+          datas['discnum'] = str(url['disk_number'])
+          datas['year'] = url['release_date']
+          song = datas['music'] + " - " + datas['artist']
+          datas['genre'] = []
           try:
              for a in url1['genres']['data']:
-                 genre.append(a['name'])
+                 datas['genre'].append(a['name'])
           except KeyError:
-             None
-          ar_album.append(url['artist']['name'])
-          dir = str(output) + "/" + artist[0].replace("/", "").replace("$", "S") + "/"
+             pass
+          datas['ar_album'] = url1['artist']['name']
+          dir = str(output) + "/" + datas['artist'].replace("/", "").replace("$", "S") + "/"
           try:
              os.makedirs(dir)
           except FileExistsError:
-             None
-          name = artist[0].replace("/", "").replace("$", "S") + " " + music[0].replace("/", "").replace("$", "S")
+             pass
+          name = datas['artist'].replace("/", "").replace("$", "S") + " " + datas['music'].replace("/", "").replace("$", "S")
           if os.path.isfile(dir + name):
            if check == False:
             return dir + name
@@ -231,27 +247,17 @@ class Login:
           try:
              extension, qualit = self.download(URL, dir, quality, recursive)
           except TrackNotFound:
-             url = self.request("https://api.deezer.com/search/track/?q=" + music[0].replace("#", "") + " + " + artist[0].replace("#", "")).json()
-             try:
-                if url['error']['message'] == "Quota limit exceeded":
-                 raise QuotaExceeded("Too much requests limit yourself")
-             except KeyError:
-                None
+             url = self.request("https://api.deezer.com/search/track/?q=" + datas['music'].replace("#", "") + " + " + datas['artist'].replace("#", ""), True).json()
              try:
                 for a in range(url['total'] + 1):
-                    if url['data'][a]['title'] == music[0] or url['data'][a]['title_short'] in music[0]:
+                    if url['data'][a]['title'] == datas['music'] or url['data'][a]['title_short'] in datas['music']:
                      URL = url['data'][a]['link']
                      break
              except IndexError:
                 try:
-                   url = self.request("https://api.deezer.com/search/track/?q=" + music[0].replace("#", "").split(" ")[0] + " + " + artist[0].replace("#", "")).json()
-                   try:
-                      if url['error']['message'] == "Quota limit exceeded":
-                       raise QuotaExceeded("Too much requests limit yourself")
-                   except KeyError:
-                      None
+                   url = self.request("https://api.deezer.com/search/track/?q=" + datas['music'].replace("#", "").split(" ")[0] + " + " + datas['artist'].replace("#", ""), True).json()
                    for a in range(url['total'] + 1):
-                       if music[0].split(" ")[0] in url['data'][a]['title']:
+                       if datas['music'].split(" ")[0] in url['data'][a]['title']:
                         URL = url['data'][a]['link']
                         break
                 except IndexError:
@@ -259,35 +265,10 @@ class Login:
              extension, qualit = self.download(URL, dir, quality, recursive)
           name += " (" + qualit + ")" + extension
           os.rename(dir + URL.split("/")[-1], dir + name)
-          try:
-             tag = mutagen.File(dir + name, easy=True)
-             tag.add_tags()
-          except mutagen.flac.FLACVorbisError:
-             tag = FLAC(dir + name)
-             tag.delete()
-             images = Picture()
-             images.type = 3
-             images.data = image
-             tag.add_picture(images)
-          except mutagen.id3._util.error:
-             None
-          tag['artist'] = artist[0]
-          tag['title'] = music[0]
-          tag['date'] = year[0]
-          tag['album'] = album[0]
-          tag['tracknumber'] = str(tracknum[0])
-          tag['discnumber'] = str(discnum[0])
-          tag['genre'] = " & ".join(genre)
-          tag['albumartist'] = ", ".join(ar_album)
-          tag.save()
-          try:
-             audio = ID3(dir + name)
-             audio['APIC'] = APIC(encoding=3, mime="image/jpeg", type=3, desc=u"Cover", data=image)
-             audio.save()
-          except mutagen.id3._util.ID3NoHeaderError:
-             None
+          self.write_tags(dir + name, datas)
           return dir + name
       def download_albumdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
+          datas = {}
           array = []
           music = []
           artist = []
@@ -303,37 +284,23 @@ class Login:
            URL, a = URL.split("?utm")
           URL1 = "https://www.deezer.com/album/" + URL.split("/")[-1]
           URL2 = "https://api.deezer.com/album/" + URL.split("/")[-1]
-          url = self.request(URL2).json()
+          url = self.request(URL2, True).json()
           try:
-             if url['error']['message'] == "Quota limit exceeded":
-              raise QuotaExceeded("Too much requests limit yourself")
-          except KeyError:
-             None
-          try:
-             if url['error']:
-              raise InvalidLink("Invalid link ;)")
-          except KeyError:
-             None
-          try:
-             image = url['cover_xl'].replace("1000", "1200")
+             image = url['cover_xl'].replace("1000x1000", "1200x1200")
           except AttributeError:
              image = self.request(URL1).text
-             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("120", "1200")
+             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("120x120", "1200x1200")
           image = self.request(image).content
           if len(image) == 13:
            image = self.request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
+          datas['image'] = image
           for a in url['tracks']['data']:
               del array[:]
               music.append(a['title'])
               urls.append(a['link'])
-              ur = self.request("https://api.deezer.com/track/" + str(a['id'])).json()
-              try:
-                 if ur['error']['message'] == "Quota limit exceeded":
-                  raise QuotaExceeded("Too much requests limit yourself")
-              except KeyError:
-                 None
-              tracknum.append(ur['track_position'])
-              discnum.append(ur['disk_number'])
+              ur = self.request("https://api.deezer.com/track/" + str(a['id']), True).json()
+              tracknum.append(str(ur['track_position']))
+              discnum.append(str(ur['disk_number']))
               for a in ur['contributors']:
                   array.append(a['name'])
               if len(array) > 1:
@@ -346,19 +313,20 @@ class Login:
               if len(array) == 0:
                array.append("Unknown")
               artist.append(", ".join(OrderedDict.fromkeys(array)))
-          album.append(url['title'])
-          year.append(url['release_date'])
+          datas['album'] = url['title']
+          datas['year'] = url['release_date']
+          datas['genre'] = []
           try:
              for a in url['genres']['data']:
-                 genre.append(a['name'])
+                 datas['genre'].append(a['name'])
           except KeyError:
-             None
-          ar_album.append(url['artist']['name'])
-          dir = str(output) + "/" + album[0].replace("/", "").replace("$", "S") + "/"
+             pass
+          datas['ar_album'] = url['artist']['name']
+          dir = str(output) + "/" + datas['album'].replace("/", "").replace("$", "S") + "/"
           try:
              os.makedirs(dir)
           except FileExistsError:
-             None
+             pass
           for a in tqdm(range(len(urls))):
               name = artist[a].replace("/", "").replace("$", "S") + " " + music[a].replace("/", "").replace("$", "S")
               if os.path.isfile(dir + name):
@@ -371,12 +339,7 @@ class Login:
               try:
                  extension, qualit = self.download(urls[a], dir, quality, recursive)
               except TrackNotFound:
-                 url = self.request("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "") + " + " + artist[a].replace("#", "")).json()
-                 try:
-                    if url['error']['message'] == "Quota limit exceeded":
-                     raise QuotaExceeded("Too much requests limit yourself")
-                 except KeyError:
-                    None
+                 url = self.request("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "") + " + " + artist[a].replace("#", ""), True).json()
                  try:
                     for b in range(url['total'] + 1):
                         if url['data'][b]['title'] == music[a] or url['data'][b]['title_short'] in music[a]:
@@ -384,12 +347,7 @@ class Login:
                          break
                  except IndexError:
                     try:
-                       url = self.request("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "").split(" ")[0] + " + " + artist[a].replace("#", "")).json()
-                       try:
-                          if url['error']['message'] == "Quota limit exceeded":
-                           raise QuotaExceeded("Too much requests limit yourself")
-                       except KeyError:
-                          None
+                       url = self.request("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "").split(" ")[0] + " + " + artist[a].replace("#", ""), True).json()
                        for b in range(url['total'] + 1):
                            if music[a].split(" ")[0] in url['data'][b]['title']:
                             URL = url['data'][b]['link']
@@ -402,53 +360,21 @@ class Login:
               name += " (" + qualit + ")" + extension
               names.append(dir + name)
               os.rename(dir + urls[a].split("/")[-1], dir + name)
-              try:
-                 tag = mutagen.File(dir + name, easy=True)
-                 tag.add_tags()
-              except mutagen.flac.FLACVorbisError:
-                 tag = FLAC(dir + name)
-                 tag.delete()
-                 images = Picture()
-                 images.type = 3
-                 images.data = image
-                 tag.add_picture(images)
-              except mutagen.id3._util.error:
-                 None
-              tag['artist'] = artist[a]
-              tag['title'] = music[a]
-              tag['date'] = year[0]
-              tag['album'] = album[0]
-              tag['tracknumber'] = str(tracknum[a])
-              tag['discnumber'] = str(discnum[a])
-              tag['genre'] = " & ".join(genre)
-              tag['albumartist'] = ", ".join(ar_album)
-              tag.save()
-              try:
-                 audio = ID3(dir + name)
-                 audio['APIC'] = APIC(encoding=3, mime="image/jpeg", type=3, desc=u"Cover", data=image)
-                 audio.save()
-              except mutagen.id3._util.ID3NoHeaderError:
-                 None
+              datas['artist'] = artist[a]
+              datas['music'] = music[a]
+              datas['tracknum'] = tracknum[a]
+              datas['discnum'] = discnum[a]
+              self.write_tags(names[a], datas)
           return names
       def download_playlistdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
           array = []
           if "?utm" in URL:
            URL, a = URL.split("?utm")
-          url = self.request("https://api.deezer.com/playlist/" + URL.split("/")[-1]).json()
-          try:
-             if url['error']['message'] == "Quota limit exceeded":
-              raise QuotaExceeded("Too much requests limit yourself")
-          except KeyError:
-             None
-          try:
-             if url['error']:
-              raise InvalidLink("Invalid link ;)")
-          except KeyError:
-             None
+          url = self.request("https://api.deezer.com/playlist/" + URL.split("/")[-1], True).json()
           for a in url['tracks']['data']:
               try:
                  array.append(self.download_trackdee(a['link'], output, check, quality, recursive))
-              except:
+              except TrackNotFound:
                  print("\nTrack not found " + a['title'])
                  array.append(output + a['title'] + "/" + a['title'])
           return array
@@ -468,12 +394,7 @@ class Login:
              isrc = url['external_ids']['isrc']
           except KeyError:
              raise TrackNotFound("Cannot convert to a Deezer link :(")
-          url = self.request("https://api.deezer.com/track/isrc:" + isrc).json()
-          try:
-             if url['error']['message'] == "Quota limit exceeded":
-              raise QuotaExceeded("Too much requests limit yourself")
-          except KeyError:
-             None
+          url = self.request("https://api.deezer.com/track/isrc:" + isrc, True).json()
           try:
              name = self.download_trackdee(url['link'], output, check, quality, recursive)
              return name
@@ -495,11 +416,6 @@ class Login:
           while upc[0] == "0":
               upc = upc[1:]
           url = self.request("https://api.deezer.com/album/upc:" + upc).json()
-          try:
-             if url['error']['message'] == "Quota limit exceeded":
-              raise QuotaExceeded("Too much requests limit yourself")
-          except KeyError:
-             None
           try:
              names = self.download_albumdee(url['link'], output, check, quality, recursive)
              return names
