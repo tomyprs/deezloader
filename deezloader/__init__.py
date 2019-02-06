@@ -88,7 +88,7 @@ class Login:
              tag.delete()
              images = Picture()
              images.type = 3
-             images.data = image
+             images.data = data['image']
              tag.add_picture(images)
           except mutagen.id3._util.error:
              pass
