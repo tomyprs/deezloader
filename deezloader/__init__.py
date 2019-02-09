@@ -64,18 +64,18 @@ class Login:
              thing = requests.get(url, headers=header)
           if control == True:
            try:
-              if thing.json()['error']:
-               raise InvalidLink("Invalid link ;)")
+              if thing.json()['error']['message'] == "no data":
+               raise TrackNotFound("Track not found :(")
            except KeyError:
               pass
            try:
               if thing.json()['error']['message'] == "Quota limit exceeded":
                raise QuotaExceeded("Too much requests limit yourself")
            except KeyError:
-              pass
+              pass   
            try:
-              if thing.json()['error']['message'] == "no data":
-               raise TrackNotFound("Track not found: " + song)
+              if thing.json()['error']:
+               raise InvalidLink("Invalid link ;)")
            except KeyError:
               pass
           return thing
@@ -181,7 +181,10 @@ class Login:
               raise QualityNotFound("The quality chose can't be downloaded")
              quality = "1"
              qualit = "MP3_128"
-          crypt = self.request(genurl(infos['results']['MD5_ORIGIN'], quality, infos['results']['MEDIA_VERSION']))
+          try:
+             crypt = self.request(genurl(infos['results']['FALLBACK']['MD5_ORIGIN'], quality, infos['results']['MEDIA_VERSION']))
+          except KeyError:
+             crypt = self.request(genurl(infos['results']['MD5_ORIGIN'], quality, infos['results']['MEDIA_VERSION']))
           if len(crypt.content) == 0:
            raise TrackNotFound("")
           open(location + ids, "wb").write(crypt.content)
@@ -353,6 +356,7 @@ class Login:
                             URL = url['data'][b]['link']
                             break
                     except IndexError:
+                       names.append(dir + name) 
                        print("\nTrack not found: " + music[a] + " - " + artist[a])
                        continue
                  extension, qualit = self.download(URL, dir, quality, recursive)
