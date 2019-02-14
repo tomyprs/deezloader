@@ -65,14 +65,14 @@ class Login:
           if control == True:
            try:
               if thing.json()['error']['message'] == "no data":
-               raise TrackNotFound("Track not found :(")
+               raise TrackNotFound("Track not found: " + song)
            except KeyError:
               pass
            try:
               if thing.json()['error']['message'] == "Quota limit exceeded":
                raise QuotaExceeded("Too much requests limit yourself")
            except KeyError:
-              pass   
+              pass
            try:
               if thing.json()['error']:
                raise InvalidLink("Invalid link ;)")
@@ -257,14 +257,7 @@ class Login:
                      URL = url['data'][a]['link']
                      break
              except IndexError:
-                try:
-                   url = self.request("https://api.deezer.com/search/track/?q=" + datas['music'].replace("#", "").split(" ")[0] + " + " + datas['artist'].replace("#", ""), True).json()
-                   for a in range(url['total'] + 1):
-                       if datas['music'].split(" ")[0] in url['data'][a]['title']:
-                        URL = url['data'][a]['link']
-                        break
-                except IndexError:
-                   raise TrackNotFound("Track not found: " + song)
+                raise TrackNotFound("Track not found: " + song)
              extension, qualit = self.download(URL, dir, quality, recursive)
           name += " (" + qualit + ")" + extension
           os.rename(dir + URL.split("/")[-1], dir + name)
@@ -349,16 +342,9 @@ class Login:
                          URL = url['data'][b]['link']
                          break
                  except IndexError:
-                    try:
-                       url = self.request("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "").split(" ")[0] + " + " + artist[a].replace("#", ""), True).json()
-                       for b in range(url['total'] + 1):
-                           if music[a].split(" ")[0] in url['data'][b]['title']:
-                            URL = url['data'][b]['link']
-                            break
-                    except IndexError:
-                       names.append(dir + name) 
-                       print("\nTrack not found: " + music[a] + " - " + artist[a])
-                       continue
+                    names.append(dir + name) 
+                    print("\nTrack not found: " + music[a] + " - " + artist[a])
+                    continue
                  extension, qualit = self.download(URL, dir, quality, recursive)
                  urls[a] = URL
               name += " (" + qualit + ")" + extension
