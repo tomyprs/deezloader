@@ -3,7 +3,6 @@ This project has been created to download songs, albums or playlists with Spotif
 * ### OS Supported ###
     ![Linux Support](https://img.shields.io/badge/Linux-Support-brightgreen.svg)
     ![macOS Support](https://img.shields.io/badge/macOS-Support-brightgreen.svg)
-    ![Windows Support](https://img.shields.io/badge/Windows-Support-brightgreen.svg)
 * ### Installation ###
       pip3 install deezloader
 ### Download song
