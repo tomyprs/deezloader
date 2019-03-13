@@ -14,10 +14,7 @@ from mutagen.flac import FLAC, Picture
 from Crypto.Cipher import AES, Blowfish
 localdir = os.getcwd()
 def generate_token():
-    token = oauth2.SpotifyClientCredentials(client_id="4fe3fecfe5334023a1472516cc99d805", client_secret="0f02b7c483c04257984695007a4a8d5c").get_access_token()
-    return token
-token = generate_token()
-spo = spotipy.Spotify(auth=token)
+    return oauth2.SpotifyClientCredentials(client_id="c6b23f1e91f84b6a9361de16aba0ae17", client_secret="237e355acaa24636abc79f1a089e6204").get_access_token()
 header = {"Accept-Language": "en-US,en;q=0.5"}
 params = {
           "api_version": "1.0",
@@ -44,7 +41,8 @@ class QualityNotFound(Exception):
       def __init__(self, message):
           super().__init__(message)
 class Login:
-      def __init__(self, mail, password):
+      def __init__(self, mail, password, token=""):
+          self.spo = spotipy.Spotify(auth=generate_token())
           self.req = requests.Session()
           check = self.req.post("http://www.deezer.com/ajax/gw-light.php", params).json()['results']['checkFormLogin']
           post_data = {
@@ -53,10 +51,15 @@ class Login:
                        "password": password,
                        "checkFormLogin": check
           }
-          if "success" == self.req.post("https://www.deezer.com/ajax/action.php", post_data).text:
-           print("Success, you are in")
+          end = self.req.post("https://www.deezer.com/ajax/action.php", post_data).text
+          if "success" == end:
+           print("Success, you are in :)")
           else:
-              raise BadCredentials("Invalid password or username")
+              if token == "":
+               raise BadCredentials(end + ", and no token provided")
+              self.req.cookies["arl"] = token
+              if self.req.get("https://www.deezer.com/").text.split("'deezer_user_id': ")[1].split(",")[0] == "0":
+               raise BadCredentials("Wrong token :(")
       def request(self, url, control=False):
           try:
              thing = requests.get(url, headers=header)
@@ -65,7 +68,7 @@ class Login:
           if control == True:
            try:
               if thing.json()['error']['message'] == "no data":
-               raise TrackNotFound("Track not found: " + song)
+               raise TrackNotFound("Track not found :(")
            except KeyError:
               pass
            try:
@@ -136,7 +139,10 @@ class Login:
                data += b"\x00" * (16 - len(data) % 16)
               c = AES.new("jo6aey6haid2Teih", AES.MODE_ECB)
               c = b2a_hex(c.encrypt(data)).decode()
-              return "https://e-cdns-proxy-%s.dzcdn.net/mobile/1/%s" % (md5[0], c)
+              try:
+                 return "https://e-cdns-proxy-%s.dzcdn.net/mobile/1/%s" % (md5[0], c)
+              except IndexError:
+                 raise TrackNotFound("")
           def calcbfkey(songid):
               h = md5hex(b"%d" % int(songid))
               key = b"g4el58wc0zvf9na1"
@@ -268,12 +274,8 @@ class Login:
           array = []
           music = []
           artist = []
-          album = []
           tracknum = []
           discnum = []
-          year = []
-          genre = []
-          ar_album = []
           urls = []
           names = []
           if "?utm" in URL:
@@ -285,7 +287,7 @@ class Login:
              image = url['cover_xl'].replace("1000x1000", "1200x1200")
           except AttributeError:
              image = self.request(URL1).text
-             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("120x120", "1200x1200")
+             image = BeautifulSoup(image, "html.parser").find("img", class_="img_main").get("src").replace("200x200", "1200x1200")
           image = self.request(image).content
           if len(image) == 13:
            image = self.request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
@@ -345,7 +347,12 @@ class Login:
                     names.append(dir + name) 
                     print("\nTrack not found: " + music[a] + " - " + artist[a])
                     continue
-                 extension, qualit = self.download(URL, dir, quality, recursive)
+                 try:
+                    extension, qualit = self.download(URL, dir, quality, recursive)
+                 except TrackNotFound:
+                    names.append(dir + name)
+                    print("\nTrack not found: " + music[a] + " - " + artist[a])
+                    continue
                  urls[a] = URL
               name += " (" + qualit + ")" + extension
               names.append(dir + name)
@@ -369,62 +376,63 @@ class Login:
                  array.append(output + a['title'] + "/" + a['title'])
           return array
       def download_trackspo(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
-          global spo
           if "?" in URL:
            URL,a = URL.split("?")
           try:
-             url = spo.track(URL)
+             url = self.spo.track(URL)
           except Exception as a:
              if not "The access token expired" in str(a):
               raise InvalidLink("Invalid link ;)")
-             token = generate_token()
-             spo = spotipy.Spotify(auth=token)
-             url = spo.track(URL)
-          try:
-             isrc = url['external_ids']['isrc']
-          except KeyError:
-             raise TrackNotFound("Cannot convert to a Deezer link :(")
+             self.spo = spotipy.Spotify(auth=generate_token())
+             url = self.spo.track(URL)
+          isrc = url['external_ids']['isrc']
           url = self.request("https://api.deezer.com/track/isrc:" + isrc, True).json()
           try:
              name = self.download_trackdee(url['link'], output, check, quality, recursive)
-             return name
           except KeyError:
              raise TrackNotFound("Track not found :(")
+          return name
       def download_albumspo(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
-          global spo
           if "?" in URL:
            URL,a = URL.split("?")
           try:
-             tracks = spo.album(URL)
+             tracks = self.spo.album(URL)
           except Exception as a:
              if not "The access token expired" in str(a):
               raise InvalidLink("Invalid link ;)")
-             token = generate_token()
-             spo = spotipy.Spotify(auth=token)
-             tracks = spo.album(URL)
+             self.spo = spotipy.Spotify(auth=generate_token())
+             tracks = self.spo.album(URL)
           upc = tracks['external_ids']['upc']
           while upc[0] == "0":
               upc = upc[1:]
           url = self.request("https://api.deezer.com/album/upc:" + upc).json()
           try:
              names = self.download_albumdee(url['link'], output, check, quality, recursive)
-             return names
           except KeyError:
-             raise AlbumNotFound("Album not found :(")
+             try:
+                try:
+                   url = self.spo.track(tracks['tracks']['items'][0]['external_urls']['spotify'])
+                except:
+                   self.spo = spotipy.Spotify(auth=generate_token())
+                   url = self.spo.track(tracks['tracks']['items'][0]['external_urls']['spotify'])
+                isrc = url['external_ids']['isrc']
+                url = self.request("https://api.deezer.com/track/isrc:" + isrc, True).json()
+                names = self.download_albumdee(url['album']['link'], output, check, quality, recursive)
+             except TrackNotFound:
+                raise AlbumNotFound("Album not found :(")
+          return names
       def download_playlistspo(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
-          global spo
           array = []
           if "?" in URL:
            URL,a = URL.split("?")
           URL = URL.split("/")
           try:
-             tracks = spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
+             tracks = self.spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
           except Exception as a:
              if not "The access token expired" in str(a):
               raise InvalidLink("Invalid link ;)")
-             token = generate_token()
-             spo = spotipy.Spotify(auth=token)
-             tracks = spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
+             self.spo = spotipy.Spotify(auth=generate_token())
+             tracks = self.spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
           for a in tracks['items']:
               try:
                  array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, quality, recursive))
@@ -434,11 +442,10 @@ class Login:
           if tracks['total'] != 100:
            for a in range(tracks['total'] // 100):
                try:
-                  tracks = spo.next(tracks)
+                  tracks = self.spo.next(tracks)
                except:
-                  token = generate_token()
-                  spo = spotipy.Spotify(auth=token)
-                  tracks = spo.next(tracks)
+                  self.spo = spotipy.Spotify(auth=generate_token())
+                  tracks = self.spo.next(tracks)
                for a in tracks['items']:
                    try:
                       array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, quality, recursive))
@@ -447,13 +454,11 @@ class Login:
                       array.append(output + a['track']['name'] + "/" + a['track']['name'])
           return array
       def download_name(self, artist, song, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
-          global spo
           try:
-             search = spo.search(q="track:" + song + " artist:" + artist)
+             search = self.spo.search(q="track:" + song + " artist:" + artist)
           except:
-             token = generate_token()
-             spo = spotipy.Spotify(auth=token)
-             search = spo.search(q="track:" + song + " artist:" + artist)
+             self.spo = spotipy.Spotify(auth=generate_token())
+             search = self.spo.search(q="track:" + song + " artist:" + artist)
           try:
              return self.download_trackspo(search['tracks']['items'][0]['external_urls']['spotify'], output, check, quality=quality, recursive=recursive)
           except IndexError:
