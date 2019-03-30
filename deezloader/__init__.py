@@ -12,6 +12,27 @@ from collections import OrderedDict
 from binascii import a2b_hex, b2a_hex
 from mutagen.flac import FLAC, Picture
 from Crypto.Cipher import AES, Blowfish
+qualities = {"FLAC": 
+                   {"quality": "9", 
+                    "extension": ".flac",
+                    "qualit": "FLAC"
+                   }, 
+             "MP3_320": {
+                         "quality": "3",
+                         "extension": ".mp3",
+                         "qualit": "320"
+             }, 
+             "MP3_256": {
+                         "quality": "5",
+                         "extension": ".mp3",
+                         "qualit": "256"
+             },
+             "MP3_128": {
+                         "quality": "1",
+                         "extension": ".mp3",
+                         "qualit": "128"
+             }
+            }
 localdir = os.getcwd()
 def generate_token():
     return oauth2.SpotifyClientCredentials(client_id="c6b23f1e91f84b6a9361de16aba0ae17", client_secret="237e355acaa24636abc79f1a089e6204").get_access_token()
@@ -111,6 +132,8 @@ class Login:
           except mutagen.id3._util.ID3NoHeaderError:
              pass
       def download(self, track, location, quality, check):
+          if not quality in qualities:
+           raise QualityNotFound("The qualities have to be FLAC or MP3_320 or MP3_256 or MP3_128")
           ids = track.split("/")[-1]
           def login():
               try:
@@ -133,16 +156,13 @@ class Login:
               h.update(data)
               return b2a_hex(h.digest())
           def genurl(md5, quality, media):
-              data = b"\xa4".join(a.encode() for a in [md5, quality, str(ids), str(media)])
+              data = b"\xa4".join(a.encode() for a in [md5, quality, ids, str(media)])
               data = b"\xa4".join([md5hex(data), data]) + b"\xa4"
               if len(data) % 16:
                data += b"\x00" * (16 - len(data) % 16)
               c = AES.new("jo6aey6haid2Teih", AES.MODE_ECB)
               c = b2a_hex(c.encrypt(data)).decode()
-              try:
-                 return "https://e-cdns-proxy-%s.dzcdn.net/mobile/1/%s" % (md5[0], c)
-              except IndexError:
-                 raise TrackNotFound("")
+              return "https://e-cdns-proxy-%s.dzcdn.net/mobile/1/%s" % (md5[0], c)
           def calcbfkey(songid):
               h = md5hex(b"%d" % int(songid))
               key = b"g4el58wc0zvf9na1"
@@ -163,30 +183,31 @@ class Login:
           while not "MD5_ORIGIN" in str(infos):
               infos = login()
           extension = ".mp3"
-          try:
-             if int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "FLAC":
-              quality = "9"
-              extension = ".flac"
-              qualit = "FLAC"
-             elif int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "MP3_320":
-              quality = "3"
-              qualit = "320"
-             elif int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "MP3_256":
-              quality = "5"
-              qualit = "256"
-             elif int(infos['results']['FILESIZE_' + quality]) > 0 and quality == "MP3_128":
-              quality = "1"
-              qualit = "128"
-             else:
-                 if check == True:
-                  raise QualityNotFound("The quality chose can't be downloaded")
-                 quality = "1"
-                 qualit = "MP3_128"
-          except KeyError:
-             if check == True:
-              raise QualityNotFound("The quality chose can't be downloaded")
-             quality = "1"
-             qualit = "MP3_128"
+          if infos['results']['FILESIZE_' + quality] != 0 and quality == "FLAC":
+           quality = "9"
+           extension = ".flac"
+           qualit = "FLAC"
+          elif infos['results']['FILESIZE_' + quality] != 0 and quality == "MP3_320":
+           quality = "3"
+           qualit = "320"
+          elif infos['results']['FILESIZE_' + quality] != 0 and quality == "MP3_256":
+           quality = "5"
+           qualit = "256"
+          elif infos['results']['FILESIZE_' + quality] != 0 and quality == "MP3_128":
+           quality = "1"
+           qualit = "128"
+          else:
+              if check == True:
+               raise QualityNotFound("The quality chosen can't be downloaded")
+              for a in qualities:
+                  if infos['results']['FILESIZE_' + a] != 0:
+                   quality = qualities[a]['quality']
+                   extension = qualities[a]['extension']
+                   qualit = qualities[a]['qualit']
+                   break
+                  else:
+                      if a == "MP3_128":
+                       raise TrackNotFound("There isn't any quality avalaible for download this song")
           try:
              crypt = self.request(genurl(infos['results']['FALLBACK']['MD5_ORIGIN'], quality, infos['results']['MEDIA_VERSION']))
           except KeyError:
@@ -197,7 +218,7 @@ class Login:
           decry = open(location + ids, "wb")
           decryptfile(crypt.iter_content(2048), calcbfkey(ids), decry)
           return extension, qualit
-      def download_trackdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
+      def download_trackdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
           datas = {}
           array = []
           if "?utm" in URL:
@@ -223,7 +244,7 @@ class Login:
                for b in array:
                    if a in b and a != b:
                     array.remove(b)
-          while len(", ".join(array)) + len(datas['music']) >= 240:
+          while len(", ".join(array).encode()) + len(datas['music']) > 240:
               del array[-1]
           if len(array) == 0:
            array.append("Unknown")
@@ -246,12 +267,6 @@ class Login:
           except FileExistsError:
              pass
           name = datas['artist'].replace("/", "").replace("$", "S") + " " + datas['music'].replace("/", "").replace("$", "S")
-          if os.path.isfile(dir + name):
-           if check == False:
-            return dir + name
-           ans = input("Song already exist do you want to redownload it?(y or n):")
-           if ans != "y":
-            return
           print("\nDownloading:" + song)
           try:
              extension, qualit = self.download(URL, dir, quality, recursive)
@@ -265,11 +280,13 @@ class Login:
              except IndexError:
                 raise TrackNotFound("Track not found: " + song)
              extension, qualit = self.download(URL, dir, quality, recursive)
+          if len((name + " (" + qualit + ")" + extension).encode()) > 240:
+           name = datas['album'] + " " + str(datas['tracknum'])
           name += " (" + qualit + ")" + extension
           os.rename(dir + URL.split("/")[-1], dir + name)
           self.write_tags(dir + name, datas)
           return dir + name
-      def download_albumdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
+      def download_albumdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
           datas = {}
           array = []
           music = []
@@ -306,7 +323,7 @@ class Login:
                    for b in array:
                        if a in b and a != b:
                         array.remove(b)
-              while len(", ".join(array)) + len(max(music)) >= 240:
+              while len(", ".join(array).encode()) + len(max(music)) > 240:
                   del array[-1]
               if len(array) == 0:
                array.append("Unknown")
@@ -327,13 +344,6 @@ class Login:
              pass
           for a in tqdm(range(len(urls))):
               name = artist[a].replace("/", "").replace("$", "S") + " " + music[a].replace("/", "").replace("$", "S")
-              if os.path.isfile(dir + name):
-               if check == False:
-                continue
-               print(dir + name)
-               ans = input("Song already exist do you want to redownload it?(y or n):")
-               if not ans == "y":
-                return
               try:
                  extension, qualit = self.download(urls[a], dir, quality, recursive)
               except TrackNotFound:
@@ -354,6 +364,8 @@ class Login:
                     print("\nTrack not found: " + music[a] + " - " + artist[a])
                     continue
                  urls[a] = URL
+              if len((name + " (" + qualit + ")" + extension).encode()) > 240:
+               name = datas['album'] + " " + tracknum[a]
               name += " (" + qualit + ")" + extension
               names.append(dir + name)
               os.rename(dir + urls[a].split("/")[-1], dir + name)
@@ -363,19 +375,19 @@ class Login:
               datas['discnum'] = discnum[a]
               self.write_tags(names[a], datas)
           return names
-      def download_playlistdee(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
+      def download_playlistdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
           array = []
           if "?utm" in URL:
            URL, a = URL.split("?utm")
           url = self.request("https://api.deezer.com/playlist/" + URL.split("/")[-1], True).json()
           for a in url['tracks']['data']:
               try:
-                 array.append(self.download_trackdee(a['link'], output, check, quality, recursive))
+                 array.append(self.download_trackdee(a['link'], output, quality, recursive))
               except TrackNotFound:
                  print("\nTrack not found " + a['title'])
                  array.append(output + a['title'] + "/" + a['title'])
           return array
-      def download_trackspo(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
+      def download_trackspo(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
           if "?" in URL:
            URL,a = URL.split("?")
           try:
@@ -388,11 +400,11 @@ class Login:
           isrc = url['external_ids']['isrc']
           url = self.request("https://api.deezer.com/track/isrc:" + isrc, True).json()
           try:
-             name = self.download_trackdee(url['link'], output, check, quality, recursive)
+             name = self.download_trackdee(url['link'], output, quality, recursive)
           except KeyError:
              raise TrackNotFound("Track not found :(")
           return name
-      def download_albumspo(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
+      def download_albumspo(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
           if "?" in URL:
            URL,a = URL.split("?")
           try:
@@ -402,26 +414,24 @@ class Login:
               raise InvalidLink("Invalid link ;)")
              self.spo = spotipy.Spotify(auth=generate_token())
              tracks = self.spo.album(URL)
-          upc = tracks['external_ids']['upc']
-          while upc[0] == "0":
-              upc = upc[1:]
-          url = self.request("https://api.deezer.com/album/upc:" + upc).json()
           try:
-             names = self.download_albumdee(url['link'], output, check, quality, recursive)
+             upc = tracks['external_ids']['upc']
+             while upc[0] == "0":
+                 upc = upc[1:]
+             url = self.request("https://api.deezer.com/album/upc:" + upc).json()
+             names = self.download_albumdee(url['link'], output, quality, recursive)
           except KeyError:
+             search = len(tracks['tracks']['items']) // 2
              try:
-                try:
-                   url = self.spo.track(tracks['tracks']['items'][0]['external_urls']['spotify'])
-                except:
-                   self.spo = spotipy.Spotify(auth=generate_token())
-                   url = self.spo.track(tracks['tracks']['items'][0]['external_urls']['spotify'])
-                isrc = url['external_ids']['isrc']
-                url = self.request("https://api.deezer.com/track/isrc:" + isrc, True).json()
-                names = self.download_albumdee(url['album']['link'], output, check, quality, recursive)
-             except TrackNotFound:
-                raise AlbumNotFound("Album not found :(")
+                url = self.spo.track(tracks['tracks']['items'][search]['external_urls']['spotify'])
+             except:
+                self.spo = spotipy.Spotify(auth=generate_token())
+                url = self.spo.track(tracks['tracks']['items'][search]['external_urls']['spotify'])
+             isrc = url['external_ids']['isrc']
+             url = self.request("https://api.deezer.com/track/isrc:" + isrc, True).json()
+             names = self.download_albumdee(url['album']['link'], output, quality, recursive)
           return names
-      def download_playlistspo(self, URL, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
+      def download_playlistspo(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
           array = []
           if "?" in URL:
            URL,a = URL.split("?")
@@ -435,10 +445,10 @@ class Login:
              tracks = self.spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
           for a in tracks['items']:
               try:
-                 array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, quality, recursive))
-              except TrackNotFound:
-                 print("\nTrack not found " + a['track']['name'])
-                 array.append(output + a['track']['name'] + "/" + a['track']['name'])
+                 array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, quality, recursive))
+              except:
+                 print("\nTrack not found :(")
+                 array.append(output + "None")
           if tracks['total'] != 100:
            for a in range(tracks['total'] // 100):
                try:
@@ -448,18 +458,18 @@ class Login:
                   tracks = self.spo.next(tracks)
                for a in tracks['items']:
                    try:
-                      array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, check, quality, recursive))
+                      array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, quality, recursive))
                    except:
-                      print("\nTrack not found " + a['track']['name'])
-                      array.append(output + a['track']['name'] + "/" + a['track']['name'])
+                      print("\nTrack not found :(")
+                      array.append(output + "None")
           return array
-      def download_name(self, artist, song, output=localdir + "/Songs/", check=True, quality="MP3_320", recursive=True):
+      def download_name(self, artist, song, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
           try:
              search = self.spo.search(q="track:" + song + " artist:" + artist)
           except:
              self.spo = spotipy.Spotify(auth=generate_token())
              search = self.spo.search(q="track:" + song + " artist:" + artist)
           try:
-             return self.download_trackspo(search['tracks']['items'][0]['external_urls']['spotify'], output, check, quality=quality, recursive=recursive)
+             return self.download_trackspo(search['tracks']['items'][0]['external_urls']['spotify'], output, quality=quality, recursive=recursive)
           except IndexError:
              raise TrackNotFound("Track not found: " + artist + " - " + song)
