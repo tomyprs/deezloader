@@ -109,24 +109,27 @@ class Login:
           def login():
               self.token = self.get_api("deezer.getUserData")['checkForm']
               return self.get_api("song.getData", self.token, {"sng_id": ids})
-          def add_more_tags(datas):
-              image = request("https://e-cdns-images.dzcdn.net/images/cover/" + self.infos['ALB_PICTURE'] + "/1200x1200-000000-80-0-0.jpg").content
+          def add_more_tags(datas, infos):
+              image = request("https://e-cdns-images.dzcdn.net/images/cover/" + infos['ALB_PICTURE'] + "/1200x1200-000000-80-0-0.jpg").content
               if len(image) == 13:
                image = request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
               datas['image'] = image
               try:
-                 datas['author'] = " & ".join(self.infos['SNG_CONTRIBUTORS']['author'])
-              except KeyError:
+                 datas['author'] = " & ".join(infos['SNG_CONTRIBUTORS']['author'])
+              except:
                  datas['author'] = ""
               try:   
-                 datas['composer'] = " & ".join(self.infos['SNG_CONTRIBUTORS']['composer'])
-              except KeyError:
+                 datas['composer'] = " & ".join(infos['SNG_CONTRIBUTORS']['composer'])
+              except:
                  datas['composer'] = ""
               try:
-                 datas['lyricist'] = " & ".join(self.infos['SNG_CONTRIBUTORS']['lyricist'])
-              except KeyError:
+                 datas['lyricist'] = " & ".join(infos['SNG_CONTRIBUTORS']['lyricist'])
+              except:
                  datas['lyricist'] = ""
-              datas['version'] = self.infos['VERSION']
+              try:
+                 datas['version'] = infos['VERSION']
+              except KeyError:
+                 datas['version'] = ""
               need = self.get_api("song.getLyrics", self.token, {"sng_id": ids})
               try:
                  datas['lyric'] = need['LYRICS_TEXT']
@@ -137,28 +140,28 @@ class Login:
                  datas['copyright'] = ""
                  datas['lyricist'] = ""
               return datas
-          self.infos = login()
-          while not "MD5_ORIGIN" in str(self.infos):
-              self.infos = login()
+          infos = login()
+          while not "MD5_ORIGIN" in str(infos):
+              infos = login()
           extension = ".mp3"
-          if int(self.infos['FILESIZE_' + quality]) > 0 and quality == "FLAC":
+          if int(infos['FILESIZE_' + quality]) > 0 and quality == "FLAC":
            quality = "9"
            extension = ".flac"
            qualit = "FLAC"
-          elif int(self.infos['FILESIZE_' + quality]) > 0 and quality == "MP3_320":
+          elif int(infos['FILESIZE_' + quality]) > 0 and quality == "MP3_320":
            quality = "3"
            qualit = "320"
-          elif int(self.infos['FILESIZE_' + quality]) > 0 and quality == "MP3_256":
+          elif int(infos['FILESIZE_' + quality]) > 0 and quality == "MP3_256":
            quality = "5"
            qualit = "256"
-          elif int(self.infos['FILESIZE_' + quality]) > 0 and quality == "MP3_128":
+          elif int(infos['FILESIZE_' + quality]) > 0 and quality == "MP3_128":
            quality = "1"
            qualit = "128"
           else:
               if check == True:
                raise QualityNotFound("The quality chosen can't be downloaded")
               for a in qualities:
-                  if int(self.infos['FILESIZE_' + a]) > 0:
+                  if int(infos['FILESIZE_' + a]) > 0:
                    quality = qualities[a]['quality']
                    extension = qualities[a]['extension']
                    qualit = qualities[a]['qualit']
@@ -167,10 +170,10 @@ class Login:
                       if a == "MP3_128":
                        raise TrackNotFound("There isn't any quality avalaible for download this song")
           try:
-             md5 = self.infos['FALLBACK']['MD5_ORIGIN']
+             md5 = infos['FALLBACK']['MD5_ORIGIN']
           except KeyError:
-             md5 = self.infos['MD5_ORIGIN']
-          hashs = genurl(md5, quality, ids, self.infos['MEDIA_VERSION'])
+             md5 = infos['MD5_ORIGIN']
+          hashs = genurl(md5, quality, ids, infos['MEDIA_VERSION'])
           try:
              crypt = request("https://e-cdns-proxy-%s.dzcdn.net/mobile/1/%s" % (md5[0], hashs))
           except IndexError:
@@ -180,7 +183,7 @@ class Login:
           open(location + ids, "wb").write(crypt.content)
           decry = open(location + ids, "wb")
           decryptfile(crypt.iter_content(2048), calcbfkey(ids), decry)
-          datas = add_more_tags(datas)
+          datas = add_more_tags(datas, infos)
           return extension, qualit, datas
       def download_trackdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
           datas = {}
