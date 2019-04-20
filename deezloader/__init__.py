@@ -102,7 +102,7 @@ class Login:
              return self.req.post("http://www.deezer.com/ajax/gw-light.php", params=params, json=json).json()['results']
           except:
              return self.req.post("http://www.deezer.com/ajax/gw-light.php", params=params, json=json).json()['results']
-      def download(self, track, location, quality, check, datas):
+      def download(self, track, name, quality, recursive_quality, recursive_download, datas):
           if not quality in qualities:
            raise QualityNotFound("The qualities have to be FLAC or MP3_320 or MP3_256 or MP3_128")
           ids = track.split("/")[-1]
@@ -158,7 +158,7 @@ class Login:
            quality = "1"
            qualit = "128"
           else:
-              if check == True:
+              if recursive_quality == True:
                raise QualityNotFound("The quality chosen can't be downloaded")
               for a in qualities:
                   if int(infos['FILESIZE_' + a]) > 0:
@@ -180,12 +180,20 @@ class Login:
              raise TrackNotFound("Track not found :(")
           if len(crypt.content) == 0:
            raise TrackNotFound("Error with this track :(")
-          open(location + ids, "wb").write(crypt.content)
-          decry = open(location + ids, "wb")
+          name += " (" + qualit + ")" + extension
+          if os.path.isfile(name):
+           if not recursive_download:
+            return name 
+           ans = input("Track " + name + " already exists, do you want to redownload it?(y or n):")
+           if ans != "y":
+            return name
+          open(name, "wb").write(crypt.content)
+          decry = open(name, "wb")
           decryptfile(crypt.iter_content(2048), calcbfkey(ids), decry)
           datas = add_more_tags(datas, infos)
-          return extension, qualit, datas
-      def download_trackdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
+          write_tags(name, datas)
+          return name
+      def download_trackdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True):
           datas = {}
           if "?utm" in URL:
            URL, a = URL.split("?utm")
@@ -225,15 +233,15 @@ class Login:
           datas['gain'] = str(url['gain'])
           datas['duration'] = str(url['duration'])
           datas['isrc'] = url['isrc']
-          dir = str(output) + "/" + datas['album'].replace("/", "").replace("$", "S") + "/"
+          dir = output + "/" + datas['album'].replace("/", "").replace("$", "S") + "/"
           try:
              os.makedirs(dir)
           except FileExistsError:
              pass
-          name = datas['album'].replace("/", "").replace("$", "S") + " " + datas['discnum'] + " " + datas['tracknum']
+          name = dir + datas['album'].replace("/", "").replace("$", "S") + " " + datas['discnum'] + " " + datas['tracknum']
           print("\nDownloading:" + song)
           try:
-             extension, qualit, datas = self.download(URL, dir, quality, recursive, datas)
+             name = self.download(URL, name, quality, recursive_quality, recursive_download, datas)
           except TrackNotFound:
              url = request("https://api.deezer.com/search/track/?q=" + datas['music'].replace("#", "") + " + " + datas['artist'].replace("#", ""), True).json()
              try:
@@ -243,12 +251,9 @@ class Login:
                      break
              except IndexError:
                 raise TrackNotFound("Track not found: " + song)
-             extension, qualit, datas = self.download(URL, dir, quality, recursive, datas)
-          name += " (" + qualit + ")" + extension
-          os.rename(dir + URL.split("/")[-1], dir + name)
-          write_tags(dir + name, datas)
-          return dir + name
-      def download_albumdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
+             name = self.download(URL, name, quality, recursive_quality, recursive_download, datas)
+          return name
+      def download_albumdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True):
           datas = {}
           array = []
           music = []
@@ -300,13 +305,13 @@ class Login:
               if a['role'] == "Main":
                datas['ar_album'].append(a['name'])
           datas['ar_album'] = " & ".join(datas['ar_album'])
-          dir = str(output) + "/" + datas['album'].replace("/", "").replace("$", "S") + "/"
+          dir = output + "/" + datas['album'].replace("/", "").replace("$", "S") + "/"
           try:
              os.makedirs(dir)
           except FileExistsError:
              pass
           for a in tqdm(range(len(urls))):
-              name = datas['album'].replace("/", "").replace("$", "S") + " " + discnum[a] + " " + tracknum[a]
+              name = dir + datas['album'].replace("/", "").replace("$", "S") + " " + discnum[a] + " " + tracknum[a]
               datas['artist'] = artist[a]
               datas['music'] = music[a]
               datas['tracknum'] = tracknum[a]
@@ -316,7 +321,7 @@ class Login:
               datas['duration'] = duration[a]
               datas['isrc'] = isrc[a]
               try:
-                 extension, qualit, datas = self.download(urls[a], dir, quality, recursive, datas)
+                 name = self.download(urls[a], name, quality, recursive_quality, recursive_download, datas)
               except TrackNotFound:
                  url = request("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "") + " + " + artist[a].replace("#", ""), True).json()
                  try:
@@ -325,34 +330,30 @@ class Login:
                          URL = url['data'][b]['link']
                          break
                  except IndexError:
-                    names.append(dir + name) 
+                    names.append(name) 
                     print("\nTrack not found: " + music[a] + " - " + artist[a])
                     continue
                  try:
-                    extension, qualit, datas = self.download(URL, dir, quality, recursive, datas)
+                    name = self.download(URL, name, quality, recursive_quality, recursive_download, datas)
                  except TrackNotFound:
-                    names.append(dir + name)
+                    names.append(name)
                     print("\nTrack not found: " + music[a] + " - " + artist[a])
                     continue
-                 urls[a] = URL
-              name += " (" + qualit + ")" + extension
-              names.append(dir + name)
-              os.rename(dir + urls[a].split("/")[-1], dir + name)
-              write_tags(names[a], datas)
+              names.append(name)
           return names
-      def download_playlistdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
+      def download_playlistdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True):
           array = []
           if "?utm" in URL:
            URL, a = URL.split("?utm")
           url = request("https://api.deezer.com/playlist/" + URL.split("/")[-1], True).json()
           for a in url['tracks']['data']:
               try:
-                 array.append(self.download_trackdee(a['link'], output, quality, recursive))
+                 array.append(self.download_trackdee(a['link'], output, quality, recursive_quality, recursive_download))
               except TrackNotFound:
                  print("\nTrack not found " + a['title'])
                  array.append(output + a['title'] + "/" + a['title'])
           return array
-      def download_trackspo(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
+      def download_trackspo(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True):
           if "?" in URL:
            URL,a = URL.split("?")
           try:
@@ -364,9 +365,9 @@ class Login:
              url = self.spo.track(URL)
           isrc = url['external_ids']['isrc']
           url = request("https://api.deezer.com/track/isrc:" + isrc, True).json()
-          name = self.download_trackdee(url['link'], output, quality, recursive)
+          name = self.download_trackdee(url['link'], output, quality, recursive_quality, recursive_download)
           return name
-      def download_albumspo(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
+      def download_albumspo(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True):
           if "?" in URL:
            URL,a = URL.split("?")
           try:
@@ -381,7 +382,7 @@ class Login:
              while upc[0] == "0":
                  upc = upc[1:]
              url = request("https://api.deezer.com/album/upc:" + upc).json()
-             names = self.download_albumdee(url['link'], output, quality, recursive)
+             names = self.download_albumdee(url['link'], output, quality, recursive_quality, recursive_download)
           except KeyError:
              search = len(tracks['tracks']['items']) // 3
              try:
@@ -392,11 +393,11 @@ class Login:
              isrc = url['external_ids']['isrc']
              try:
                 url = request("https://api.deezer.com/track/isrc:" + isrc, True).json()
-                names = self.download_albumdee(url['album']['link'], output, quality, recursive)
+                names = self.download_albumdee(url['album']['link'], output, quality, recursive_quality, recursive_download)
              except TrackNotFound:
                 raise AlbumNotFound("Album not found :(")
           return names
-      def download_playlistspo(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
+      def download_playlistspo(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True):
           array = []
           if "?" in URL:
            URL,a = URL.split("?")
@@ -410,7 +411,7 @@ class Login:
              tracks = self.spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
           for a in tracks['items']:
               try:
-                 array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, quality, recursive))
+                 array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, quality, recursive_quality, recursive_download))
               except:
                  print("\nTrack not found :(")
                  array.append(output + "None")
@@ -423,18 +424,18 @@ class Login:
                   tracks = self.spo.next(tracks)
                for a in tracks['items']:
                    try:
-                      array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, quality, recursive))
+                      array.append(self.download_trackspo(a['track']['external_urls']['spotify'], output, quality, recursive_quality, recursive_download))
                    except:
                       print("\nTrack not found :(")
                       array.append(output + "None")
           return array
-      def download_name(self, artist, song, output=localdir + "/Songs/", quality="MP3_320", recursive=True):
+      def download_name(self, artist, song, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True):
           try:
              search = self.spo.search(q="track:" + song + " artist:" + artist)
           except:
              self.spo = spotipy.Spotify(auth=generate_token())
              search = self.spo.search(q="track:" + song + " artist:" + artist)
           try:
-             return self.download_trackspo(search['tracks']['items'][0]['external_urls']['spotify'], output, quality=quality, recursive=recursive)
+             return self.download_trackspo(search['tracks']['items'][0]['external_urls']['spotify'], output, quality, recursive_quality, recursive_download)
           except IndexError:
              raise TrackNotFound("Track not found: " + artist + " - " + song)
