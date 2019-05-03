@@ -65,7 +65,7 @@ def write_tags(song, data):
     try:
        audio = ID3(song)
        audio['APIC'] = APIC(encoding=3, mime="image/jpeg", type=3, desc=u"Cover", data=data['image']) 
-       audio['USLT'] = USLT(encoding=3, lang=u'eng', desc=u'desc', text=data['lyric'])
+       audio['USLT'] = USLT(encoding=3, lang=u"eng", desc=u"desc", text=data['lyric'])
        audio.save()
     except mutagen.id3._util.ID3NoHeaderError:
        pass
