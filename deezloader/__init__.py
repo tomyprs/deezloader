@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 import os
 import zipfile
-import spotipy
 import requests
 from tqdm import tqdm
-import spotipy.oauth2 as oauth2
+from spotipy import Spotify, oauth2
 from collections import OrderedDict
-from deezloader.utils import decryptfile, genurl, calcbfkey, write_tags
+from deezloader.utils import decryptfile, genurl, calcbfkey, write_tags, var_excape
 localdir = os.getcwd()
 qualities = {"FLAC":{
                      "quality": "9",
@@ -55,7 +54,7 @@ def request(url, control=False):
        thing = requests.get(url, headers=header)
     except:
        thing = requests.get(url, headers=header)
-    if control == True:
+    if control:
      try:
         if thing.json()['error']['message'] == "no data":
          raise TrackNotFound("Track not found :(")
@@ -73,8 +72,8 @@ def request(url, control=False):
         pass
     return thing
 class Login:
-      def __init__(self, mail, password, token=""):
-          self.spo = spotipy.Spotify(auth=generate_token())
+      def __init__(self, mail, password, token=None):
+          self.spo = Spotify(auth=generate_token())
           self.req = requests.Session()
           check = self.get_api("deezer.getUserData")['checkFormLogin']
           post_data = {
@@ -87,12 +86,12 @@ class Login:
           if "success" == end:
            print("Success, you are in :)")
           else:
-              if token == "":
+              if not token:
                raise BadCredentials(end + ", and no token provided")
               self.req.cookies["arl"] = token
               if self.req.get("https://www.deezer.com/").text.split("'deezer_user_id': ")[1].split(",")[0] == "0":
                raise BadCredentials("Wrong token :(")
-      def get_api(self, method="", api_token="null", json=""):
+      def get_api(self, method=None, api_token="null", json=None):
           params = {
                     "api_version": "1.0",
                     "api_token": api_token,
@@ -103,18 +102,68 @@ class Login:
              return self.req.post("http://www.deezer.com/ajax/gw-light.php", params=params, json=json).json()['results']
           except:
              return self.req.post("http://www.deezer.com/ajax/gw-light.php", params=params, json=json).json()['results']
-      def download(self, track, name, quality, recursive_quality, recursive_download, datas):
+      def download(self, link, name, quality, recursive_quality, recursive_download, datas, create_zip=False):
           if not quality in qualities:
            raise QualityNotFound("The qualities have to be FLAC or MP3_320 or MP3_256 or MP3_128")
-          ids = track.split("/")[-1]
-          def login():
-              self.token = self.get_api("deezer.getUserData")['checkForm']
-              return self.get_api("song.getData", self.token, {"sng_id": ids})
-          def add_more_tags(datas, infos):
-              image = request("https://e-cdns-images.dzcdn.net/images/cover/" + infos['ALB_PICTURE'] + "/1200x1200-000000-80-0-0.jpg").content
-              if len(image) == 13:
-               image = request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
-              datas['image'] = image
+          def login(method, json):
+              infos = ""
+              while not "MD5_ORIGIN" in str(infos):
+                  self.token = self.get_api("deezer.getUserData")['checkForm']
+                  infos = self.get_api(method, self.token, json)
+              return infos
+          def ultimatum(infos, name, datas, quality, recursive_download, recursive_quality):
+              extension = ".mp3"
+              ids = infos['SNG_ID']
+              if int(infos['FILESIZE_' + quality]) > 0 and quality == "FLAC":
+               quality = "9"
+               extension = ".flac"
+               qualit = "FLAC"
+              elif int(infos['FILESIZE_' + quality]) > 0 and quality == "MP3_320":
+               quality = "3"
+               qualit = "320"
+              elif int(infos['FILESIZE_' + quality]) > 0 and quality == "MP3_256":
+               quality = "5"
+               qualit = "256"
+              elif int(infos['FILESIZE_' + quality]) > 0 and quality == "MP3_128":
+               quality = "1"
+               qualit = "128"
+              else:
+                  if recursive_quality:
+                   raise QualityNotFound("The quality chosen can't be downloaded")
+                  for a in qualities:
+                      if int(infos['FILESIZE_' + a]) > 0:
+                       quality = qualities[a]['quality']
+                       extension = qualities[a]['extension']
+                       qualit = qualities[a]['qualit']
+                       break
+                      else:
+                          if a == "MP3_128":
+                           raise TrackNotFound("There isn't any quality avalaible for download this song")
+              name += " (" + qualit + ")" + extension
+              if os.path.isfile(name):
+               if not recursive_download:
+                return name 
+               ans = input("Track " + name + " already exists, do you want to redownload it?(y or n):")
+               if ans != "y":
+                return name
+              try:
+                 md5 = infos['FALLBACK']['MD5_ORIGIN']
+              except KeyError:
+                 md5 = infos['MD5_ORIGIN']
+              hashs = genurl(md5, quality, ids, infos['MEDIA_VERSION'])
+              try:
+                 crypt = request("https://e-cdns-proxy-%s.dzcdn.net/mobile/1/%s" % (md5[0], hashs))
+              except IndexError:
+                 raise TrackNotFound("Track not found :(")
+              if len(crypt.content) == 0:
+               raise TrackNotFound("Error with this track :(")
+              open(name, "wb").write(crypt.content)
+              decry = open(name, "wb")
+              decryptfile(crypt.iter_content(2048), calcbfkey(ids), decry)
+              datas = add_more_tags(datas, infos, ids)
+              write_tags(name, datas)
+              return name
+          def add_more_tags(datas, infos, ids):
               try:
                  datas['author'] = " & ".join(infos['SNG_CONTRIBUTORS']['author'])
               except:
@@ -141,59 +190,95 @@ class Login:
                  datas['copyright'] = ""
                  datas['lyricist'] = ""
               return datas
-          infos = login()
-          while not "MD5_ORIGIN" in str(infos):
-              infos = login()
-          extension = ".mp3"
-          if int(infos['FILESIZE_' + quality]) > 0 and quality == "FLAC":
-           quality = "9"
-           extension = ".flac"
-           qualit = "FLAC"
-          elif int(infos['FILESIZE_' + quality]) > 0 and quality == "MP3_320":
-           quality = "3"
-           qualit = "320"
-          elif int(infos['FILESIZE_' + quality]) > 0 and quality == "MP3_256":
-           quality = "5"
-           qualit = "256"
-          elif int(infos['FILESIZE_' + quality]) > 0 and quality == "MP3_128":
-           quality = "1"
-           qualit = "128"
+          ids = link.split("/")[-1]
+          zip_name = ""
+          quali = ""
+          if "track" in link:
+           method = "song.getData"
+           json = {"sng_id": ids}
+           infos = login(method, json)
+           image = request("https://e-cdns-images.dzcdn.net/images/cover/" + infos['ALB_PICTURE'] + "/1200x1200-000000-80-0-0.jpg").content
+           if len(image) == 13:
+            image = request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
+           datas['image'] = image
+           song = datas['music'] + " - " + datas['artist']
+           print("\nDownloading:" + song)
+           try:
+              nams = ultimatum(infos, name, datas, quality, recursive_download, recursive_quality)
+           except TrackNotFound:
+              url = request("https://api.deezer.com/search/track/?q=" + datas['music'].replace("#", "") + " + " + datas['artist'].replace("#", ""), True).json()
+              try:
+                 for b in range(url['total'] + 1):
+                     if url['data'][b]['title'] == datas['music'] or datas['music'] in url['data'][b]['title_short']:
+                      URL = url['data'][b]['link']
+                      break
+              except IndexError:
+                 raise TrackNotFound("Track not found: " + song)
+              json = {"sng_id": URL.split("/")[-1]}
+              infos = login(method, json)
+              nams = ultimatum(infos, name, datas, quality, recursive_download, recursive_quality)
           else:
-              if recursive_quality == True:
-               raise QualityNotFound("The quality chosen can't be downloaded")
-              for a in qualities:
-                  if int(infos['FILESIZE_' + a]) > 0:
-                   quality = qualities[a]['quality']
-                   extension = qualities[a]['extension']
-                   qualit = qualities[a]['qualit']
-                   break
-                  else:
-                      if a == "MP3_128":
-                       raise TrackNotFound("There isn't any quality avalaible for download this song")
-          name += " (" + qualit + ")" + extension
-          if os.path.isfile(name):
-           if not recursive_download:
-            return name 
-           ans = input("Track " + name + " already exists, do you want to redownload it?(y or n):")
-           if ans != "y":
-            return name
-          try:
-             md5 = infos['FALLBACK']['MD5_ORIGIN']
-          except KeyError:
-             md5 = infos['MD5_ORIGIN']
-          hashs = genurl(md5, quality, ids, infos['MEDIA_VERSION'])
-          try:
-             crypt = request("https://e-cdns-proxy-%s.dzcdn.net/mobile/1/%s" % (md5[0], hashs))
-          except IndexError:
-             raise TrackNotFound("Track not found :(")
-          if len(crypt.content) == 0:
-           raise TrackNotFound("Error with this track :(")
-          open(name, "wb").write(crypt.content)
-          decry = open(name, "wb")
-          decryptfile(crypt.iter_content(2048), calcbfkey(ids), decry)
-          datas = add_more_tags(datas, infos)
-          write_tags(name, datas)
-          return name
+              nams = []
+              detas = {}
+              method = "song.getListByAlbum"
+              json = {
+                      "alb_id": ids,
+                      "nb": -1
+                     }
+              infos = login(method, json)['data']
+              image = request("https://e-cdns-images.dzcdn.net/images/cover/" + infos[0]['ALB_PICTURE'] + "/1200x1200-000000-80-0-0.jpg").content
+              if len(image) == 13:
+               image = request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
+              detas['image'] = image
+              detas['album'] = datas['album']
+              detas['year'] = datas['year']
+              detas['genre'] = datas['genre']
+              detas['ar_album'] = datas['ar_album']
+              detas['label'] = datas['label']
+              for a in tqdm(range(len(name))):
+                  detas['music'] = datas['music'][a]
+                  detas['artist'] = datas['artist'][a]
+                  detas['tracknum'] = datas['tracknum'][a]
+                  detas['discnum'] = datas['discnum'][a]
+                  detas['bpm'] = datas['bpm'][a]
+                  detas['gain'] = datas['gain'][a]
+                  detas['duration'] = datas['duration'][a]
+                  detas['isrc'] = datas['isrc'][a]
+                  try:
+                     nams.append(ultimatum(infos[a], name[a], detas, quality, recursive_download, recursive_quality))
+                  except TrackNotFound:
+                     url = request("https://api.deezer.com/search/track/?q=" + detas['music'].replace("#", "") + " + " + detas['artist'].replace("#", ""), True).json()
+                     try:
+                        for b in range(url['total'] + 1):
+                            if url['data'][b]['title'] == detas['music'] or detas['music'] in url['data'][b]['title_short']:
+                             URL = url['data'][b]['link']
+                             break
+                     except IndexError:
+                        nams.append(name[a])
+                        print("\nTrack not found: " + detas['music'] + " - " + detas['artist'])
+                        continue
+                     try:
+                        method = "song.getData"
+                        json = {"sng_id": URL.split("/")[-1]}
+                        nams.append(ultimatum(login(method, json), name[a], detas, quality, recursive_download, recursive_quality))
+                     except TrackNotFound:
+                        nams.append(name[a])
+                        print("\nTrack not found: " + detas['music'] + " - " + detas['artist'])
+                        continue
+                  quali = nams[a].split("(")[-1].split(")")[0]
+              if create_zip:
+               dir = "/".join(name[a].split("/")[:-1]) + "/"
+               if len(nams) > 0:
+                zip_name = dir + dir.split("/")[-2] + " (" + quali + ").zip"
+                z = zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED)
+                for a in nams:
+                    b = a.split("/")[-1]
+                    try:
+                       z.write(a, b)
+                    except FileNotFoundError:
+                       pass
+                z.close()
+          return nams, zip_name
       def download_trackdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True):
           datas = {}
           if "?utm" in URL:
@@ -217,7 +302,6 @@ class Login:
           datas['tracknum'] = str(url['track_position'])
           datas['discnum'] = str(url['disk_number'])
           datas['year'] = url['release_date']
-          song = datas['music'] + " - " + datas['artist']
           datas['genre'] = []
           try:
              for a in url1['genres']['data']:
@@ -235,66 +319,34 @@ class Login:
           datas['gain'] = str(url['gain'])
           datas['duration'] = str(url['duration'])
           datas['isrc'] = url['isrc']
-          dir = output + "/" + datas['album'].replace("/", "").replace("$", "S") + " " + url1['upc'] + "/"
+          album = var_excape(datas['album'])
+          dir = output + album + " " + url1['upc'] + "/"
           try:
              os.makedirs(dir)
           except FileExistsError:
              pass
-          name = dir + datas['album'].replace("/", "").replace("$", "S") + " CD:" + datas['discnum'] + " TRACK:" + datas['tracknum']
-          print("\nDownloading:" + song)
-          try:
-             name = self.download(URL, name, quality, recursive_quality, recursive_download, datas)
-          except TrackNotFound:
-             url = request("https://api.deezer.com/search/track/?q=" + datas['music'].replace("#", "") + " + " + datas['artist'].replace("#", ""), True).json()
-             try:
-                for a in range(url['total'] + 1):
-                    if url['data'][a]['title'] == datas['music'] or url['data'][a]['title_short'] in datas['music']:
-                     URL = url['data'][a]['link']
-                     break
-             except IndexError:
-                raise TrackNotFound("Track not found: " + song)
-             name = self.download(URL, name, quality, recursive_quality, recursive_download, datas)
+          name = dir + album + " CD " + datas['discnum'] + " TRACK " + datas['tracknum']
+          name, a = self.download(URL, name, quality, recursive_quality, recursive_download, datas)
           return name
       def download_albumdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True, create_zip=False):
           datas = {}
-          array = []
-          music = []
-          artist = []
-          tracknum = []
-          discnum = []
-          bpm = []
-          gain = []
-          duration = []
-          isrc = []
-          urls = []
+          datas['music'] = []
+          datas['artist'] = []
+          datas['tracknum'] = []
+          datas['discnum'] = []
+          datas['bpm'] = []
+          datas['gain'] = []
+          datas['duration'] = []
+          datas['isrc'] = []
           names = []
+          array = []
           if "?utm" in URL:
            URL, a = URL.split("?utm")
           URL1 = "https://www.deezer.com/album/" + URL.split("/")[-1]
           URL2 = "https://api.deezer.com/album/" + URL.split("/")[-1]
           url = request(URL2, True).json()
-          for a in url['tracks']['data']:
-              del array[:]
-              music.append(a['title'])
-              urls.append(a['link'])
-              ur = request("https://api.deezer.com/track/" + str(a['id']), True).json()
-              tracknum.append(str(ur['track_position']))
-              discnum.append(str(ur['disk_number']))
-              bpm.append(str(ur['bpm']))
-              gain.append(str(ur['gain']))
-              duration.append(str(ur['duration']))
-              isrc.append(ur['isrc'])
-              for a in ur['contributors']:
-                  array.append(a['name'])
-              array.append(ur['artist']['name'])
-              if len(array) > 1:
-               for a in array:
-                   for b in array:
-                       if a in b and a != b:
-                        array.remove(b)
-              artist.append(", ".join(OrderedDict.fromkeys(array)))
-          datas['label'] = url['label']
           datas['album'] = url['title']
+          datas['label'] = url['label']
           datas['year'] = url['release_date']
           datas['genre'] = []
           try:
@@ -308,54 +360,36 @@ class Login:
               if a['role'] == "Main":
                datas['ar_album'].append(a['name'])
           datas['ar_album'] = " & ".join(datas['ar_album'])
-          dir = output + "/" + datas['album'].replace("/", "").replace("$", "S") + " " + url['upc'] + "/"
+          album = var_excape(datas['album'])
+          dir = output + "/" + album + " " + url['upc'] + "/"
+          for a in url['tracks']['data']:
+              del array[:]
+              datas['music'].append(a['title'])
+              ur = request("https://api.deezer.com/track/" + str(a['id']), True).json()
+              discnum = str(ur['disk_number'])
+              tracknum = str(ur['track_position'])
+              names.append(dir + album + " CD " + discnum + " TRACK " + tracknum)
+              datas['tracknum'].append(tracknum)
+              datas['discnum'].append(discnum)
+              datas['bpm'].append(str(ur['bpm']))
+              datas['gain'].append(str(ur['gain']))
+              datas['duration'].append(str(ur['duration']))
+              datas['isrc'].append(ur['isrc'])
+              for a in ur['contributors']:
+                  array.append(a['name'])
+              array.append(ur['artist']['name'])
+              if len(array) > 1:
+               for a in array:
+                   for b in array:
+                       if a in b and a != b:
+                        array.remove(b)
+              datas['artist'].append(", ".join(OrderedDict.fromkeys(array)))
           try:
              os.makedirs(dir)
           except FileExistsError:
              pass
-          for a in tqdm(range(len(urls))):
-              name = dir + datas['album'].replace("/", "").replace("$", "S") + " CD:" + discnum[a] + " TRACK:" + tracknum[a]
-              datas['artist'] = artist[a]
-              datas['music'] = music[a]
-              datas['tracknum'] = tracknum[a]
-              datas['discnum'] = discnum[a]
-              datas['bpm'] = bpm[a]
-              datas['gain'] = gain[a]
-              datas['duration'] = duration[a]
-              datas['isrc'] = isrc[a]
-              try:
-                 name = self.download(urls[a], name, quality, recursive_quality, recursive_download, datas)
-              except TrackNotFound:
-                 url = request("https://api.deezer.com/search/track/?q=" + music[a].replace("#", "") + " + " + artist[a].replace("#", ""), True).json()
-                 try:
-                    for b in range(url['total'] + 1):
-                        if url['data'][b]['title'] == music[a] or url['data'][b]['title_short'] in music[a]:
-                         URL = url['data'][b]['link']
-                         break
-                 except IndexError:
-                    names.append(name)
-                    print("\nTrack not found: " + music[a] + " - " + artist[a])
-                    continue
-                 try:
-                    name = self.download(URL, name, quality, recursive_quality, recursive_download, datas)
-                 except TrackNotFound:
-                    names.append(name)
-                    print("\nTrack not found: " + music[a] + " - " + artist[a])
-                    continue
-              names.append(name)
-              quali = name.split("(")[-1].split(")")[0]
-          if create_zip == True:
-           zip_name = "None"
-           if len(names) > 0:
-            zip_name = dir + dir.split("/")[-2] + " (" + quali + ").zip"
-            z = zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED)
-            for a in names:
-                b = a.split("/")[-1]
-                try:
-                   z.write(a, b)
-                except FileNotFoundError:
-                   pass
-            z.close()
+          names, zip_name = self.download(URL, names, quality, recursive_quality, recursive_download, datas, create_zip)
+          if create_zip:
            return names, zip_name
           return names
       def download_playlistdee(self, URL, output=localdir + "/Songs/", quality="MP3_320", recursive_quality=True, recursive_download=True):
@@ -378,7 +412,7 @@ class Login:
           except Exception as a:
              if not "The access token expired" in str(a):
               raise InvalidLink("Invalid link ;)")
-             self.spo = spotipy.Spotify(auth=generate_token())
+             self.spo = Spotify(auth=generate_token())
              url = self.spo.track(URL)
           isrc = url['external_ids']['isrc']
           url = request("https://api.deezer.com/track/isrc:" + isrc, True).json()
@@ -392,7 +426,7 @@ class Login:
           except Exception as a:
              if not "The access token expired" in str(a):
               raise InvalidLink("Invalid link ;)")
-             self.spo = spotipy.Spotify(auth=generate_token())
+             self.spo = Spotify(auth=generate_token())
              tracks = self.spo.album(URL)
           try:
              upc = tracks['external_ids']['upc']
@@ -401,11 +435,11 @@ class Login:
              url = request("https://api.deezer.com/album/upc:" + upc).json()
              names = self.download_albumdee(url['link'], output, quality, recursive_quality, recursive_download, create_zip)
           except KeyError:
-             search = len(tracks['tracks']['items']) // 3
+             search = len(tracks['tracks']['items']) // 8
              try:
                 url = self.spo.track(tracks['tracks']['items'][search]['external_urls']['spotify'])
              except:
-                self.spo = spotipy.Spotify(auth=generate_token())
+                self.spo = Spotify(auth=generate_token())
                 url = self.spo.track(tracks['tracks']['items'][search]['external_urls']['spotify'])
              isrc = url['external_ids']['isrc']
              try:
@@ -424,7 +458,7 @@ class Login:
           except Exception as a:
              if not "The access token expired" in str(a):
               raise InvalidLink("Invalid link ;)")
-             self.spo = spotipy.Spotify(auth=generate_token())
+             self.spo = Spotify(auth=generate_token())
              tracks = self.spo.user_playlist_tracks(URL[-3], playlist_id=URL[-1])
           for a in tracks['items']:
               try:
@@ -437,7 +471,7 @@ class Login:
                try:
                   tracks = self.spo.next(tracks)
                except:
-                  self.spo = spotipy.Spotify(auth=generate_token())
+                  self.spo = Spotify(auth=generate_token())
                   tracks = self.spo.next(tracks)
                for a in tracks['items']:
                    try:
@@ -450,7 +484,7 @@ class Login:
           try:
              search = self.spo.search(q="track:" + song + " artist:" + artist)
           except:
-             self.spo = spotipy.Spotify(auth=generate_token())
+             self.spo = Spotify(auth=generate_token())
              search = self.spo.search(q="track:" + song + " artist:" + artist)
           try:
              return self.download_trackspo(search['tracks']['items'][0]['external_urls']['spotify'], output, quality, recursive_quality, recursive_download)

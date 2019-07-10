@@ -1,10 +1,10 @@
 #!/usr/bin/python3
-import mutagen
+from mutagen import File
 from Crypto.Hash import MD5
 from binascii import a2b_hex, b2a_hex
-from mutagen.flac import FLAC, Picture
-from mutagen.id3 import ID3, APIC, USLT
 from Crypto.Cipher import AES, Blowfish
+from mutagen.id3 import ID3, APIC, USLT, _util
+from mutagen.flac import FLAC, Picture, FLACNoHeaderError
 def md5hex(data):
     h = MD5.new()
     h.update(data)
@@ -33,6 +33,10 @@ def decryptfile(fh, key, fo):
          data = blowfishDecrypt(data, key)
         fo.write(data)
         seg += 1
+    fo.close()
+def var_excape(string):
+    string = string.replace("\\", "").replace("/", "").replace(":", "").replace("*", "").replace("?", "").replace('"', "").replace("<", "").replace(">", "").replace("|", "")
+    return string
 def write_tags(song, data):
     try:
        tag = FLAC(song)
@@ -40,10 +44,14 @@ def write_tags(song, data):
        images = Picture()
        images.type = 3
        images.data = data['image']
+       tag.clear_pictures()
        tag.add_picture(images)
        tag['lyrics'] = data['lyric']
-    except mutagen.flac.FLACNoHeaderError:
-       tag = mutagen.File(song, easy=True)
+    except FLACNoHeaderError:
+       try:
+          tag = File(song, easy=True)
+       except:
+          return
     tag['artist'] = data['artist']
     tag['title'] = data['music']
     tag['date'] = data['year']
@@ -64,8 +72,8 @@ def write_tags(song, data):
     tag.save()
     try:
        audio = ID3(song)
-       audio['APIC'] = APIC(encoding=3, mime="image/jpeg", type=3, desc=u"Cover", data=data['image']) 
-       audio['USLT'] = USLT(encoding=3, lang=u"eng", desc=u"desc", text=data['lyric'])
+       audio.add(APIC(encoding=3, mime="image/jpeg", type=3, desc=u"Cover", data=data['image']))
+       audio.add(USLT(encoding=3, lang=u"eng", desc=u"desc", text=data['lyric']))
        audio.save()
-    except mutagen.id3._util.ID3NoHeaderError:
+    except _util.ID3NoHeaderError:
        pass
