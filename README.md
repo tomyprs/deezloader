@@ -4,9 +4,9 @@ This project has been created to download songs, albums or playlists with Spotif
 
 # Disclaimer
 
-	- I am not responsible for the usage of this program by other people.
-	- I do not recommend you doing this illegally or against Deezer's terms of service.
-	- This project is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- I am not responsible for the usage of this program by other people.
+- I do not recommend you doing this illegally or against Deezer's terms of service.
+- This project is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 * ### OS Supported ###
 	![Linux Support](https://img.shields.io/badge/Linux-Support-brightgreen.svg)
@@ -23,24 +23,24 @@ $ deezloader-dw -h
 ```
 
 #OPTIONS
--h, --help            show this help message and exit
--l LINK, --link LINK  Deezer or Spotify link for download
--s SONG, --song SONG  song name
--a ARTIST, --artist ARTIST
-                    artist song
--o OUTPUT, --output OUTPUT
-                    Output folder
--q QUALITY, --quality QUALITY
-                    Select download quality between FLAC, 320, 256, 128
--rq RECURSIVE_QUALITY, --recursive_quality RECURSIVE_QUALITY
-                    If choosen quality doesn't exist download with best
-                    possible quality (True or False)
--rd RECURSIVE_DOWNLOAD, --recursive_download RECURSIVE_DOWNLOAD
-                    If the song has already downloaded skip (True or
-                    False)
--g GUI, --gui GUI   Show the little gui (True or False)
--z ZIP, --zip ZIP   If is an album or playlist link create a zip archive
-                    (True or False)
+	-h, --help            show this help message and exit
+	-l LINK, --link LINK  Deezer or Spotify link for download
+	-s SONG, --song SONG  song name
+	-a ARTIST, --artist ARTIST
+  	                  artist song
+	-o OUTPUT, --output OUTPUT
+    	                Output folder
+	-q QUALITY, --quality QUALITY
+    	                Select download quality between FLAC, 320, 256, 128
+	-rq RECURSIVE_QUALITY, --recursive_quality RECURSIVE_QUALITY
+     	               If choosen quality doesn't exist download with best
+        	            possible quality (True or False)
+	-rd RECURSIVE_DOWNLOAD, --recursive_download RECURSIVE_DOWNLOAD
+    	                If the song has already downloaded skip (True or
+        	            False)
+	-g GUI, --gui GUI   Show the little gui (True or False)
+	-z ZIP, --zip ZIP   If is an album or playlist link create a zip archive
+    	                (True or False)
 
 ### Initialize
 
