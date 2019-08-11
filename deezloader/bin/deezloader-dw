@@ -1,0 +1,167 @@
+#!/usr/bin/python3
+
+import sys
+import argparse
+import deezloader
+import configparser
+
+def download_link(link, output, quality, recursive_quality, recursive_download, gui, zips):
+	if "spotify" in link:
+		if "track/" in link:
+			downloa.download_trackspo(
+				link, output,
+				quality, recursive_quality,
+				recursive_download, gui
+			)
+
+		elif "album/" in link:
+			downloa.download_albumspo(
+				link, output,
+				quality, recursive_quality,
+				recursive_download, gui, zips
+			)
+
+		elif "playlist/" in link:
+			downloa.download_playlistspo(
+				link, output,
+				quality, recursive_quality,
+				recursive_download, gui, zips
+			)
+
+	elif "deezer" in link:
+		if "track/" in link:
+			downloa.download_trackdee(
+				link, output,
+				quality, recursive_quality,
+				recursive_download, gui
+			)
+
+		elif "album/" in link:
+			downloa.download_albumdee(
+				link, output,
+				quality, recursive_quality,
+				recursive_download, gui, zips
+			)
+
+		elif "playlist/" in link:
+			downloa.download_playlistdee(
+				link, output,
+				quality, recursive_quality,
+				recursive_download, gui, zips
+			)
+
+parser = argparse.ArgumentParser(
+	description="Deezloader downloader"
+)
+
+parser.add_argument(
+	"setting",
+	help="Path for the setting file"
+)
+
+parser.add_argument(
+	"-l", "--link",
+	help="Deezer or Spotify link for download"
+)
+
+parser.add_argument(
+	"-s", "--song",
+	help="song name"
+)
+
+parser.add_argument(
+	"-a", "--artist",
+	help="artist song"
+)
+
+parser.add_argument(
+	"-o", "--output",
+	help="Output folder"
+)
+
+parser.add_argument(
+	"-q", "--quality",
+	help="Select download quality between FLAC, 320, 256, 128"
+)
+
+parser.add_argument(
+	"-rq", "--recursive_quality",
+	help="If choosen quality doesn't exist download with best possible quality (True or False)"
+)
+
+parser.add_argument(
+	"-rd", "--recursive_download",
+	help="If the song has already downloaded skip (True or False)"
+)
+
+parser.add_argument(
+	"-g", "--gui",
+	help="Show the little gui (True or False)"
+)
+
+parser.add_argument(
+	"-z", "--zip",
+	help="If is an album or playlist link create a zip archive (True or False)"
+)
+
+args = parser.parse_args()
+ini_file = args.setting
+config = configparser.ConfigParser()
+config.read(ini_file)
+
+try:
+	mail = config['login']['mail']
+	password = config['login']['password']
+	token = config['login']['token']
+except KeyError:
+	print("Something went wrong with configuration file")
+	sys.exit(0)
+
+downloa = deezloader.Login(mail, password, token)
+link = args.link
+output = args.output
+quality = args.quality
+
+if quality and quality != "FLAC":
+	quality = "MP3_" + quality
+
+recursive_quality = args.recursive_quality
+recursive_download = args.recursive_download
+zips = args.zip
+song = args.song
+artist = args.artist
+gui = args.gui
+
+if not output:
+	output = "Songs/"
+else:
+	output += "/"
+
+if not quality:
+	quality = "MP3_320"
+
+if not recursive_quality:
+	recursive_quality = False
+
+if not recursive_download:
+	recursive_download = False
+
+if not zips:
+	zips = False
+
+if not gui:
+	gui = True
+
+if link:
+	download_link(
+		link, output, 
+		quality, recursive_quality,
+		recursive_download, gui, zips
+	)
+
+if song and artist:
+	downloa.download_name(
+		artist, song,
+		output, quality,
+		recursive_quality, recursive_download, gui
+	)
