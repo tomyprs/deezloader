@@ -21,8 +21,12 @@ Finally **deezloader-dw** avalaible ;)
 ```bash
 $ deezloader-dw -h
 ```
+	usage: deezloader-dw [-h] [-l LINK] [-s SONG] [-a ARTIST] [-o OUTPUT]
+                     [-q QUALITY] [-rq RECURSIVE_QUALITY]
+                     [-rd RECURSIVE_DOWNLOAD] [-g GUI] [-z ZIP]
+                     setting
 
-#OPTIONS
+# OPTIONS
 	-h, --help            show this help message and exit
 	-l LINK, --link LINK  Deezer or Spotify link for download
 	-s SONG, --song SONG  song name
