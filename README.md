@@ -52,6 +52,9 @@ $ deezloader-dw -h
 	password = deezer_password
 	token = deezer_arl_token
 
+setting.ini file for use deezloader-dw
+
+
 # Library
 
 ### Initialize
