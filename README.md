@@ -62,7 +62,8 @@ setting.ini file for use deezloader-dw
 ```python
 import deezloader
 
-downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD", "YOUR ARL TOKEN DEEZER") #how get arl token https://www.youtube.com/watch?v=pWcG9T3WyYQ the video is not mine
+downloa = deezloader.Login("YOUR DEEZER EMAIL", "YOUR DEEZER PASSWORD", "YOUR ARL TOKEN DEEZER")
+#how get arl token https://www.youtube.com/watch?v=pWcG9T3WyYQ the video is not mine
 ```
 
 ### Download song
