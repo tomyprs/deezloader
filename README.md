@@ -15,7 +15,7 @@ This project has been created to download songs, albums or playlists with Spotif
 * ### Installation ###
 	pip3 install deezloader
 
-## CLI interface
+# CLI interface
 
 Finally **deezloader-dw** avalaible ;)
 ```bash
@@ -26,7 +26,7 @@ $ deezloader-dw -h
                      [-rd RECURSIVE_DOWNLOAD] [-g GUI] [-z ZIP]
                      setting
 
-# OPTIONS
+## OPTIONS
 	-h, --help            show this help message and exit
 	-l LINK, --link LINK  Deezer or Spotify link for download
 	-s SONG, --song SONG  song name
@@ -45,6 +45,14 @@ $ deezloader-dw -h
 	-g GUI, --gui GUI   Show the little gui (True or False)
 	-z ZIP, --zip ZIP   If is an album or playlist link create a zip archive
     	                (True or False)
+
+## SETTING
+	[login]
+	mail = deezer_mail
+	password = deezer_password
+	token = deezer_arl_token
+
+# Library
 
 ### Initialize
 
@@ -99,7 +107,7 @@ downloa.download_albumspo(
 	recursive_quality=True,
 	recursive_download=True,
 	interface=True,
-	zips=True
+	zips=False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
 #recursive_quality=True if selected quality isn't avalaible download with best quality possible
@@ -117,7 +125,7 @@ downloa.download_albumdee(
 	recursive_quality=True,
 	recursive_download=True,
 	interface=True,
-	zips=True
+	zips=False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
 #recursive_quality=True if selected quality isn't avalaible download with best quality possible
@@ -137,7 +145,7 @@ downloa.download_playlistspo(
 	recursive_quality=True,
 	recursive_download=True,
 	interface=True,
-	zips=True
+	zips=False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
 #recursive_quality=True if selected quality isn't avalaible download with best quality possible
@@ -155,7 +163,7 @@ downloa.download_playlistdee(
 	recursive_quality=True,
 	recursive_download=True,
 	interface=True,
-	zips=True
+	zips=False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
 #recursive_quality=True if selected quality isn't avalaible download with best quality possible
