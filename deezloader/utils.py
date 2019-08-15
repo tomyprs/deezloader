@@ -21,7 +21,7 @@ def choose_img(image):
 			image
 		)
 	).content
-			
+
 	if len(image) == 13:
 		image = request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
 
@@ -39,13 +39,13 @@ def request(url, control=False):
 				raise exceptions.TrackNotFound("Track not found :(")
 		except KeyError:
 			pass
-		
+
 		try:
 			if thing.json()['error']['message'] == "Quota limit exceeded":
 				raise exceptions.QuotaExceeded("Too much requests limit yourself")
 		except KeyError:
 			pass
-		
+
 		try:
 			if thing.json()['error']:
 				raise exceptions.InvalidLink("Invalid link ;)")
@@ -182,20 +182,20 @@ def write_tags(song, data):
 		
 		audio.add(
 			APIC(
-				encoding=3,
-				mime="image/jpeg",
-				type=3,
-				desc=u"Cover",
-				data=data['image']
+				encoding = 3,
+				mime = "image/jpeg",
+				type = 3,
+				desc = u"Cover",
+				data = data['image']
 			)
 		)
 
 		audio.add(
 			USLT(
-				encoding=3,
-				lang=u"eng",
-				desc=u"desc",
-				text=data['lyric']
+				encoding = 3,
+				lang = u"eng",
+				desc = u"desc",
+				text = data['lyric']
 			)
 		)
 

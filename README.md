@@ -73,32 +73,32 @@ Download track by Spotify link
 ```python
 downloa.download_trackspo(
 	"Insert the Spotify link of the track to download",
-	output="SELECT THE PATH WHERE SAVE YOUR SONGS",
-	quality="MP3_320",
-	recursive_quality=False,
-	recursive_download=False
-	interface=True
+	output = "SELECT THE PATH WHERE SAVE YOUR SONGS",
+	quality = "MP3_320",
+	recursive_quality = False,
+	recursive_download = False
+	not_interface = False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
 #recursive_quality=True if selected quality isn't avalaible download with best quality possible
 #recursive_download=True if song has already been downloaded don't ask for download it again
-#interface=False if you want too see no download progress
+#not_interface=False if you want too see no download progress
 ```
 
 Download track by Deezer link
 ```python
 downloa.download_trackdee(
 	"Insert the Spotify link of the track to download",
-	output="SELECT THE PATH WHERE SAVE YOUR SONGS",
-	quality="MP3_320",
-	recursive_quality=False,
-	recursive_download=False
-	interface=True
+	output = "SELECT THE PATH WHERE SAVE YOUR SONGS",
+	quality = "MP3_320",
+	recursive_quality = False,
+	recursive_download = False
+	not_interface = False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
-#recursive_quality=True if selected quality isn't avalaible download with best quality possible
-#recursive_download=True if song has already been downloaded don't ask for download it again
-#interface=False if you want too see no download progress
+#recursive_quality = True if selected quality isn't avalaible download with best quality possible
+#recursive_download = True if song has already been downloaded don't ask for download it again
+#not_interface = True if you want too see no download progress
 ```
 
 ### Download album
@@ -106,36 +106,36 @@ Download album by Spotify link
 ```python
 downloa.download_albumspo(
 	"Insert the Spotify link of the album to download",
-	output="SELECT THE PATH WHERE SAVE YOUR SONGS",
-	quality="MP3_320",
-	recursive_quality=True,
-	recursive_download=True,
-	interface=True,
-	zips=False
+	output = "SELECT THE PATH WHERE SAVE YOUR SONGS",
+	quality = "MP3_320",
+	recursive_quality = True,
+	recursive_download = True,
+	not_interface = False,
+	zips = False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
-#recursive_quality=True if selected quality isn't avalaible download with best quality possible
-#recursive_download=True if song has already been downloaded don't ask for download it again
-#interface=False if you want too see no download progress
-#zips=True create a zip with all album songs
+#recursive_quality = True if selected quality isn't avalaible download with best quality possible
+#recursive_download = True if song has already been downloaded don't ask for download it again
+#not_interface = True if you want too see no download progress
+#zips = True create a zip with all album songs
 ```
 
 Download album from Deezer link
 ```python
 downloa.download_albumdee(
 	"Insert the Spotify link of the album to download",
-	output="SELECT THE PATH WHERE SAVE YOUR SONGS",
-	quality="MP3_320",
-	recursive_quality=True,
-	recursive_download=True,
-	interface=True,
-	zips=False
+	output = "SELECT THE PATH WHERE SAVE YOUR SONGS",
+	quality = "MP3_320",
+	recursive_quality = True,
+	recursive_download = True,
+	not_interface = False,
+	zips = False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
-#recursive_quality=True if selected quality isn't avalaible download with best quality possible
-#recursive_download=True if song has already been downloaded don't ask for download it again
-#interface=False if you want too see no download progress
-#zips=True create a zip with all album songs
+#recursive_quality = True if selected quality isn't avalaible download with best quality possible
+#recursive_download = True if song has already been downloaded don't ask for download it again
+#not_interface = True if you want too see no download progress
+#zips = True create a zip with all album songs
 ```
 
 ### Download playlist
@@ -144,36 +144,36 @@ Download playlist by Spotify link
 ```python
 downloa.download_playlistspo(
 	"Insert the Spotify link of the album to download",
-	output="SELECT THE PATH WHERE SAVE YOUR SONGS",
-	quality="MP3_320",
-	recursive_quality=True,
-	recursive_download=True,
-	interface=True,
-	zips=False
+	output = "SELECT THE PATH WHERE SAVE YOUR SONGS",
+	quality = "MP3_320",
+	recursive_quality = True,
+	recursive_download = True,
+	not_interface = False,
+	zips = False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
-#recursive_quality=True if selected quality isn't avalaible download with best quality possible
-#recursive_download=True if song has already been downloaded don't ask for download it again
-#interface=False if you want too see no download progress
-#zips=True create a zip with all album songs
+#recursive_quality = True if selected quality isn't avalaible download with best quality possible
+#recursive_download = True if song has already been downloaded don't ask for download it again
+#not_interface = True if you want too see no download progress
+#zips = True create a zip with all album songs
 ```
 
 Download playlist from Deezer link
 ```python
 downloa.download_playlistdee(
 	"Insert the Spotify link of the album to download",
-	output="SELECT THE PATH WHERE SAVE YOUR SONGS",
-	quality="MP3_320",
-	recursive_quality=True,
-	recursive_download=True,
-	interface=True,
-	zips=False
+	output = "SELECT THE PATH WHERE SAVE YOUR SONGS",
+	quality = "MP3_320",
+	recursive_quality = True,
+	recursive_download = True,
+	not_interface = False,
+	zips = False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
-#recursive_quality=True if selected quality isn't avalaible download with best quality possible
-#recursive_download=True if song has already been downloaded don't ask for download it again
-#interface=False if you want too see no download progress
-#zips=True create a zip with all album songs
+#recursive_quality = True if selected quality isn't avalaible download with best quality possible
+#recursive_download = True if song has already been downloaded don't ask for download it again
+#not_interface = True if you want too see no download progress
+#zips = True create a zip with all album songs
 ```
 
 ### Download name
@@ -181,16 +181,16 @@ downloa.download_playlistdee(
 Download by name
 ```python
 downloa.download_name(
-	artist="Eminem",
-	song="Berzerk",
-	output="SELECT THE PATH WHERE SAVE YOUR SONGS",
-	quality="MP3_320",
-	recursive_quality=False,
-	recursive_download=False,
-	interface=True
+	artist = "Eminem",
+	song = "Berzerk",
+	output = "SELECT THE PATH WHERE SAVE YOUR SONGS",
+	quality = "MP3_320",
+	recursive_quality = False,
+	recursive_download = False,
+	not_interface = False
 )
 #quality can be FLAC, MP3_320, MP3_256 or MP3_128
-#recursive_quality=True if selected quality isn't avalaible download with best quality possible
-#recursive_download=True if song has already been downloaded don't ask for download it again
-#interface=False if you want too see no download progress
+#recursive_quality = True if selected quality isn't avalaible download with best quality possible
+#recursive_download = True if song has already been downloaded don't ask for download it again
+#not_interface = True if you want too see no download progress
 ```

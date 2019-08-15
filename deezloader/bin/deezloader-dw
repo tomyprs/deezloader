@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import os
 import sys
 import argparse
 import deezloader
@@ -54,58 +55,64 @@ parser = argparse.ArgumentParser(
 	description="Deezloader downloader"
 )
 
-parser.add_argument(
-	"setting",
-	help="Path for the setting file"
-)
+if not os.path.isfile("setting.ini"):
+	parser.add_argument(
+		"setting",
+		help = "Path for the setting file"
+	)
 
 parser.add_argument(
 	"-l", "--link",
-	help="Deezer or Spotify link for download"
+	help = "Deezer or Spotify link for download"
 )
 
 parser.add_argument(
 	"-s", "--song",
-	help="song name"
+	help = "song name"
 )
 
 parser.add_argument(
 	"-a", "--artist",
-	help="artist song"
+	help = "artist song"
 )
 
 parser.add_argument(
 	"-o", "--output",
-	help="Output folder"
+	help = "Output folder"
 )
 
 parser.add_argument(
 	"-q", "--quality",
-	help="Select download quality between FLAC, 320, 256, 128"
+	help = "Select download quality between FLAC, 320, 256, 128"
 )
 
 parser.add_argument(
 	"-rq", "--recursive_quality",
-	help="If choosen quality doesn't exist download with best possible quality (True or False)"
+	help = "If choosen quality doesn't exist download with best possible quality (True or False)"
 )
 
 parser.add_argument(
 	"-rd", "--recursive_download",
-	help="If the song has already downloaded skip (True or False)"
+	help = "If the song has already downloaded skip (True or False)"
 )
 
 parser.add_argument(
 	"-g", "--gui",
-	help="Show the little gui (True or False)"
+	help = "Show the little gui (True or False)"
 )
 
 parser.add_argument(
 	"-z", "--zip",
-	help="If is an album or playlist link create a zip archive (True or False)"
+	help = "If is an album or playlist link create a zip archive (True or False)"
 )
 
 args = parser.parse_args()
-ini_file = args.setting
+
+try:
+	ini_file = args.setting
+except AttributeError:
+	ini_file = "setting.ini"
+
 config = configparser.ConfigParser()
 config.read(ini_file)
 

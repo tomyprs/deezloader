@@ -13,11 +13,11 @@ from deezloader.utils import (
 	choose_img, create_zip
 )
 
-stock_output = os.getcwd() + "/Songs/"
+stock_output = os.getcwd() + "/Songs"
 stock_quality = "MP3_320"
 stock_recursive_quality = False
 stock_recursive_download = False
-stock_interface = True
+stock_not_interface = False
 stock_zip = False
 
 qualities = {
@@ -49,14 +49,14 @@ qualities = {
 
 def generate_token():
 	return oauth2.SpotifyClientCredentials(
-		client_id="c6b23f1e91f84b6a9361de16aba0ae17",
-		client_secret="237e355acaa24636abc79f1a089e6204"
+		client_id = "c6b23f1e91f84b6a9361de16aba0ae17",
+		client_secret = "237e355acaa24636abc79f1a089e6204"
 	).get_access_token()
 
 class Login:
 	def __init__(self, mail, password, token=None):
 		self.spo = Spotify(
-			auth=generate_token()
+			auth = generate_token()
 		)
 
 		self.req = requests.Session()
@@ -104,20 +104,21 @@ class Login:
 		try:
 			return self.req.post(
 				"http://www.deezer.com/ajax/gw-light.php",
-				params=params,
-				json=json
+				params = params,
+				json = json
 			).json()['results']
 		except:
 			return self.req.post(
 				"http://www.deezer.com/ajax/gw-light.php",
-				params=params,
-				json=json
+				params = params,
+				json = json
 			).json()['results']
 
 	def download(
 		self, link, name,
-		quality, recursive_quality, recursive_download,
-		datas, interface, zips=False
+		quality, recursive_quality,
+		recursive_download, datas,
+		not_interface, zips = False
 	):
 		if not quality in qualities:
 			raise exceptions.QualityNotFound("The qualities have to be FLAC or MP3_320 or MP3_256 or MP3_128")
@@ -157,7 +158,7 @@ class Login:
 			else:
 				if not recursive_quality:
 					raise exceptions.QualityNotFound("The quality chosen can't be downloaded")
-					
+
 				for a in qualities:
 					if int(infos['FILESIZE_' + a]) > 0:
 						quality = qualities[a]['quality']
@@ -277,7 +278,7 @@ class Login:
 			datas['image'] = image
 			song = datas['music'] + " - " + datas['artist']
 			
-			if interface:
+			if not not_interface:
 				print("Downloading:" + song)
 
 			try:
@@ -333,7 +334,12 @@ class Login:
 		detas['ar_album'] = datas['ar_album']
 		detas['label'] = datas['label']
 
-		for a in tqdm(range(len(name)), disable=interface):
+		for a in tqdm(
+			range(
+				len(name)
+			), 
+			disable = not_interface
+		):
 			detas['music'] = datas['music'][a]
 			detas['artist'] = datas['artist'][a]
 			detas['tracknum'] = datas['tracknum'][a]
@@ -382,7 +388,7 @@ class Login:
 							), 
 							detas, name[a], quality
 						)
-					)		
+					)
 				except exceptions.TrackNotFound:
 					nams.append(name[a])
 					print("Track not found: " + detas['music'] + " - " + detas['artist'])
@@ -393,7 +399,7 @@ class Login:
 				.split("(")[-1]
 				.split(")")[0]
 			)
-				
+
 		if zips:
 			directory = "/".join(
 				name[a]
@@ -408,11 +414,11 @@ class Login:
 
 	def download_trackdee(
 		self, URL,
-		output = stock_output,
+		output = stock_output + "/",
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
-		interface = stock_interface
+		not_interface = stock_not_interface
 	):
 		datas = {}
 
@@ -443,7 +449,7 @@ class Login:
 				for b in array:
 					if a in b and a != b:
 						array.remove(b)
-			
+
 		datas['artist'] = ", ".join(
 				OrderedDict.fromkeys(array)
 		)
@@ -486,18 +492,18 @@ class Login:
 		name = self.download(
 			URL, name,
 			quality, recursive_quality,
-			recursive_download, datas, interface
+			recursive_download, datas, not_interface
 		)
 
 		return name
 
 	def download_albumdee(
 		self, URL,
-		output = stock_output,
+		output = stock_output + "/",
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
-		interface = stock_interface,
+		not_interface = stock_not_interface,
 		zips = stock_zip
 	):
 		datas = {}
@@ -557,7 +563,7 @@ class Login:
 			names.append(
 				directory + album + " CD " + discnum + " TRACK " + tracknum
 			)
-			
+
 			datas['tracknum'].append(tracknum)
 			datas['discnum'].append(discnum)
 			datas['bpm'].append(str(ur['bpm']))
@@ -577,7 +583,7 @@ class Login:
 					for b in array:
 						if a in b and a != b:
 							array.remove(b)
-				
+
 			datas['artist'].append(
 				", ".join(
 					OrderedDict.fromkeys(array)
@@ -593,7 +599,7 @@ class Login:
 			URL, names,
 			quality, recursive_quality,
 			recursive_download, datas,
-			interface, zips
+			not_interface, zips
 		)
 
 		if zips:
@@ -603,11 +609,11 @@ class Login:
 
 	def download_playlistdee(
 		self, URL,
-		output = stock_output,
+		output = stock_output + "/",
 		quality = stock_quality,
 		recursive_quality = True,
 		recursive_download = True,
-		interface = stock_interface,
+		not_interface = stock_not_interface,
 		zips = stock_zip
 	):
 		array = []
@@ -627,7 +633,7 @@ class Login:
 					self.download_trackdee(
 						a['link'], output,
 						quality, recursive_quality,
-						recursive_download, interface
+						recursive_download, not_interface
 					)
 				)
 			except exceptions.TrackNotFound:
@@ -643,11 +649,11 @@ class Login:
 
 	def download_trackspo(
 		self, URL,
-		output = stock_output,
+		output = stock_output + "/",
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
-		interface = stock_interface
+		not_interface = stock_not_interface
 	):
 		if "?" in URL:
 			URL, a = URL.split("?")
@@ -659,11 +665,11 @@ class Login:
 				raise exceptions.InvalidLink("Invalid link ;)")
 
 			self.spo = Spotify(
-				auth=generate_token()
+				auth = generate_token()
 			)
-		
+
 			url = self.spo.track(URL)
-		
+
 		isrc = url['external_ids']['isrc']
 
 		url = request(
@@ -673,18 +679,18 @@ class Login:
 		name = self.download_trackdee(
 			url['link'], output,
 			quality, recursive_quality,
-			recursive_download, interface
+			recursive_download, not_interface
 		)
 
 		return name
 
 	def download_albumspo(
 		self, URL,
-		output = stock_output,
+		output = stock_output + "/",
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
-		interface = stock_interface,
+		not_interface = stock_not_interface,
 		zips = stock_zip
 	):
 		if "?" in URL:
@@ -697,7 +703,7 @@ class Login:
 				raise exceptions.InvalidLink("Invalid link ;)")
 
 			self.spo = Spotify(
-				auth=generate_token()
+				auth = generate_token()
 			)
 
 			tracks = self.spo.album(URL)
@@ -713,7 +719,7 @@ class Login:
 			names = self.download_albumdee(
 				url['link'], output,
 				quality, recursive_quality,
-				recursive_download, interface, zips
+				recursive_download, not_interface, zips
 			)
 		except KeyError:
 			search = len(
@@ -726,7 +732,7 @@ class Login:
 				)
 			except:
 				self.spo = Spotify(
-					auth=generate_token()
+					auth = generate_token()
 				)
 
 				url = self.spo.track(
@@ -739,11 +745,11 @@ class Login:
 				url = request(
 					"https://api.deezer.com/track/isrc:" + isrc, True
 				).json()
-					
+
 				names = self.download_albumdee(
 					url['album']['link'], output,
 					quality, recursive_quality,
-					recursive_download, interface, zips
+					recursive_download, not_interface, zips
 				)
 			except exceptions.TrackNotFound:
 				raise exceptions.AlbumNotFound("Album not found :(")
@@ -752,11 +758,11 @@ class Login:
 
 	def download_playlistspo(
 		self, URL,
-		output = stock_output,
+		output = stock_output + "/",
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
-		interface = stock_interface,
+		not_interface = stock_not_interface,
 		zips = stock_zip
 	):
 		array = []
@@ -768,15 +774,15 @@ class Login:
 
 		try:
 			tracks = self.spo.user_playlist_tracks(
-				URL[-3],
-				playlist_id=URL[-1]
+				URL[-3], 
+				playlist_id = URL[-1]
 			)
 		except Exception as a:
 			if not "The access token expired" in str(a):
 				raise exceptions.InvalidLink("Invalid link ;)")
 
 			self.spo = Spotify(
-				auth=generate_token()
+				auth = generate_token()
 			)
 
 			tracks = self.spo.user_playlist_tracks(
@@ -790,7 +796,7 @@ class Login:
 					self.download_trackspo(
 						a['track']['external_urls']['spotify'],
 						output, quality,
-						recursive_quality, recursive_download, interface
+						recursive_quality, recursive_download, not_interface
 					)
 				)
 			except:
@@ -803,7 +809,7 @@ class Login:
 					tracks = self.spo.next(tracks)
 				except:
 					self.spo = Spotify(
-						auth=generate_token()
+						auth = generate_token()
 					)
 
 					tracks = self.spo.next(tracks)
@@ -814,7 +820,7 @@ class Login:
 							self.download_trackspo(
 								a['track']['external_urls']['spotify'],
 								output, quality,
-								recursive_quality, recursive_download, interface
+								recursive_quality, recursive_download, not_interface
 							)
 						)
 					except:
@@ -830,11 +836,11 @@ class Login:
 
 	def download_name(
 		self, artist, song,
-		output = stock_output,
+		output = stock_output + "/",
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
-		interface = stock_interface
+		not_interface = stock_not_interface
 	):
 
 		query = (
@@ -849,7 +855,7 @@ class Login:
 			search = self.spo.search(q=query)
 		except:
 			self.spo = Spotify(
-				auth=generate_token()
+				auth = generate_token()
 			)
 
 			search = self.spo.search(q=query)
@@ -858,7 +864,7 @@ class Login:
 			return self.download_trackspo(
 				search['tracks']['items'][0]['external_urls']['spotify'],
 				output, quality,
-				recursive_quality, recursive_download, interface
+				recursive_quality, recursive_download, not_interface
 			)
 		except IndexError:
 			raise exceptions.TrackNotFound("Track not found: " + artist + " - " + song)
