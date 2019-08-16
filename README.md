@@ -23,28 +23,29 @@ $ deezloader-dw -h
 ```
 	usage: deezloader-dw [-h] [-l LINK] [-s SONG] [-a ARTIST] [-o OUTPUT]
                      [-q QUALITY] [-rq RECURSIVE_QUALITY]
-                     [-rd RECURSIVE_DOWNLOAD] [-g GUI] [-z ZIP]
+                     [-rd RECURSIVE_DOWNLOAD] [-g NOT_GUI] [-z ZIP]
                      setting
 
 ## OPTIONS
 	-h, --help            show this help message and exit
-	-l LINK, --link LINK  Deezer or Spotify link for download
-	-s SONG, --song SONG  song name
-	-a ARTIST, --artist ARTIST
-  	                  artist song
-	-o OUTPUT, --output OUTPUT
-    	                Output folder
-	-q QUALITY, --quality QUALITY
-    	                Select download quality between FLAC, 320, 256, 128
-	-rq RECURSIVE_QUALITY, --recursive_quality RECURSIVE_QUALITY
-     	               If choosen quality doesn't exist download with best
-        	            possible quality (True or False)
-	-rd RECURSIVE_DOWNLOAD, --recursive_download RECURSIVE_DOWNLOAD
-    	                If the song has already downloaded skip (True or
-        	            False)
-	-g GUI, --gui GUI   Show the little gui (True or False)
-	-z ZIP, --zip ZIP   If is an album or playlist link create a zip archive
-    	                (True or False)
+  	-l LINK, --link LINK  Deezer or Spotify link for download
+  	-s SONG, --song SONG  song name
+  	-a ARTIST, --artist ARTIST
+                        artist song
+  	-o OUTPUT, --output OUTPUT
+                        Output folder
+  	-q QUALITY, --quality QUALITY
+                        Select download quality between FLAC, 320, 256, 128
+  	-rq RECURSIVE_QUALITY, --recursive_quality RECURSIVE_QUALITY
+                        If choosen quality doesn't exist download with best
+                        possible quality (True or False)
+  	-rd RECURSIVE_DOWNLOAD, --recursive_download RECURSIVE_DOWNLOAD
+                        If the song has already downloaded skip (True or
+                        False)
+  	-g NOT_GUI, --not_gui NOT_GUI
+                        Show the little not_gui (True or False)
+  	-z ZIP, --zip ZIP     If is an album or playlist link create a zip archive
+                        (True or False)
 
 ## SETTING
 	[login]

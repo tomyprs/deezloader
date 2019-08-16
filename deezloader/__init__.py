@@ -708,6 +708,8 @@ class Login:
 
 			tracks = self.spo.album(URL)
 
+		tot = tracks['total_tracks']
+
 		try:
 			upc = tracks['external_ids']['upc']
 
@@ -742,12 +744,19 @@ class Login:
 			isrc = url['external_ids']['isrc']
 
 			try:
-				url = request(
+				ids = request(
 					"https://api.deezer.com/track/isrc:" + isrc, True
+				).json()['album']['id']
+
+				tracks = request(
+					"https://api.deezer.com/album/" + str(ids)
 				).json()
 
+				if tot != tracks['nb_tracks']:
+					raise exceptions.TrackNotFound("")
+
 				names = self.download_albumdee(
-					url['album']['link'], output,
+					tracks['link'], output,
 					quality, recursive_quality,
 					recursive_download, not_interface, zips
 				)

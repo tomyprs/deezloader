@@ -6,27 +6,27 @@ import argparse
 import deezloader
 import configparser
 
-def download_link(link, output, quality, recursive_quality, recursive_download, gui, zips):
+def download_link(link, output, quality, recursive_quality, recursive_download, not_gui, zips):
 	if "spotify" in link:
 		if "track/" in link:
 			downloa.download_trackspo(
 				link, output,
 				quality, recursive_quality,
-				recursive_download, gui
+				recursive_download, not_gui
 			)
 
 		elif "album/" in link:
 			downloa.download_albumspo(
 				link, output,
 				quality, recursive_quality,
-				recursive_download, gui, zips
+				recursive_download, not_gui, zips
 			)
 
 		elif "playlist/" in link:
 			downloa.download_playlistspo(
 				link, output,
 				quality, recursive_quality,
-				recursive_download, gui, zips
+				recursive_download, not_gui, zips
 			)
 
 	elif "deezer" in link:
@@ -34,25 +34,25 @@ def download_link(link, output, quality, recursive_quality, recursive_download, 
 			downloa.download_trackdee(
 				link, output,
 				quality, recursive_quality,
-				recursive_download, gui
+				recursive_download, not_gui
 			)
 
 		elif "album/" in link:
 			downloa.download_albumdee(
 				link, output,
 				quality, recursive_quality,
-				recursive_download, gui, zips
+				recursive_download, not_gui, zips
 			)
 
 		elif "playlist/" in link:
 			downloa.download_playlistdee(
 				link, output,
 				quality, recursive_quality,
-				recursive_download, gui, zips
+				recursive_download, not_gui, zips
 			)
 
 parser = argparse.ArgumentParser(
-	description="Deezloader downloader"
+	description = "Deezloader downloader"
 )
 
 if not os.path.isfile("setting.ini"):
@@ -97,8 +97,8 @@ parser.add_argument(
 )
 
 parser.add_argument(
-	"-g", "--gui",
-	help = "Show the little gui (True or False)"
+	"-g", "--not_gui",
+	help = "Show the little not_gui (True or False)"
 )
 
 parser.add_argument(
@@ -137,7 +137,7 @@ recursive_download = args.recursive_download
 zips = args.zip
 song = args.song
 artist = args.artist
-gui = args.gui
+not_gui = args.not_gui
 
 if not output:
 	output = "Songs/"
@@ -156,19 +156,19 @@ if not recursive_download:
 if not zips:
 	zips = False
 
-if not gui:
-	gui = True
+if not not_gui:
+	not_gui = False
 
 if link:
 	download_link(
 		link, output, 
 		quality, recursive_quality,
-		recursive_download, gui, zips
+		recursive_download, not_gui, zips
 	)
 
 if song and artist:
 	downloa.download_name(
 		artist, song,
 		output, quality,
-		recursive_quality, recursive_download, gui
+		recursive_quality, recursive_download, not_gui
 	)
