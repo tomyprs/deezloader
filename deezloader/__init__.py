@@ -306,7 +306,7 @@ class Login:
 				}
 				
 				infos = get_infos(method, json)
-				nams = ultimatum(infos, detas, name, quality)
+				nams = ultimatum(infos, datas, name, quality)
 
 			return nams
 		
@@ -724,9 +724,7 @@ class Login:
 				recursive_download, not_interface, zips
 			)
 		except KeyError:
-			search = len(
-					tracks['tracks']['items']
-			) // 8
+			search = tot // 5
 
 			try:
 				url = self.spo.track(
@@ -749,7 +747,7 @@ class Login:
 				).json()['album']['id']
 
 				tracks = request(
-					"https://api.deezer.com/album/" + str(ids)
+					"https://api.deezer.com/album/" + str(ids), True
 				).json()
 
 				if tot != tracks['nb_tracks']:
