@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
 	name = "deezloader",
-	version = "5.5.3.1",
+	version = "5.5.4.1",
 	description = "Downloads songs, albums or playlists from deezer",
 	license = "CC BY-NC-SA 4.0",
 	author = "An0nimia",

@@ -6,7 +6,11 @@ import argparse
 import deezloader
 import configparser
 
-def download_link(link, output, quality, recursive_quality, recursive_download, not_gui, zips):
+def download_link(
+	link, output,
+	quality, recursive_quality,
+	recursive_download, not_gui, zips
+):
 	if "spotify" in link:
 		if "track/" in link:
 			downloa.download_trackspo(
@@ -117,14 +121,12 @@ config = configparser.ConfigParser()
 config.read(ini_file)
 
 try:
-	mail = config['login']['mail']
-	password = config['login']['password']
 	token = config['login']['token']
 except KeyError:
 	print("Something went wrong with configuration file")
 	sys.exit(0)
 
-downloa = deezloader.Login(mail, password, token)
+downloa = deezloader.Login(token)
 link = args.link
 output = args.output
 quality = args.quality

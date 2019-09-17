@@ -3,23 +3,58 @@
 import zipfile
 import requests
 from mutagen import File
+from spotipy import oauth2
 from Crypto.Hash import MD5
 from deezloader import exceptions
 from binascii import a2b_hex, b2a_hex
 from Crypto.Cipher import AES, Blowfish
-from mutagen.id3 import ID3, APIC, USLT, _util
-from mutagen.flac import FLAC, Picture, FLACNoHeaderError
+
+from mutagen.id3 import (
+	ID3, APIC,
+	USLT, _util
+)
+
+from mutagen.flac import (
+	FLAC, Picture,
+	FLACNoHeaderError
+)
+
+qualities = {
+	"FLAC": {
+		"quality": "9",
+		"extension": ".flac",
+		"qualit": "FLAC"
+	},
+	"MP3_320": {
+		"quality": "3",
+		"extension": ".mp3",
+		"qualit": "320"
+	},
+	"MP3_256": {
+		"quality": "5",
+		"extension": ".mp3",
+		"qualit": "256"
+	},
+	"MP3_128": {
+		"quality": "1",
+		"extension": ".mp3",
+		"qualit": "128"
+	}
+}
 
 header = {
 	"Accept-Language": "en-US,en;q=0.5"
 }
 
+def generate_token():
+	return oauth2.SpotifyClientCredentials(
+		client_id = "c6b23f1e91f84b6a9361de16aba0ae17",
+		client_secret = "237e355acaa24636abc79f1a089e6204"
+	).get_access_token()
+
 def choose_img(image):
 	image = request(
-		"https://e-cdns-images.dzcdn.net/images/cover/%s/1200x1200-000000-80-0-0.jpg"
-		% (
-			image
-		)
+		"https://e-cdns-images.dzcdn.net/images/cover/%s/1200x1200-000000-80-0-0.jpg" % image
 	).content
 
 	if len(image) == 13:
@@ -27,11 +62,11 @@ def choose_img(image):
 
 	return image
 
-def request(url, control=False):
+def request(url, control = False):
 	try:
-		thing = requests.get(url, headers=header)
+		thing = requests.get(url, headers = header)
 	except:
-		thing = requests.get(url, headers=header)
+		thing = requests.get(url, headers = header)
 
 	if control:
 		try:
@@ -70,6 +105,7 @@ def create_zip(zip_name, nams):
 def md5hex(data):
 	h = MD5.new()
 	h.update(data)
+
 	return b2a_hex(
 		h.digest()
 	)
@@ -96,12 +132,17 @@ def genurl(md5, quality, ids, media):
 	return media_url
 
 def calcbfkey(songid):
-	h = md5hex(b"%d" % int(songid))
+	h = md5hex(
+		b"%d" % int(songid)
+	)
+
 	key = b"g4el58wc0zvf9na1"
 
 	return "".join(
-		chr(h[i] ^ h[i + 16] ^ key[i]
-	) for i in range(16))
+		chr(
+			h[i] ^ h[i + 16] ^ key[i]
+		) for i in range(16)
+	)
 
 def blowfishDecrypt(data, key):
 	c = Blowfish.new(
@@ -154,7 +195,7 @@ def write_tags(song, data):
 		tag['lyrics'] = data['lyric']
 	except FLACNoHeaderError:
 		try:
-			tag = File(song, easy=True)
+			tag = File(song, easy = True)
 		except:
 			return
 
@@ -179,7 +220,7 @@ def write_tags(song, data):
 
 	try:
 		audio = ID3(song)
-		
+
 		audio.add(
 			APIC(
 				encoding = 3,
