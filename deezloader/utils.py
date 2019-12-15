@@ -2,10 +2,10 @@
 
 import zipfile
 from os import makedirs
+from hashlib import md5
 from requests import get
 from mutagen import File
 from spotipy import oauth2
-from Crypto.Hash import MD5
 from deezloader import exceptions
 from collections import OrderedDict
 from binascii import a2b_hex, b2a_hex
@@ -18,7 +18,7 @@ from mutagen.id3 import (
 
 from mutagen.flac import (
 	FLAC, Picture,
-	FLACNoHeaderError
+	FLACNoHeaderError, error
 )
 
 qualities = {
@@ -124,12 +124,7 @@ def check_dir(directory):
 		pass
 
 def md5hex(data):
-	h = MD5.new()
-	h.update(data)
-
-	return b2a_hex(
-		h.digest()
-	)
+	return md5(data).hexdigest().encode()
 
 def genurl(md5, quality, ids, media):
 	data = b"\xa4".join(
@@ -218,7 +213,9 @@ def write_tags(song, data):
 		try:
 			tag = File(song, easy = True)
 		except:
-			return
+			raise exceptions.TrackNotFound("")
+	except error:
+		raise exceptions.TrackNotFound("")
 
 	tag['artist'] = data['artist']
 	tag['title'] = data['music']
