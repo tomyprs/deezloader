@@ -116,7 +116,7 @@ def artist_sort(array):
 	)
 
 	return artists
-				
+
 def check_dir(directory):
 	try:
 		makedirs(directory)
@@ -124,7 +124,13 @@ def check_dir(directory):
 		pass
 
 def md5hex(data):
-	return md5(data).hexdigest().encode()
+	hashed = (
+		md5(data)
+		.hexdigest()
+		.encode()
+	)
+
+	return hashed
 
 def genurl(md5, quality, ids, media):
 	data = b"\xa4".join(
@@ -139,7 +145,7 @@ def genurl(md5, quality, ids, media):
 	if len(data) % 16:
 		data += b"\x00" * (16 - len(data) % 16)
 
-	c = AES.new("jo6aey6haid2Teih", AES.MODE_ECB)
+	c = AES.new("jo6aey6haid2Teih".encode(), AES.MODE_ECB)
 
 	media_url = b2a_hex(
 		c.encrypt(data)
@@ -162,7 +168,7 @@ def calcbfkey(songid):
 
 def blowfishDecrypt(data, key):
 	c = Blowfish.new(
-		key, Blowfish.MODE_CBC,
+		key.encode(), Blowfish.MODE_CBC,
 		a2b_hex("0001020304050607")
 	)
 
