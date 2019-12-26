@@ -761,18 +761,17 @@ class Login:
 		lazy(tracks)
 		tot = tracks['total']
 
-		if tot != 100:
-			for a in range(tot // 100):
-				try:
-					tracks = self.spo.next(tracks)
-				except:
-					self.spo = Spotify(
-						generate_token()
-					)
+		for a in range(tot // 100 - 1):
+			try:
+				tracks = self.spo.next(tracks)
+			except:
+				self.spo = Spotify(
+					generate_token()
+				)
 
-					tracks = self.spo.next(tracks)
+				tracks = self.spo.next(tracks)
 
-				lazy(tracks)
+			lazy(tracks)
 
 		if zips:
 			zip_name = "{}playlist {}.zip".format(output, URL[-1])			
