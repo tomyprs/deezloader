@@ -48,6 +48,8 @@ header = {
 	"Accept-Language": "en-US,en;q=0.5"
 }
 
+cover = "https://e-cdns-images.dzcdn.net/images/cover/%s/1200x1200-000000-80-0-0.jpg"
+
 def generate_token():
 	return oauth2.SpotifyClientCredentials(
 		client_id = "c6b23f1e91f84b6a9361de16aba0ae17",
@@ -55,12 +57,10 @@ def generate_token():
 	).get_access_token()
 
 def choose_img(image):
-	image = request(
-		"https://e-cdns-images.dzcdn.net/images/cover/%s/1200x1200-000000-80-0-0.jpg" % image
-	).content
+	image = request(cover % image).content
 
 	if len(image) == 13:
-		image = request("https://e-cdns-images.dzcdn.net/images/cover/1200x1200-000000-80-0-0.jpg").content
+		image = request(cover % "").content
 
 	return image
 
@@ -80,12 +80,6 @@ def request(url, control = False):
 		try:
 			if thing.json()['error']['message'] == "Quota limit exceeded":
 				raise exceptions.QuotaExceeded("Too much requests limit yourself")
-		except KeyError:
-			pass
-
-		try:
-			if thing.json()['error']:
-				raise exceptions.InvalidLink("Invalid link ;)")
 		except KeyError:
 			pass
 
@@ -197,7 +191,7 @@ def var_excape(string):
 		.replace(":", "")
 		.replace("*", "")
 		.replace("?", "")
-		.replace('"', "")
+		.replace("\"", "")
 		.replace("<", "")
 		.replace(">", "")
 		.replace("|", "")
@@ -218,6 +212,7 @@ def write_tags(song, data):
 	except FLACNoHeaderError:
 		try:
 			tag = File(song, easy = True)
+			tag.delete()
 		except:
 			raise exceptions.TrackNotFound("")
 	except error:

@@ -1,0 +1,241 @@
+#!/usr/bin/python3
+
+import os
+import socket
+import stagger
+from shutil import rmtree
+from mutagen.flac import FLAC
+from mutagen.easyid3 import EasyID3
+from configparser import ConfigParser
+from base64 import b64encode, b64decode
+from flask_cors import CORS, cross_origin
+from deezloader import Login, deezweb_utils
+from deezloader.exceptions import QualityNotFound
+
+from flask import (
+	Flask, request,
+	send_file, render_template
+)
+
+config = ConfigParser()
+config.read("setting.ini")
+
+try:
+	deezer_token = config['login']['token']
+except KeyError:
+	print("Something went wrong with configuration file")
+	exit()
+
+app = Flask(__name__)
+downloa = Login(deezer_token)
+qualities = ["FLAC", "MP3_320", "MP3_256", "MP3_128"]
+output = "%s/Songs/" % os.getcwd()
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("1.1.1.1", 80))
+ip = s.getsockname()[0]
+s.close()
+port = 5000
+d_api = "http://{}:{}/download?path=%s".format(ip, port)
+p_api = "http://{}:{}/play?path=%s".format(ip, port)
+w_api = "http://{}:{}/want?link=%s&quality=%s".format(ip, port)
+
+def check_all():
+	dirs = "/".join(
+		os.path.realpath(__file__).split("/")[:-1]
+	)
+
+	folder1 = "%s/templates/" % dirs
+	folder2 = "%s/static/" % dirs
+
+	if not os.path.exists(folder1):
+		os.makedirs(folder1)
+		folder1 += "%s"
+	
+	if not os.path.exists(folder2):
+		os.makedirs(folder2)
+		js = "%s/js/" % folder2
+		css = "%s/css/" % folder2
+		imgs = "%s/imgs/" % folder2
+		os.makedirs(js)
+		os.makedirs(css)
+		os.makedirs(imgs)
+		js += "%s"
+		css += "%s"
+		imgs += "%s"
+
+	files = [
+		("deez-web.html", deezweb_utils.deezweb_html, folder1, "w"),
+		("player.html", deezweb_utils.player_html, folder1, "w"), 
+		("s-list.html", deezweb_utils.slist_html, folder1, "w"),
+		("index.css", deezweb_utils.index_css, css, "w"),
+		("player.css", deezweb_utils.player_css, css, "w"),
+		("download.js", deezweb_utils.download_js, js, "w"),
+		("player.js", deezweb_utils.playes_js, js, "w"),
+		("deez.ico", b64decode(deezweb_utils.d_ico), imgs, "wb"),
+		("deez.jpg", b64decode(deezweb_utils.d_jpg), imgs, "wb")
+	]
+
+	for a in range(
+		len(files)
+	):
+		f = files[a][0]
+		w = files[a][1]
+		c = files[a][2]
+		m = files[a][3]
+		fil = open(c % f, m)
+		fil.write(w)
+		fil.close()
+
+def download_link(link, quality):
+	if "spotify" in link:
+		if "track/" in link:
+			return downloa.download_trackspo(
+				link, output, quality,
+				True, True
+			)
+
+		elif "album/" in link:
+			return downloa.download_albumspo(
+				link, output, quality,
+				True, True, zips = True
+			)
+
+		elif "playlist/" in link:
+			return downloa.download_playlistspo(
+				link, output, quality,
+				True, True, zips = True
+			)
+
+	elif "deezer" in link:
+		if "track/" in link:
+			return downloa.download_trackdee(
+				link, output, quality,
+				True, True
+			)
+
+		elif "album/" in link:
+			return downloa.download_albumdee(
+				link, output, quality,
+				True, True, zips = True
+			)
+
+		elif "playlist/" in link:
+			return downloa.download_playlistdee(
+				link, output, quality,
+				True, True, zips = True
+			)
+
+@app.route("/")
+def index():
+	return render_template("deez-web.html", ip = ip, port = port)
+
+@app.route("/want")
+@cross_origin(origin = "*")
+def want():
+	params = request.args
+	quality = params['quality']
+
+	if not quality in qualities:
+		raise QualityNotFound("Invalid quality :(")
+
+	link = params['link']
+	datas = download_link(link, quality)
+
+	if type(datas) is tuple:
+		streams = [
+			p_api % datas[0][a]
+			for a in range(
+				len(datas[0])
+			)
+		]
+
+		downloads = [
+			d_api % datas[0][a]
+			for a in range(
+				len(datas[0])
+			)
+		]
+
+		zips = d_api % datas[1]
+
+		return {
+			"paths": datas[0],
+			"downloads": downloads,
+			"streams": streams,
+			"zip_path": datas[1],
+			"zip_down": zips
+		}
+	else:
+		download = d_api % datas
+		stream = p_api % datas
+
+		return {
+			"download": download,
+			"stream": stream,
+			"path": datas
+		}
+
+@app.route("/list")
+def slist():
+	params = request.args
+	quality = params['quality']
+	link = params['link']
+	url = w_api % (link, quality)
+	return render_template("s-list.html", url = url)
+
+@app.route("/play")
+def play():
+	path = request.args['path']
+
+	try:
+		mp3 = stagger.read_tag(path)
+		data = mp3[stagger.id3.APIC][0].data
+		song = EasyID3(path)
+	except stagger.errors.NoTagError:
+		song = FLAC(path)
+		data = song.pictures[0].data
+
+	i_encoded = "data:image/jpeg;base64, %s" % b64encode(data).decode()
+	title = song['title'][0]
+	artist = song['artist'][0]
+	path = d_api % path
+
+	return render_template(
+		"player.html",
+		title = title,
+		artist = artist,
+		image = i_encoded,
+		path = path
+	)
+
+@app.route("/download")
+def download():
+	try:
+		path = request.args['path']
+		return send_file(path)
+	except FileNotFoundError:
+		return "Wrong path specified"
+
+@app.route("/del")
+def delete():
+	try:
+		path = request.args['path']
+		os.remove(path)
+		return "DONE"
+	except FileNotFoundError:
+		return "Wrong path specified"
+
+@app.route("/delall")
+def delall():
+	for a in os.listdir(output):
+		try:
+			rmtree(output + a)
+		except NotADirectoryError:
+			os.remove(output + a)
+		except OSError:
+			pass
+
+	return "DONE"
+
+check_all()
+app.run("0.0.0.0", port)

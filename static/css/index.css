@@ -1,0 +1,13 @@
+body {
+	background-image: url("../imgs/deez.jpg");
+}
+
+ul {
+	margin-right: 200px;
+	margin-left: 200px;
+	text-align: center;
+}
+
+#button {
+	text-align: center;
+}

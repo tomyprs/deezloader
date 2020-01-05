@@ -25,7 +25,9 @@ answers = ["Y", "y", "Yes", "YES"]
 method_get_track = "song.getData"
 method_get_album = "song.getListByAlbum"
 method_get_user = "deezer.getUserData"
+method_get_lyric = "song.getLyrics"
 api_link = "http://www.deezer.com/ajax/gw-light.php"
+s_server = "https://e-cdns-proxy-{}.dzcdn.net/mobile/1/{}"
 
 class Login:
 	def __init__(self, token):
@@ -71,7 +73,7 @@ class Login:
 		if not quality in qualities:
 			raise exceptions.QualityNotFound("The qualities have to be FLAC or MP3_320 or MP3_256 or MP3_128")
 
-		self.token = self.get_api("deezer.getUserData")['checkForm']
+		self.token = self.get_api(method_get_user)['checkForm']
 
 		def get_infos(method, json):
 			infos = None
@@ -84,7 +86,7 @@ class Login:
 		def ultimatum(infos, datas, name, quality):
 			extension = ".mp3"
 			ids = infos['SNG_ID']
-			key = "FILESIZE_" + quality
+			key = "FILESIZE_%s" % quality
 
 			if int(infos[key]) > 0 and quality == "FLAC":
 				quality = "9"
@@ -108,7 +110,7 @@ class Login:
 					raise exceptions.QualityNotFound("The quality chosen can't be downloaded")
 
 				for a in qualities:
-					if int(infos['FILESIZE_' + a]) > 0:
+					if int(infos['FILESIZE_%s' % a]) > 0:
 						quality = qualities[a]['quality']
 						extension = qualities[a]['extension']
 						qualit = qualities[a]['qualit']
@@ -137,7 +139,7 @@ class Login:
 
 			try:
 				crypt = request(
-					"https://e-cdns-proxy-{}.dzcdn.net/mobile/1/{}".format(md5[0], hashs)
+					s_server.format(md5[0], hashs)
 				)
 			except IndexError:
 				raise exceptions.TrackNotFound("Track: %s not found:("  % name)
@@ -145,9 +147,6 @@ class Login:
 			if len(crypt.content) == 0:
 				raise exceptions.TrackNotFound("Something is wrong with %s :(" % name)
 
-			encry = open(name, "wb")
-			encry.write(crypt.content)
-			encry.close()
 			decry = open(name, "wb")
 
 			decryptfile(
@@ -194,7 +193,7 @@ class Login:
 			except KeyError:
 				datas['version'] = ""
 
-			need = self.get_api("song.getLyrics", self.token, json)
+			need = self.get_api(method_get_lyric, self.token, json)
 
 			try:
 				datas['lyric'] = need['LYRICS_TEXT']
@@ -269,12 +268,15 @@ class Login:
 		detas['ar_album'] = datas['ar_album']
 		detas['label'] = datas['label']
 
-		for a in tqdm(
+		t = tqdm(
 			range(
 				len(name)
-			), 
+			),
+			desc = detas['album'],
 			disable = not_interface
-		):
+		)
+
+		for a in t:
 			detas['music'] = datas['music'][a]
 			detas['artist'] = datas['artist'][a]
 			detas['tracknum'] = datas['tracknum'][a]
@@ -284,6 +286,7 @@ class Login:
 			detas['duration'] = datas['duration'][a]
 			detas['isrc'] = datas['isrc'][a]
 			song = "{} - {}".format(detas['music'], detas['artist'])
+			t.set_description_str(song)
 
 			try:
 				nams.append(
@@ -311,7 +314,7 @@ class Login:
 							detas, name[a], quality
 						)
 					)
-				except (exceptions.TrackNotFound, IndexError, exceptions.InvalidLink):
+				except (exceptions.TrackNotFound, IndexError):
 					nams.append(name[a])
 					print("Track not found: %s :(" % song)
 					continue
@@ -338,12 +341,13 @@ class Login:
 
 	def download_trackdee(
 		self, URL,
-		output = stock_output + "/",
+		output = stock_output,
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
 		not_interface = stock_not_interface
 	):
+		output += "/"
 		datas = {}
 
 		ids = (
@@ -431,13 +435,14 @@ class Login:
 
 	def download_albumdee(
 		self, URL,
-		output = stock_output + "/",
+		output = stock_output,
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
 		not_interface = stock_not_interface,
 		zips = stock_zip
 	):
+		output += "/"
 		datas = {}
 		datas['music'] = []
 		datas['artist'] = []
@@ -555,7 +560,7 @@ class Login:
 
 	def download_playlistdee(
 		self, URL,
-		output = stock_output + "/",
+		output = stock_output,
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
@@ -597,7 +602,7 @@ class Login:
 
 	def download_trackspo(
 		self, URL,
-		output = stock_output + "/",
+		output = stock_output,
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
@@ -633,7 +638,7 @@ class Login:
 
 	def download_albumspo(
 		self, URL,
-		output = stock_output + "/",
+		output = stock_output,
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
@@ -717,7 +722,7 @@ class Login:
 
 	def download_playlistspo(
 		self, URL,
-		output = stock_output + "/",
+		output = stock_output,
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
@@ -782,7 +787,7 @@ class Login:
 
 	def download_name(
 		self, artist, song,
-		output = stock_output + "/",
+		output = stock_output,
 		quality = stock_quality,
 		recursive_quality = stock_recursive_quality,
 		recursive_download = stock_recursive_download,
@@ -802,8 +807,8 @@ class Login:
 		try:
 			return self.download_trackspo(
 				search['tracks']['items'][0]['external_urls']['spotify'],
-				output, quality,
-				recursive_quality, recursive_download, not_interface
+				output, quality, recursive_quality,
+				recursive_download, not_interface
 			)
 		except IndexError:
 			raise exceptions.TrackNotFound("Track not found: :(")

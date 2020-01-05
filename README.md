@@ -7,6 +7,7 @@ This project has been created to download songs, albums or playlists with Spotif
 - I am not responsible for the usage of this program by other people.
 - I do not recommend you doing this illegally or against Deezer's terms of service.
 - This project is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+- The css and the js code haven't been coded by me, all thanks go to Shayan (https://codepen.io/shayanea/pen/yvvjya)
 
 * ### OS Supported ###
 	![Linux Support](https://img.shields.io/badge/Linux-Support-brightgreen.svg)
@@ -48,12 +49,18 @@ $ deez-dw -h
   	-z ZIP, --zip ZIP     If is an album or playlist link create a zip archive
                         (True or False)
 
+# WEB interface
+
+Finally **deez-web** avalaible ;)
+```bash
+$ deez-web
+```
+
 ## SETTING
 	[login]
 	token = deezer_arl_token
 
-setting.ini file for use deez-dw
-
+setting.ini file for use deez-dw and deez-web
 
 # Library
 

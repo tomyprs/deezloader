@@ -140,19 +140,17 @@ output = args.output
 quality = args.quality
 
 if quality and quality != "FLAC":
-	quality = "MP3_" + quality
+	quality = "MP3_%s" % quality
 
-recursive_quality = args.recursive_quality
-recursive_download = args.recursive_download
-zips = args.zip
+recursive_quality = bool(args.recursive_quality)
+recursive_download = bool(args.recursive_download)
+zips = bool(args.zip)
 song = args.song
 artist = args.artist
-not_gui = args.not_gui
+not_gui = bool(args.not_gui)
 
 if not output:
-	output = "Songs/"
-else:
-	output += "/"
+	output = "Songs"
 
 if not quality:
 	quality = "MP3_320"
