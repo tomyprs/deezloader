@@ -49,9 +49,7 @@ def check_all():
 
 	if not os.path.exists(folder1):
 		os.makedirs(folder1)
-		folder1 += "%s"
-	
-	if not os.path.exists(folder2):
+		folder1 += "%s"	
 		os.makedirs(folder2)
 		js = "%s/js/" % folder2
 		css = "%s/css/" % folder2
@@ -63,28 +61,28 @@ def check_all():
 		css += "%s"
 		imgs += "%s"
 
-	files = [
-		("deez-web.html", deezweb_utils.deezweb_html, folder1, "w"),
-		("player.html", deezweb_utils.player_html, folder1, "w"), 
-		("s-list.html", deezweb_utils.slist_html, folder1, "w"),
-		("index.css", deezweb_utils.index_css, css, "w"),
-		("player.css", deezweb_utils.player_css, css, "w"),
-		("download.js", deezweb_utils.download_js, js, "w"),
-		("player.js", deezweb_utils.playes_js, js, "w"),
-		("deez.ico", b64decode(deezweb_utils.d_ico), imgs, "wb"),
-		("deez.jpg", b64decode(deezweb_utils.d_jpg), imgs, "wb")
-	]
+		files = [
+			("deez-web.html", deezweb_utils.deezweb_html, folder1, "w"),
+			("player.html", deezweb_utils.player_html, folder1, "w"), 
+			("s-list.html", deezweb_utils.slist_html, folder1, "w"),
+			("index.css", deezweb_utils.index_css, css, "w"),
+			("player.css", deezweb_utils.player_css, css, "w"),
+			("download.js", deezweb_utils.download_js, js, "w"),
+			("player.js", deezweb_utils.playes_js, js, "w"),
+			("deez.ico", b64decode(deezweb_utils.d_ico), imgs, "wb"),
+			("deez.jpg", b64decode(deezweb_utils.d_jpg), imgs, "wb")
+		]
 
-	for a in range(
-		len(files)
-	):
-		f = files[a][0]
-		w = files[a][1]
-		c = files[a][2]
-		m = files[a][3]
-		fil = open(c % f, m)
-		fil.write(w)
-		fil.close()
+		for a in range(
+			len(files)
+		):
+			f = files[a][0]
+			w = files[a][1]
+			c = files[a][2]
+			m = files[a][3]
+			fil = open(c % f, m)
+			fil.write(w)
+			fil.close()
 
 def download_link(link, quality):
 	if "spotify" in link:
