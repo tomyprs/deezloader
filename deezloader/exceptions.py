@@ -12,10 +12,6 @@ class InvalidLink(Exception):
 	def __init__(self, message):
 		super().__init__(message)
 
-class BadCredentials(Exception):
-	def __init__(self, message):
-		super().__init__(message)
-
 class QuotaExceeded(Exception):
 	def __init__(self, message):
 		super().__init__(message)
@@ -25,5 +21,9 @@ class QualityNotFound(Exception):
 		super().__init__(message)
 
 class NoDataApi(Exception):
+	def __init__(self, message):
+		super().__init__(message)
+
+class BadCredentials(Exception):
 	def __init__(self, message):
 		super().__init__(message)

@@ -1,59 +1,40 @@
 #!/usr/bin/python3
 
 import zipfile
-from os import makedirs
-from hashlib import md5
 from requests import get
 from mutagen import File
 from spotipy import oauth2
+from os.path import isfile
+from os import makedirs, remove
 from deezloader import exceptions
 from collections import OrderedDict
-from binascii import a2b_hex, b2a_hex
-from Crypto.Cipher import AES, Blowfish
+from mutagen.id3._util import ID3NoHeaderError
+from mutagen.flac import error as NOTVALIDSONG
+
+from deezloader.deezer_settings import (
+	songs_server, api_album
+)
 
 from mutagen.id3 import (
-	ID3, APIC,
-	USLT, _util
+	ID3, APIC, USLT
 )
 
 from mutagen.flac import (
-	FLAC, Picture,
-	FLACNoHeaderError, error
+	FLAC, Picture, FLACNoHeaderError
 )
 
-qualities = {
-	"FLAC": {
-		"quality": "9",
-		"extension": ".flac",
-		"qualit": "FLAC"
-	},
-	"MP3_320": {
-		"quality": "3",
-		"extension": ".mp3",
-		"qualit": "320"
-	},
-	"MP3_256": {
-		"quality": "5",
-		"extension": ".mp3",
-		"qualit": "256"
-	},
-	"MP3_128": {
-		"quality": "1",
-		"extension": ".mp3",
-		"qualit": "128"
-	}
-}
+from deezloader.deezer_settings import (
+	api_search_trk, cover, header
+)
 
-header = {
-	"Accept-Language": "en-US,en;q=0.5"
-}
-
-cover = "https://e-cdns-images.dzcdn.net/images/cover/%s/1200x1200-000000-80-0-0.jpg"
+from deezloader.others_settings import (
+	spotify_client_id, spotify_client_secret
+)
 
 def generate_token():
 	return oauth2.SpotifyClientCredentials(
-		client_id = "c6b23f1e91f84b6a9361de16aba0ae17",
-		client_secret = "237e355acaa24636abc79f1a089e6204"
+		client_id = spotify_client_id,
+		client_secret = spotify_client_secret
 	).get_access_token()
 
 def choose_img(image):
@@ -63,6 +44,15 @@ def choose_img(image):
 		image = request(cover % "").content
 
 	return image
+
+def get_ids(URL):
+	ids = (
+		URL
+		.split("?utm")[0]
+		.split("/")[-1]
+	)
+
+	return ids
 
 def request(url, control = False):
 	try:
@@ -117,71 +107,15 @@ def check_dir(directory):
 	except FileExistsError:
 		pass
 
-def md5hex(data):
-	hashed = (
-		md5(data)
-		.hexdigest()
-		.encode()
-	)
+def check_md5_song(infos):
+	try:
+		song_md5 = infos['FALLBACK']['MD5_ORIGIN']
+		version = infos['FALLBACK']['MEDIA_VERSION']
+	except KeyError:
+		song_md5 = infos['MD5_ORIGIN']
+		version = infos['MEDIA_VERSION']
 
-	return hashed
-
-def genurl(md5, quality, ids, media):
-	data = b"\xa4".join(
-		a.encode() 
-		for a in [md5, quality, ids, str(media)]
-	)
-
-	data = b"\xa4".join(
-		[md5hex(data), data]
-	) + b"\xa4"
-
-	if len(data) % 16:
-		data += b"\x00" * (16 - len(data) % 16)
-
-	c = AES.new("jo6aey6haid2Teih".encode(), AES.MODE_ECB)
-
-	media_url = b2a_hex(
-		c.encrypt(data)
-	).decode()
-
-	return media_url
-
-def calcbfkey(songid):
-	h = md5hex(
-		b"%d" % int(songid)
-	)
-
-	key = b"g4el58wc0zvf9na1"
-
-	return "".join(
-		chr(
-			h[i] ^ h[i + 16] ^ key[i]
-		) for i in range(16)
-	)
-
-def blowfishDecrypt(data, key):
-	c = Blowfish.new(
-		key.encode(), Blowfish.MODE_CBC,
-		a2b_hex("0001020304050607")
-	)
-
-	return c.decrypt(data)
-
-def decryptfile(fh, key, fo):
-	seg = 0
-
-	for data in fh:
-		if not data:
-			break
-
-		if (seg % 3) == 0 and len(data) == 2048:
-			data = blowfishDecrypt(data, key)
-
-		fo.write(data)
-		seg += 1
-
-	fo.close()
+	return song_md5, version
 
 def var_excape(string):
 	string = (
@@ -199,6 +133,78 @@ def var_excape(string):
 
 	return string
 
+def not_found(song, title):
+	url = request(
+		api_search_trk % song.replace("#", ""), True
+	).json()
+
+	for b in range(url['total'] + 1):
+		if url['data'][b]['title'] == title or title in url['data'][b]['title_short']:
+			ids = url['data'][b]['link'].split("/")[-1]
+			break
+
+	return ids
+
+def song_exist(n, song_hash):
+	crypted_audio = request(
+		songs_server.format(n, song_hash)
+	)
+
+	if len(crypted_audio.content) == 0:
+		raise exceptions.TrackNotFound("")
+
+	return crypted_audio
+
+def tracking(URL, album = None):
+	datas= {}
+	json_track = request(URL, True).json()
+
+	if not album:
+		json_album = request(
+			api_album % str(json_track['album']['id']), True
+		).json()
+
+		datas['genre'] = []
+
+		try:
+			for a in json_album['genres']['data']:
+				datas['genre'].append(a['name'])
+		except KeyError:
+			pass
+
+		datas['genre'] = " & ".join(datas['genre'])
+		datas['ar_album'] = []
+
+		for a in json_album['contributors']:
+			if a['role'] == "Main":
+				datas['ar_album'].append(a['name'])
+
+		datas['ar_album'] = " & ".join(datas['ar_album'])
+		datas['album'] = json_album['title']
+		datas['label'] = json_album['label']
+		datas['upc'] = json_album['upc']
+
+	datas['music'] = json_track['title']
+	array = []
+
+	for a in json_track['contributors']:
+		if a['name'] != "":
+			array.append(a['name'])
+
+	array.append(
+		json_track['artist']['name']
+	)
+
+	datas['artist'] = artist_sort(array)
+	datas['tracknum'] = str(json_track['track_position'])
+	datas['discnum'] = str(json_track['disk_number'])
+	datas['year'] = json_track['release_date']
+	datas['bpm'] = str(json_track['bpm'])
+	datas['gain'] = str(json_track['gain'])
+	datas['duration'] = str(json_track['duration'])
+	datas['isrc'] = json_track['isrc']
+	return datas
+
 def write_tags(song, data):
 	try:
 		tag = FLAC(song)
@@ -214,8 +220,11 @@ def write_tags(song, data):
 			tag = File(song, easy = True)
 			tag.delete()
 		except:
+			if isfile(song):
+				remove(song)
+
 			raise exceptions.TrackNotFound("")
-	except error:
+	except NOTVALIDSONG:
 		raise exceptions.TrackNotFound("")
 
 	tag['artist'] = data['artist']
@@ -260,5 +269,5 @@ def write_tags(song, data):
 		)
 
 		audio.save()
-	except _util.ID3NoHeaderError:
+	except ID3NoHeaderError:
 		pass
