@@ -200,7 +200,6 @@ def tracking(URL, album = None):
 	datas['discnum'] = str(json_track['disk_number'])
 	datas['year'] = json_track['release_date']
 	datas['bpm'] = str(json_track['bpm'])
-	datas['gain'] = str(json_track['gain'])
 	datas['duration'] = str(json_track['duration'])
 	datas['isrc'] = json_track['isrc']
 	return datas
@@ -242,7 +241,6 @@ def write_tags(song, data):
 	tag['length'] = data['duration']
 	tag['organization'] = data['label']
 	tag['isrc'] = data['isrc']
-	tag['replaygain_*_gain'] = data['gain']
 	tag['lyricist'] = data['lyricist']
 	tag.save()
 

@@ -278,7 +278,6 @@ class Login:
 				detas['tracknum'] = datas['tracknum'][a]
 				detas['discnum'] = datas['discnum'][a]
 				detas['bpm'] = datas['bpm'][a]
-				detas['gain'] = datas['gain'][a]
 				detas['duration'] = datas['duration'][a]
 				detas['isrc'] = datas['isrc'][a]
 				song = "{} - {}".format(detas['music'], detas['artist'])
@@ -410,7 +409,6 @@ class Login:
 		datas['tracknum'] = []
 		datas['discnum'] = []
 		datas['bpm'] = []
-		datas['gain'] = []
 		datas['duration'] = []
 		datas['isrc'] = []
 		names = []
@@ -447,7 +445,6 @@ class Login:
 			datas['tracknum'].append(tracknum)
 			datas['discnum'].append(discnum)
 			datas['bpm'].append(detas['bpm'])
-			datas['gain'].append(detas['gain'])
 			datas['duration'].append(detas['duration'])
 			datas['isrc'].append(detas['isrc'])
 			datas['artist'].append(detas['artist'])
