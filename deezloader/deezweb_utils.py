@@ -12,10 +12,181 @@ d_jpg = (
 """
 )
 
+css404 = (
+"""
+* {
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+body {
+	padding: 0;
+	margin: 0;
+}
+
+#notfound {
+	position: relative;
+	height: 100vh;
+}
+
+#notfound .notfound {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.notfound {
+	max-width: 520px;
+	width: 100%;
+	line-height: 1.4;
+}
+
+.notfound .notfound-404 {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 150px;
+	width: 200px;
+	z-index: -1;
+}
+
+.notfound .notfound-404 h1 {
+	font-family: 'Poppins', sans-serif;
+	font-size: 238px;
+	font-weight: 700;
+	margin: 0px;
+	color: #e3e3e3;
+	text-transform: uppercase;
+	letter-spacing: 7px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.notfound h2 {
+	font-family: 'Poppins', sans-serif;
+	font-size: 28px;
+	font-weight: 400;
+	text-transform: uppercase;
+	color: #222;
+	margin-top: 12px;
+	margin-bottom: 15px;
+}
+
+.notfound .notfound-search {
+	position: relative;
+	padding-right: 123px;
+	width: 100%;
+	margin: 30px 0px 20px;
+}
+
+.notfound .notfound-search input {
+	font-family: 'Poppins', sans-serif;
+	width: 100%;
+	height: 40px;
+	padding: 3px 15px;
+	color: #222;
+	font-size: 18px;
+	font-weight: 400;
+	background: #fff;
+	border: 2px solid rgba(21, 23, 35, 0.2);
+	-webkit-transition: 0.2s all;
+	transition: 0.2s all;
+}
+
+.notfound .notfound-search input:focus {
+	border-color: #57a3f8;
+}
+
+.notfound .notfound-search button {
+	font-family: 'Poppins', sans-serif;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 120px;
+	height: 40px;
+	text-align: center;
+	border: none;
+	background: #57a3f8;
+	cursor: pointer;
+	padding: 0;
+	color: #fff;
+	font-weight: 700;
+	font-size: 18px;
+}
+
+.notfound a {
+	font-family: 'Poppins', sans-serif;
+	display: inline-block;
+	font-weight: 700;
+	border-radius: 15px;
+	text-decoration: none;
+	color: #57a3f8;
+}
+
+.notfound a:hover {
+	color: #57a3f8;
+}
+
+.notfound a>.arrow {
+	position: relative;
+	top: -2px;
+	border: solid #57a3f8;
+	border-width: 0 3px 3px 0;
+	display: inline-block;
+	padding: 3px;
+	-webkit-transform: rotate(135deg);
+	-ms-transform: rotate(135deg);
+	transform: rotate(135deg);
+}
+
+@media only screen and (max-width: 767px) {
+	.notfound .notfound-404 {
+		height: 110px;
+		line-height: 110px;
+	}
+
+	.notfound .notfound-404 h1 {
+		font-size: 170px;
+	}
+
+	.notfound h2 {
+		font-size: 24px;
+	}
+
+	.notfound .notfound-search {
+		margin: 10px 0px 20px;
+	}
+}
+
+@media only screen and (max-width: 480px) {
+	.notfound .notfound-404 {
+		left: 40px;
+	}
+
+	.notfound .notfound-404 h1 {
+		font-size: 120px;
+	}
+
+	.notfound h2 {
+		font-size: 18px;
+	}
+}
+"""
+)
+
 index_css = (
 """
 body {
 	background-image: url("../imgs/deez.jpg");
+	margin-left: 20%;
+	margin-right: 20%;
 }
 
 ul {
@@ -27,182 +198,1540 @@ ul {
 #button {
 	text-align: center;
 }
+
+.hidden {
+	display: none;
+}
+
+#load {
+	color: green;
+	margin-top: 25%;
+}
 """
 )
 
 player_css = (
 """
-@import url("https://fonts.googleapis.com/css?family=Fira+Sans");
-html, body {
-  position: relative;
-  min-height: 100vh;
-  background-color: #FFF0F5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Fira Sans", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+*:focus {
+	outline: none;
 }
 
-.player {
-  position: relative;
+body {
+	font-family: Helvetica, Arial;
+	margin: 0;
+	background-color: #ffeff5;
 }
-.player .info {
-  position: absolute;
-  height: 60px;
-  top: 0;
-  opacity: 0;
-  left: 10px;
-  right: 10px;
-  background-color: rgba(255, 255, 255, 0.5);
-  padding: 5px 15px 5px 110px;
-  border-radius: 15px;
-  transition: all .5s ease;
+
+#app-cover {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	left: 0;
+	width: 430px;
+	height: 100px;
+	margin: -4px auto;
 }
-.player .info .artist,
-.player .info .name {
-  display: block;
+
+#bg-layer {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color: #fff;
+	opacity: 0.51;
+	z-index: 2;
 }
-.player .info .artist {
-  color: #222;
-  font-size: 16px;
-  margin-bottom: 5px;
+
+#player {
+	position: relative;
+	height: 100%;
+	z-index: 3;
 }
-.player .info .name {
-  color: #999;
-  font-size: 12px;
-  margin-bottom: 8px;
+
+#player-track {
+	position: absolute;
+	top: 0;
+	right: 15px;
+	left: 15px;
+	padding: 13px 22px 10px 184px;
+	background-color: #fff7f7;
+	border-radius: 15px 15px 0 0;
+	transition: 0.3s ease top;
+	z-index: 1;
 }
-.player .info .progress-bar {
-  background-color: #ddd;
-  height: 2px;
-  width: 100%;
-  position: relative;
+
+#player-track.active {
+	top: -92px;
 }
-.player .info .progress-bar .bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  background-color: red;
-  width: 10%;
-  transition: all .2s ease;
+
+#album-name {
+	color: #54576f;
+	font-size: 17px;
+	font-weight: bold;
 }
-.player .info.active {
-  top: -60px;
-  opacity: 1;
-  transition: all .5s ease;
+
+#track-name {
+	color: #acaebd;
+	font-size: 13px;
+	margin: 2px 0 13px 0;
 }
-.player .control-panel {
-  position: relative;
-  background-color: #fff;
-  border-radius: 15px;
-  width: 300px;
-  height: 80px;
-  z-index: 5;
-  box-shadow: 0px 20px 20px 5px rgba(132, 132, 132, 0.3);
+
+#track-time {
+	height: 12px;
+	margin-bottom: 3px;
+	overflow: hidden;
 }
-.player .control-panel .album-art {
-  position: absolute;
-  left: 20px;
-  top: -15px;
-  height: 80px;
-  width: 80px;
-  border-radius: 50%;
-  box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0);
-  transform: scale(1);
-  transition: all .5s ease;
+
+#current-time {
+	float: left;
 }
-.player .control-panel .album-art::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 15px;
-  height: 15px;
-  background-color: #fff;
-  border-radius: 50%;
-  z-index: 5;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
+
+#track-length {
+	float: right;
 }
-.player .control-panel .album-art::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 50%;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 80px;
+
+#current-time,
+#track-length {
+	color: transparent;
+	font-size: 11px;
+	background-color: #ffe8ee;
+	border-radius: 10px;
+	transition: 0.3s ease all;
 }
-.player .control-panel.active .album-art {
-  box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.2);
-  transform: scale(1.2);
-  transition: all .5s ease;
+
+#track-time.active #current-time,
+#track-time.active #track-length {
+	color: #f86d92;
+	background-color: transparent;
 }
-.player .control-panel.active .album-art::before {
-  animation: rotation 3s infinite linear;
-  -webkit-animation: rotation 3s infinite linear;
-  animation-fill-mode: forwards;
+
+#s-area,
+#seek-bar {
+	position: relative;
+	height: 4px;
+	border-radius: 4px;
 }
-@keyframes rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+
+#s-area {
+	background-color: #ffe8ee;
+	cursor: pointer;
 }
-.player .control-panel .controls {
-  display: flex;
-  justify-content: flex-end;
-  height: 80px;
-  padding: 0 15px;
+
+#ins-time {
+	position: absolute;
+	top: -29px;
+	color: #fff;
+	font-size: 12px;
+	white-space: pre;
+	padding: 5px 6px;
+	border-radius: 4px;
+	display: none;
 }
-.player .control-panel .controls .prev,
-.player .control-panel .controls .play,
-.player .control-panel .controls .next {
-  width: 55px;
-  height: auto;
-  border-radius: 10px;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: 20px;
-  margin: 5px 0;
-  background-color: #fff;
-  cursor: pointer;
-  transition: background-color .3s ease;
-  -webkit-transition: background-color .3s ease;
+
+#s-hover {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	opacity: 0.2;
+	z-index: 2;
 }
-.player .control-panel .controls .prev:hover,
-.player .control-panel .controls .play:hover,
-.player .control-panel .controls .next:hover {
-  background-color: #eee;
-  transition: background-color .3s ease;
-  -webkit-transition: background-color .3s ease;
+
+#ins-time,
+#s-hover {
+	background-color: #3b3d50;
 }
-.player .control-panel .controls .prev {
-  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDI1MC40ODggMjUwLjQ4OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjUwLjQ4OCAyNTAuNDg4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlByZXZpb3VzX3RyYWNrIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik0yMzcuNDg0LDIyLjU4N2MtMy4yNjYsMC03LjU5MS0wLjQwMS0xMS4wNzIsMi4wMDVsLTkyLjI2NCw3Ny45MVYzNy4yNTIgICBjMC0yLjUwNywwLjA1Ny0xNC42NjYtMTMuMDA0LTE0LjY2NmMtMy4yNjUsMC03LjU5LTAuNDAxLTExLjA3MiwyLjAwNUw4LjEwNywxMTAuNjkzYy05LjY2OSw2LjY3NC03Ljk5NywxNC41NTEtNy45OTcsMTQuNTUxICAgcy0xLjY3MSw3Ljg3OCw3Ljk5NywxNC41NTFsMTAxLjk2NSw4Ni4xMDJjMy40ODIsMi40MDUsNy44MDcsMi4wMDQsMTEuMDcyLDIuMDA0YzEzLjA2MiwwLDEzLjAwNC0xMS43LDEzLjAwNC0xNC42NjZ2LTY1LjI0OSAgIGw5Mi4yNjQsNzcuOTExYzMuNDgyLDIuNDA1LDcuODA3LDIuMDA0LDExLjA3MiwyLjAwNGMxMy4wNjIsMCwxMy4wMDQtMTEuNywxMy4wMDQtMTQuNjY2VjM3LjI1MiAgIEMyNTAuNDg4LDM0Ljc0NiwyNTAuNTQ2LDIyLjU4NywyMzcuNDg0LDIyLjU4N3oiIGZpbGw9IiNjMmM2Y2YiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
+
+#seek-bar {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 0;
+	background-color: #fd6d94;
+	transition: 0.2s ease width;
+	z-index: 1;
 }
-.player .control-panel .controls .play {
-  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi4xNTMgMjMyLjE1MyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjE1MyAyMzIuMTUzOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBsYXkiPgoJPHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkOyIgZD0iTTIwMy43OTEsOTkuNjI4TDQ5LjMwNywyLjI5NGMtNC41NjctMi43MTktMTAuMjM4LTIuMjY2LTE0LjUyMS0yLjI2NiAgIGMtMTcuMTMyLDAtMTcuMDU2LDEzLjIyNy0xNy4wNTYsMTYuNTc4djE5OC45NGMwLDIuODMzLTAuMDc1LDE2LjU3OSwxNy4wNTYsMTYuNTc5YzQuMjgzLDAsOS45NTUsMC40NTEsMTQuNTIxLTIuMjY3ICAgbDE1NC40ODMtOTcuMzMzYzEyLjY4LTcuNTQ1LDEwLjQ4OS0xNi40NDksMTAuNDg5LTE2LjQ0OVMyMTYuNDcxLDEwNy4xNzIsMjAzLjc5MSw5OS42Mjh6IiBmaWxsPSIjYzJjNmNmIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==);
+
+#player-content {
+	position: relative;
+	height: 100%;
+	background-color: #fff;
+	box-shadow: 0 30px 80px #656565;
+	border-radius: 15px;
+	z-index: 2;
 }
-.player .control-panel .controls .next {
-  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDI1MC40ODggMjUwLjQ4OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjUwLjQ4OCAyNTAuNDg4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9Ik5leHRfdHJhY2tfMiI+Cgk8cGF0aCBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7IiBkPSJNMjQyLjM4MSwxMTAuNjkzTDE0MC40MTUsMjQuNTkxYy0zLjQ4LTIuNDA2LTcuODA1LTIuMDA1LTExLjA3MS0yLjAwNSAgIGMtMTMuMDYxLDAtMTMuMDAzLDExLjctMTMuMDAzLDE0LjY2NnY2NS4yNDlsLTkyLjI2NS03Ny45MWMtMy40ODItMi40MDYtNy44MDctMi4wMDUtMTEuMDcyLTIuMDA1ICAgQy0wLjA1NywyMi41ODcsMCwzNC4yODcsMCwzNy4yNTJ2MTc1Ljk4M2MwLDIuNTA3LTAuMDU3LDE0LjY2NiwxMy4wMDQsMTQuNjY2YzMuMjY1LDAsNy41OSwwLjQwMSwxMS4wNzItMi4wMDVsOTIuMjY1LTc3LjkxICAgdjY1LjI0OWMwLDIuNTA3LTAuMDU4LDE0LjY2NiwxMy4wMDMsMTQuNjY2YzMuMjY2LDAsNy41OTEsMC40MDEsMTEuMDcxLTIuMDA1bDEwMS45NjYtODYuMTAxICAgYzkuNjY4LTYuNjc1LDcuOTk3LTE0LjU1MSw3Ljk5Ny0xNC41NTFTMjUyLjA0OSwxMTcuMzY3LDI0Mi4zODEsMTEwLjY5M3oiIGZpbGw9IiNjMmM2Y2YiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
+
+#album-art {
+	position: absolute;
+	top: -40px;
+	width: 115px;
+	height: 115px;
+	margin-left: 40px;
+	transform: rotateZ(0);
+	transition: 0.3s ease all;
+	box-shadow: 0 0 0 10px #fff;
+	border-radius: 50%;
+	overflow: hidden;
 }
-.player .control-panel.active .controls .play {
-  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi42NzkgMjMyLjY3OSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjY3OSAyMzIuNjc5OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBhdXNlIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik04MC41NDMsMEgzNS43OTdjLTkuODg1LDAtMTcuODk4LDguMDE0LTE3Ljg5OCwxNy44OTh2MTk2Ljg4MyAgIGMwLDkuODg1LDguMDEzLDE3Ljg5OCwxNy44OTgsMTcuODk4aDQ0Ljc0NmM5Ljg4NSwwLDE3Ljg5OC04LjAxMywxNy44OTgtMTcuODk4VjE3Ljg5OEM5OC40NCw4LjAxNCw5MC40MjcsMCw4MC41NDMsMHogTTE5Ni44ODIsMCAgIGgtNDQuNzQ2Yy05Ljg4NiwwLTE3Ljg5OSw4LjAxNC0xNy44OTksMTcuODk4djE5Ni44ODNjMCw5Ljg4NSw4LjAxMywxNy44OTgsMTcuODk5LDE3Ljg5OGg0NC43NDYgICBjOS44ODUsMCwxNy44OTgtOC4wMTMsMTcuODk4LTE3Ljg5OFYxNy44OThDMjE0Ljc4MSw4LjAxNCwyMDYuNzY3LDAsMTk2Ljg4MiwweiIgZmlsbD0iI2MyYzZjZiIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=);
+
+#album-art.active {
+	top: -60px;
+	box-shadow: 0 0 0 4px #fff7f7, 0 30px 50px -15px #afb7c1;
+}
+
+#album-art:before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	right: 0;
+	left: 0;
+	width: 20px;
+	height: 20px;
+	margin: -10px auto 0 auto;
+	background-color: #d6dee7;
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 2px #fff;
+	z-index: 2;
+}
+
+#album-art img {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	z-index: -1;
+}
+
+#album-art img.active {
+	opacity: 1;
+	z-index: 1;
+}
+
+#album-art.active img.active {
+	z-index: 1;
+	animation: rotateAlbumArt 3s linear 0s infinite forwards;
+}
+
+@keyframes rotateAlbumArt {
+	0% {
+		transform: rotateZ(0);
+	}
+
+	100% {
+		transform: rotateZ(360deg);
+	}
+}
+
+#buffer-box {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	left: 0;
+	height: 13px;
+	color: #1f1f1f;
+	font-size: 13px;
+	font-family: Helvetica;
+	text-align: center;
+	font-weight: bold;
+	line-height: 1;
+	padding: 6px;
+	margin: -12px auto 0 auto;
+	background-color: rgba(255, 255, 255, 0.19);
+	opacity: 0;
+	z-index: 2;
+}
+
+#album-art img,
+#buffer-box {
+	transition: 0.1s linear all;
+}
+
+#album-art.buffering img {
+	opacity: 0.25;
+}
+
+#album-art.buffering img.active {
+	opacity: 0.8;
+	filter: blur(2px);
+	-webkit-filter: blur(2px);
+}
+
+#album-art.buffering #buffer-box {
+	opacity: 1;
+}
+
+#player-controls {
+	width: 250px;
+	height: 100%;
+	margin: 0 5px 0 141px;
+	float: right;
+	overflow: hidden;
+}
+
+.control {
+	width: 33.333%;
+	float: left;
+	padding: 12px 0;
+}
+
+.button {
+	width: 26px;
+	height: 26px;
+	padding: 25px;
+	background-color: #fff;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.button i {
+	display: block;
+	color: #d6dee7;
+	font-size: 26px;
+	text-align: center;
+	line-height: 1;
+}
+
+.button,
+.button i {
+	transition: 0.2s ease all;
+}
+
+.button:hover {
+	background-color: #d6d6de;
+}
+
+.button:hover i {
+	color: #fff;
+}
+
+.prev,
+.play,
+.next,
+.pause {
+	width: 55px;
+	height: auto;
+	border-radius: 10px;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 20px;
+	margin: 5px 0;
+	background-color: #fff;
+	cursor: pointer;
+	transition: background-color .3s ease;
+	-webkit-transition: background-color .3s ease;
+}
+
+.prev:hover,
+.play:hover,
+.next:hover,
+.pause:hover {
+	background-color: #eee;
+	transition: background-color .3s ease;
+	-webkit-transition: background-color .3s ease;
+}
+
+.prev {
+	background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDI1MC40ODggMjUwLjQ4OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjUwLjQ4OCAyNTAuNDg4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlByZXZpb3VzX3RyYWNrIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik0yMzcuNDg0LDIyLjU4N2MtMy4yNjYsMC03LjU5MS0wLjQwMS0xMS4wNzIsMi4wMDVsLTkyLjI2NCw3Ny45MVYzNy4yNTIgICBjMC0yLjUwNywwLjA1Ny0xNC42NjYtMTMuMDA0LTE0LjY2NmMtMy4yNjUsMC03LjU5LTAuNDAxLTExLjA3MiwyLjAwNUw4LjEwNywxMTAuNjkzYy05LjY2OSw2LjY3NC03Ljk5NywxNC41NTEtNy45OTcsMTQuNTUxICAgcy0xLjY3MSw3Ljg3OCw3Ljk5NywxNC41NTFsMTAxLjk2NSw4Ni4xMDJjMy40ODIsMi40MDUsNy44MDcsMi4wMDQsMTEuMDcyLDIuMDA0YzEzLjA2MiwwLDEzLjAwNC0xMS43LDEzLjAwNC0xNC42NjZ2LTY1LjI0OSAgIGw5Mi4yNjQsNzcuOTExYzMuNDgyLDIuNDA1LDcuODA3LDIuMDA0LDExLjA3MiwyLjAwNGMxMy4wNjIsMCwxMy4wMDQtMTEuNywxMy4wMDQtMTQuNjY2VjM3LjI1MiAgIEMyNTAuNDg4LDM0Ljc0NiwyNTAuNTQ2LDIyLjU4NywyMzcuNDg0LDIyLjU4N3oiIGZpbGw9IiNjMmM2Y2YiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
+}
+
+.play {
+	background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi4xNTMgMjMyLjE1MyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjE1MyAyMzIuMTUzOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBsYXkiPgoJPHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkOyIgZD0iTTIwMy43OTEsOTkuNjI4TDQ5LjMwNywyLjI5NGMtNC41NjctMi43MTktMTAuMjM4LTIuMjY2LTE0LjUyMS0yLjI2NiAgIGMtMTcuMTMyLDAtMTcuMDU2LDEzLjIyNy0xNy4wNTYsMTYuNTc4djE5OC45NGMwLDIuODMzLTAuMDc1LDE2LjU3OSwxNy4wNTYsMTYuNTc5YzQuMjgzLDAsOS45NTUsMC40NTEsMTQuNTIxLTIuMjY3ICAgbDE1NC40ODMtOTcuMzMzYzEyLjY4LTcuNTQ1LDEwLjQ4OS0xNi40NDksMTAuNDg5LTE2LjQ0OVMyMTYuNDcxLDEwNy4xNzIsMjAzLjc5MSw5OS42Mjh6IiBmaWxsPSIjYzJjNmNmIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==);
+}
+
+.next {
+	background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDI1MC40ODggMjUwLjQ4OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjUwLjQ4OCAyNTAuNDg4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9Ik5leHRfdHJhY2tfMiI+Cgk8cGF0aCBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7IiBkPSJNMjQyLjM4MSwxMTAuNjkzTDE0MC40MTUsMjQuNTkxYy0zLjQ4LTIuNDA2LTcuODA1LTIuMDA1LTExLjA3MS0yLjAwNSAgIGMtMTMuMDYxLDAtMTMuMDAzLDExLjctMTMuMDAzLDE0LjY2NnY2NS4yNDlsLTkyLjI2NS03Ny45MWMtMy40ODItMi40MDYtNy44MDctMi4wMDUtMTEuMDcyLTIuMDA1ICAgQy0wLjA1NywyMi41ODcsMCwzNC4yODcsMCwzNy4yNTJ2MTc1Ljk4M2MwLDIuNTA3LTAuMDU3LDE0LjY2NiwxMy4wMDQsMTQuNjY2YzMuMjY1LDAsNy41OSwwLjQwMSwxMS4wNzItMi4wMDVsOTIuMjY1LTc3LjkxICAgdjY1LjI0OWMwLDIuNTA3LTAuMDU4LDE0LjY2NiwxMy4wMDMsMTQuNjY2YzMuMjY2LDAsNy41OTEsMC40MDEsMTEuMDcxLTIuMDA1bDEwMS45NjYtODYuMTAxICAgYzkuNjY4LTYuNjc1LDcuOTk3LTE0LjU1MSw3Ljk5Ny0xNC41NTFTMjUyLjA0OSwxMTcuMzY3LDI0Mi4zODEsMTEwLjY5M3oiIGZpbGw9IiNjMmM2Y2YiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
+}
+
+.pause {
+	background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi42NzkgMjMyLjY3OSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjY3OSAyMzIuNjc5OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBhdXNlIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik04MC41NDMsMEgzNS43OTdjLTkuODg1LDAtMTcuODk4LDguMDE0LTE3Ljg5OCwxNy44OTh2MTk2Ljg4MyAgIGMwLDkuODg1LDguMDEzLDE3Ljg5OCwxNy44OTgsMTcuODk4aDQ0Ljc0NmM5Ljg4NSwwLDE3Ljg5OC04LjAxMywxNy44OTgtMTcuODk4VjE3Ljg5OEM5OC40NCw4LjAxNCw5MC40MjcsMCw4MC41NDMsMHogTTE5Ni44ODIsMCAgIGgtNDQuNzQ2Yy05Ljg4NiwwLTE3Ljg5OSw4LjAxNC0xNy44OTksMTcuODk4djE5Ni44ODNjMCw5Ljg4NSw4LjAxMywxNy44OTgsMTcuODk5LDE3Ljg5OGg0NC43NDYgICBjOS44ODUsMCwxNy44OTgtOC4wMTMsMTcuODk4LTE3Ljg5OFYxNy44OThDMjE0Ljc4MSw4LjAxNCwyMDYuNzY3LDAsMTk2Ljg4MiwweiIgZmlsbD0iI2MyYzZjZiIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=);
+}
+"""
+)
+
+playlist_css = (
+"""
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700");
+
+:root {
+	--color: #faa700;
+	--color-light: #f5ede1;
+	--dark: #a7a7a7;
+	--dark: #8a8a8a;
+	--darker: #303030;
+	--sans-serif: 'Roboto', sans-serif;
+}
+
+body {
+	background: #0a1a24;
+}
+
+#bg-artwork {
+	position: fixed;
+	top: -30px;
+	right: -30px;
+	bottom: -30px;
+	left: -30px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: 50%;
+	filter: blur(40px);
+	-webkit-filter: blur(40px);
+	z-index: -1;
+}
+
+.background img {
+	max-width: 100%;
+	max-height: 100vh;
+	box-shadow: inset 0px -17vw 30vw 1vw #131313;
+}
+
+.background+section {
+	margin-top: 60vmin;
+	background: transparent;
+	--dark: rgba(white, .5);
+	--dark: rgba(white, .6);
+	--darker: rgba(white, .8);
+}
+
+.background+section .bookmark {
+	border-color: rgba(255, 255, 255, 0.2);
+}
+
+.background+section .bookmark svg {
+	fill: #fff;
+}
+
+.background+section .album-tracks {
+	background: rgba(255, 255, 255, 0.1);
+	border: none;
+}
+
+section {
+	background: #fafafa;
+	margin: 100px 56px;
+	padding: 20px 56px;
+	color: var(--darker);
+}
+
+section .album-info:after {
+	content: " ";
+	display: block;
+	height: 0;
+	clear: both;
+}
+
+section .album-art {
+	float: left;
+	width: 220px;
+	margin-right: 20px;
+	margin-bottom: 20px;
+}
+
+section .album-art * {
+	border-radius: 3px;
+}
+
+section .album-art img {
+	width: 100%;
+	margin-bottom: 10px;
+	margin-top: -80px;
+	box-shadow: 0 5px 60px -3px rgba(0, 0, 0, 0.18);
+}
+
+section .plays {
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	align-items: center;
+	align-content: initial;
+	color: white;
+	background: var(--color);
+	padding: 10px;
+	text-transform: uppercase;
+	-webkit-box-flex: 1;
+	flex: 1 0 50%;
+}
+
+section .bookmark {
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	align-items: center;
+	align-content: initial;
+	width: 48px;
+	height: 48px;
+	border: 3px solid var(--color-light);
+	margin-left: 10px;
+}
+
+section .album-details>* {
+	padding: 10px 0;
+}
+
+section h2 {
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: initial;
+	justify-content: initial;
+	-webkit-box-align: center;
+	align-items: center;
+	align-content: initial;
+	color: var(--dark);
+	font-size: 16px;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+section h2 img {
+	width: 60px;
+	border-radius: 50%;
+	margin-right: 10px;
+}
+
+section h1 {
+	font-size: 50px;
+	font-weight: 300;
+	word-wrap: break-word;
+}
+
+section h1+span {
+	color: var(--dark);
+}
+
+section h1+span span:first-child {
+	padding-right: 20px;
+}
+
+section p {
+	margin-top: 15px;
+}
+
+section .album-tracks {
+	background: #f8f8f8;
+	border: 1px solid #efefef;
+	margin-top: 20px;
+}
+
+@media (max-width: 800px) {
+	section {
+		margin: 100px 36px 36px 36px;
+	}
+}
+
+@media (max-width: 700px) {
+	section .album-art {
+		width: 100%;
+	}
+
+	section .album-art img {
+		width: auto;
+		max-width: 100%;
+		margin: -100px auto 10px auto;
+		display: block;
+	}
+
+	section .album-details {
+		float: left;
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 550px) {
+	section {
+		margin: 100px 20px 20px 20px;
+		padding: 20px 16px;
+	}
+
+	section ol {
+		padding: 16px;
+	}
+}
+
+ol {
+	list-style-type: none;
+	padding: 20px 36px;
+	font-weight: 500;
+}
+
+ol li {
+	counter-increment: number;
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: justify;
+	justify-content: space-between;
+	-webkit-box-align: center;
+	align-items: center;
+	align-content: initial;
+	height: 45px;
+	color: var(--dark);
+}
+
+ol li span:not(:last-child) {
+	margin-right: 2em;
+}
+
+@media (max-width: 700px) {
+	ol li span:not(:last-child) {
+		margin-right: 1em;
+	}
+}
+
+ol li span:first-child {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	color: var(--darker);
+}
+
+ol li span:first-child:before {
+	content: counter(number);
+	margin-right: 2em;
+	color: var(--dark);
+	display: inline-block;
+	text-align: end;
+	width: 20px;
+}
+
+.actions {
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: initial;
+	justify-content: initial;
+	-webkit-box-align: initial;
+	align-items: initial;
+	align-content: initial;
+	-webkit-box-flex: 1;
+	flex: 1 1 100%;
+}
+
+.control {
+	width: 33.333%;
+	float: left;
+	padding: 12px 0;
+}
+
+.button {
+	width: 26px;
+	height: 26px;
+	padding: 25px;
+	background-color: #fff;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.button i {
+	display: block;
+	color: #d6dee7;
+	font-size: 26px;
+	text-align: center;
+	line-height: 1;
+}
+
+.button,
+.button i {
+	transition: 0.2s ease all;
+}
+
+.button:hover {
+	background-color: #d6d6de;
+}
+
+.button:hover i {
+	color: #fff;
+}
+
+.play,
+.pause {
+	width: 55px;
+	height: auto;
+	border-radius: 10px;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 20px;
+	margin: 5px 0;
+	background-color: #fff;
+	cursor: pointer;
+	transition: background-color .3s ease;
+	-webkit-transition: background-color .3s ease;
+}
+
+.play:hover,
+.pause:hover {
+	background-color: #eee;
+	transition: background-color .3s ease;
+	-webkit-transition: background-color .3s ease;
+}
+
+.play {
+	background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi4xNTMgMjMyLjE1MyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjE1MyAyMzIuMTUzOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBsYXkiPgoJPHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkOyIgZD0iTTIwMy43OTEsOTkuNjI4TDQ5LjMwNywyLjI5NGMtNC41NjctMi43MTktMTAuMjM4LTIuMjY2LTE0LjUyMS0yLjI2NiAgIGMtMTcuMTMyLDAtMTcuMDU2LDEzLjIyNy0xNy4wNTYsMTYuNTc4djE5OC45NGMwLDIuODMzLTAuMDc1LDE2LjU3OSwxNy4wNTYsMTYuNTc5YzQuMjgzLDAsOS45NTUsMC40NTEsMTQuNTIxLTIuMjY3ICAgbDE1NC40ODMtOTcuMzMzYzEyLjY4LTcuNTQ1LDEwLjQ4OS0xNi40NDksMTAuNDg5LTE2LjQ0OVMyMTYuNDcxLDEwNy4xNzIsMjAzLjc5MSw5OS42Mjh6IiBmaWxsPSIjYzJjNmNmIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==);
+}
+
+.pause {
+	background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi42NzkgMjMyLjY3OSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjY3OSAyMzIuNjc5OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBhdXNlIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik04MC41NDMsMEgzNS43OTdjLTkuODg1LDAtMTcuODk4LDguMDE0LTE3Ljg5OCwxNy44OTh2MTk2Ljg4MyAgIGMwLDkuODg1LDguMDEzLDE3Ljg5OCwxNy44OTgsMTcuODk4aDQ0Ljc0NmM5Ljg4NSwwLDE3Ljg5OC04LjAxMywxNy44OTgtMTcuODk4VjE3Ljg5OEM5OC40NCw4LjAxNCw5MC40MjcsMCw4MC41NDMsMHogTTE5Ni44ODIsMCAgIGgtNDQuNzQ2Yy05Ljg4NiwwLTE3Ljg5OSw4LjAxNC0xNy44OTksMTcuODk4djE5Ni44ODNjMCw5Ljg4NSw4LjAxMywxNy44OTgsMTcuODk5LDE3Ljg5OGg0NC43NDYgICBjOS44ODUsMCwxNy44OTgtOC4wMTMsMTcuODk4LTE3Ljg5OFYxNy44OThDMjE0Ljc4MSw4LjAxNCwyMDYuNzY3LDAsMTk2Ljg4MiwweiIgZmlsbD0iI2MyYzZjZiIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=);
+}
+
+#redirect-artist,
+#redirect-player {
+	color: black;
+}
+
+#redirect-artist:hover,
+#redirect-player:hover {
+	color: red;
+	text-decoration: none;
 }
 """
 )
 
 download_js = (
 """
-function back_json(url){
+$(function () {
+	$("#play").click(function () {
+		$("#play_progress").toggleClass("hidden");
+		var quality = $("#quality").val();
+		var link = $("#link").val();
+		var url = server + "/want?link=" + link + "&quality=" + quality;
+		var n_url;
+
+		if (link.includes("artist")) {
+			n_url = server + "/artist?link=" + link;
+		} else if (link.includes("album") || link.includes("playlist")) {
+			n_url = server + "/playlist?link=" + link + "&quality=" + quality;
+		} else {
+			var info = back_json(url);
+			n_url = info.stream;
+		}
+
+		window.location.replace(n_url);
+	})
+})
+"""
+)
+
+player_js = (
+"""
+$(function () {
+	var playerTrack = $("#player-track"),
+		bgArtwork = $('#bg-artwork'),
+		bgArtworkUrl, albumName = $('#album-name'),
+		trackName = $('#track-name'),
+		albumArt = $('#album-art'),
+		sArea = $('#s-area'),
+		seekBar = $('#seek-bar'),
+		trackTime = $('#track-time'),
+		insTime = $('#ins-time'),
+		sHover = $('#s-hover'),
+		playPauseButton = $("#play-pause-button"),
+		i = playPauseButton,
+		tProgress = $('#current-time'),
+		tTime = $('#track-length'),
+		seekT, seekLoc, seekBarPos, cM, ctMinutes, ctSeconds, curMinutes, curSeconds, durMinutes, durSeconds, playProgress, bTime, nTime = 0,
+		buffInterval = null,
+		tFlag = false,
+		playPreviousTrackButton = $('#play-previous'),
+		playNextTrackButton = $('#play-next'),
+		currIndex = -1,
+		path = $(".path");
+
+	var albums = [albumName.html()];
+	var trackNames = [trackName.html()];
+	var albumArtworks = ['_1'];
+	var trackUrl = [path.html()];
+
+	function playPause() {
+		setTimeout(function () {
+			if (audio.paused) {
+				playerTrack.addClass('active');
+				albumArt.addClass('active');
+				checkBuffering();
+				i.attr('class', 'button pause');
+				audio.play();
+			} else {
+				playerTrack.removeClass('active');
+				albumArt.removeClass('active');
+				clearInterval(buffInterval);
+				albumArt.removeClass('buffering');
+				i.attr('class', 'button play');
+				audio.pause();
+			}
+		}, 300);
+	}
+
+
+	function showHover(event) {
+		seekBarPos = sArea.offset();
+		seekT = event.clientX - seekBarPos.left;
+		seekLoc = audio.duration * (seekT / sArea.outerWidth());
+
+		sHover.width(seekT);
+
+		cM = seekLoc / 60;
+
+		ctMinutes = Math.floor(cM);
+		ctSeconds = Math.floor(seekLoc - ctMinutes * 60);
+
+		if ((ctMinutes < 0) || (ctSeconds < 0))
+			return;
+
+		if ((ctMinutes < 0) || (ctSeconds < 0))
+			return;
+
+		if (ctMinutes < 10)
+			ctMinutes = '0' + ctMinutes;
+		if (ctSeconds < 10)
+			ctSeconds = '0' + ctSeconds;
+
+		if (isNaN(ctMinutes) || isNaN(ctSeconds))
+			insTime.text('--:--');
+		else
+			insTime.text(ctMinutes + ':' + ctSeconds);
+
+		insTime.css({
+			'left': seekT,
+			'margin-left': '-21px'
+		}).fadeIn(0);
+
+	}
+
+	function hideHover() {
+		sHover.width(0);
+		insTime.text('00:00').css({
+			'left': '0px',
+			'margin-left': '0px'
+		}).fadeOut(0);
+	}
+
+	function playFromClickedPos() {
+		audio.currentTime = seekLoc;
+		seekBar.width(seekT);
+		hideHover();
+	}
+
+	function updateCurrTime() {
+		nTime = new Date();
+		nTime = nTime.getTime();
+
+		if (!tFlag) {
+			tFlag = true;
+			trackTime.addClass('active');
+		}
+
+		curMinutes = Math.floor(audio.currentTime / 60);
+		curSeconds = Math.floor(audio.currentTime - curMinutes * 60);
+
+		durMinutes = Math.floor(audio.duration / 60);
+		durSeconds = Math.floor(audio.duration - durMinutes * 60);
+
+		playProgress = (audio.currentTime / audio.duration) * 100;
+
+		if (curMinutes < 10)
+			curMinutes = '0' + curMinutes;
+		if (curSeconds < 10)
+			curSeconds = '0' + curSeconds;
+
+		if (durMinutes < 10)
+			durMinutes = '0' + durMinutes;
+		if (durSeconds < 10)
+			durSeconds = '0' + durSeconds;
+
+		if (isNaN(curMinutes) || isNaN(curSeconds))
+			tProgress.text('00:00');
+		else
+			tProgress.text(curMinutes + ':' + curSeconds);
+
+		if (isNaN(durMinutes) || isNaN(durSeconds))
+			tTime.text('00:00');
+		else
+			tTime.text(durMinutes + ':' + durSeconds);
+
+		if (isNaN(curMinutes) || isNaN(curSeconds) || isNaN(durMinutes) || isNaN(durSeconds))
+			trackTime.removeClass('active');
+		else
+			trackTime.addClass('active');
+
+
+		seekBar.width(playProgress + '%');
+
+		if (playProgress == 100) {
+			i.attr('class', 'button play');
+			seekBar.width(0);
+			tProgress.text('00:00');
+			albumArt.removeClass('buffering').removeClass('active');
+			clearInterval(buffInterval);
+		}
+	}
+
+	function checkBuffering() {
+		clearInterval(buffInterval);
+		buffInterval = setInterval(function () {
+			if ((nTime == 0) || (bTime - nTime) > 1000)
+				albumArt.addClass('buffering');
+			else
+				albumArt.removeClass('buffering');
+
+			bTime = new Date();
+			bTime = bTime.getTime();
+
+		}, 100);
+	}
+
+	function selectTrack(flag) {
+		if (flag == 0 || flag == 1)
+			++currIndex;
+		else
+			--currIndex;
+
+		if ((currIndex > -1) && (currIndex < albumArtworks.length)) {
+			if (flag == 0)
+				i.attr('class', 'button play');
+			else {
+				albumArt.removeClass('buffering');
+				i.attr('class', 'button pause');
+			}
+
+			seekBar.width(0);
+			trackTime.removeClass('active');
+			tProgress.text('00:00');
+			tTime.text('00:00');
+
+			currAlbum = albums[currIndex];
+			currTrackName = trackNames[currIndex];
+			currArtwork = albumArtworks[currIndex];
+
+			audio.src = trackUrl[currIndex];
+
+			nTime = 0;
+			bTime = new Date();
+			bTime = bTime.getTime();
+
+			if (flag != 0) {
+				audio.play();
+				playerTrack.addClass('active');
+				albumArt.addClass('active');
+
+				clearInterval(buffInterval);
+				checkBuffering();
+			}
+
+			albumName.text(currAlbum);
+			trackName.text(currTrackName);
+			albumArt.find('img.active').removeClass('active');
+			$('#' + currArtwork).addClass('active');
+
+			bgArtworkUrl = $('#' + currArtwork).attr('src');
+
+			bgArtwork.css({
+				'background-image': 'url(' + bgArtworkUrl + ')'
+			});
+		} else {
+			if (flag == 0 || flag == 1)
+				--currIndex;
+			else
+				++currIndex;
+		}
+	}
+
+	function initPlayer() {
+		audio = new Audio();
+
+		selectTrack(0);
+
+		audio.loop = false;
+
+		playPauseButton.on('click', playPause);
+
+		sArea.mousemove(function (event) {
+			showHover(event);
+		});
+
+		sArea.mouseout(hideHover);
+
+		sArea.on('click', playFromClickedPos);
+
+		$(audio).on('timeupdate', updateCurrTime);
+
+		playPreviousTrackButton.on('click', function () {
+			selectTrack(-1);
+		});
+		playNextTrackButton.on('click', function () {
+			selectTrack(1);
+		});
+	}
+
+	initPlayer();
+});
+"""
+)
+
+playlist_js = (
+"""
+function show_album_spotify(access_token, url) {
+	var headers = get_headers(access_token);
+	var ids = get_ids(url);
+	var api_album_spotify = api_spotify + "albums/" + ids;
+
+	$.ajax({
+		type: "GET",
+		url: api_album_spotify,
+		headers: headers,
+		success: function (json) {
+			var image = json['images'][0]['url'];
+			var label = json['label'];
+			var genres = json['genres'].join(",");
+			var album = json['name'];
+			var artist = json['artists'][0];
+			var artist_name = artist['name'];
+			var artist_link = artist['external_urls']['spotify'];
+			var api_artist = artist['href'];
+
+			$.ajax({
+				type: "GET",
+				url: api_artist,
+				headers: headers,
+				success: function (json) {
+					var artist_image = json['images'][0]['url'];
+					$("#artist-art").attr("src", artist_image);
+				}
+			})
+
+			var redirect_artist = server + "/artist?link=" + artist_link;
+			var artist_link_html = "<a id=\"redirect-artist\" href=\"" + redirect_artist + "\" target=\"_blank\">" + artist_name + "</a>";
+			$("#artist-name").html(artist_link_html);
+			$("#bg-artwork").css("background-image", "url(" + image + ")");
+			$("#album-art").attr("src", image);
+			$("#album-title").html(album);
+			$("#genre").html(genres);
+			$("#label").html(label);
+			var url = $(".url").val();
+			var slave = new Worker(slaver);
+
+			slave.addEventListener("message", function (e) {
+				var info = e.data;
+				console.log(info);
+				var list = $("#songs");
+				var tracks = json['tracks']['items'];
+				var downloads = info.downloads;
+				var plays = info.streams;
+
+				for (a = 0; a < tracks.length; a++) {
+					var c = tracks[a];
+					var song = c['name'];
+					var duration = c['duration_ms'];
+					var html = "<li><div class=\"hidden\">" + downloads[a] + "</div>";
+					html += "<div class=\"control\"><div class=\"button play\" id=\"play\"></div></div>";
+					var play_href = "<a id=\"redirect-player\" href=\"" + plays[a] + "\">"
+					html += "<span>" + play_href + song + "</a></span><span>" + duration + "</span></li>";
+					list.append(html);
+				}
+
+				$("#load").remove();
+
+			})
+
+			slave.postMessage(url);
+
+		}
+	})
+}
+
+function show_album_deezer(url) {
+	var ids = get_ids(url);
+	var api_album_deezer = api_deezer + "album/" + ids;
+	var json = back_json(api_album_deezer);
+	var image = json['cover_xl'];
+	var label = json['label'];
+	var genress = json['genres']['data'];
+	var genres = [];
+
+	for (var a = 0; a < genress.length; a++) {
+		var genre = genress[a]['name'];
+		genres.push(genre);
+	}
+
+	genres = genres.join("&");
+	var artist_image = json['artist']['picture_xl'];
+	var artist_name = json['artist']['name'];
+	var album = json['title'];
+	var id_artist = json['artist']['id'];
+	var api_artist = api_deezer + "artist/" + id_artist;
+	var redirect_artist = server + "/artist?link=" + api_artist;
+	var artist_link_html = "<a id=\"redirect-artist\" href=\"" + redirect_artist + "\" target=\"_blank\">" + artist_name + "</a>";
+	$("#artist-art").attr("src", artist_image);
+	$("#artist-name").html(artist_link_html);
+	$("#bg-artwork").css("background-image", "url(" + image + ")");
+	$("#album-art").attr("src", image);
+	$("#album-title").html(album);
+	$("#genre").html(genres);
+	$("#label").html(label);
+	var url = $(".url").val();
+	var slave = new Worker(slaver);
+
+	slave.addEventListener("message", function (e) {
+		var info = e.data;
+		var list = $("#songs");
+		var tracks = json['tracks']['data'];
+		var downloads = info.downloads;
+		var plays = info.streams;
+
+		for (a = 0; a < tracks.length; a++) {
+			var c = tracks[a];
+			var song = c['title'];
+			var duration = c['duration'];
+			var html = "<li><div class=\"hidden\">" + downloads[a] + "</div>";
+			html += "<div class=\"control\"><div class=\"button play\" id=\"play\"></div></div>";
+			var play_href = "<a id=\"redirect-player\" href=\"" + plays[a] + "\">"
+			html += "<span>" + play_href + song + "</a></span><span>" + duration + "</span></li>";
+			list.append(html);
+		}
+
+		$("#load").remove();
+
+	})
+
+	slave.postMessage(url);
+
+}
+
+function show_playlist_spotify(access_token, url) {
+	var headers = get_headers(access_token);
+	var ids = get_ids(url);
+	var api_playlist_spotify = api_spotify + "playlists/" + ids;
+
+	$.ajax({
+		type: "GET",
+		url: api_playlist_spotify,
+		headers: headers,
+		success: function (json) {
+			var image = json['images'][0]['url'];
+			var label = "";
+			var genres = "";
+			var album = json['name'];
+			var artist_name = json['owner']['display_name'];
+			var api_artist_spotify = json['owner']['href'];
+
+			$.ajax({
+				type: "GET",
+				url: api_artist_spotify,
+				headers: headers,
+				success: function (json) {
+					if (json['images'].length !== 0) {
+						var artist_image = json['images'][0]['url'];
+					} else {
+						var artist_image = song_default_image;
+					}
+
+					$("#artist-art").attr("src", artist_image);
+				}
+			})
+
+			$("#artist-name").html(artist_name);
+			$("#bg-artwork").css("background-image", "url(" + image + ")");
+			$("#album-art").attr("src", image);
+			$("#album-title").html(album);
+			$("#genre").html(genres);
+			$("#label").html(label);
+			var url = $(".url").val();
+			var slave = new Worker(slaver);
+
+			slave.addEventListener("message", function (e) {
+				var info = e.data;
+				var list = $("#songs");
+				var tracks = json['tracks']['items'];
+
+				for (a = 0; a < info.length; a++) {
+					var c = tracks[a]['track'];
+					var song = c['name'];
+					var duration = c['duration_ms'];
+					var html = "<li>";
+					html += "<div class=\"hidden\">" + info[a] + "</div>";
+					html += "<div class=\"control\"><div class=\"button play\" id=\"play\"></div></div>";
+					html += "<span>" + song + "</span><span>" + duration + "</span></li>";
+					list.append(html);
+				}
+
+				$("#load").remove();
+
+			})
+
+			slave.postMessage(url);
+
+		}
+	})
+}
+
+function show_playlist_deezer(url) {
+	var ids = get_ids(url);
+	var api_playlist_deezer = api_deezer + "playlist/" + ids;
+	var json = back_json(api_playlist_deezer);
+	var image = json['picture_xl'];
+	var duration = json['duration'];
+	var nb_tracks = json['nb_tracks'];
+	var api_artist_deezer = api_deezer + "user/" + json['creator']['id'];
+	var artist_image = back_json(api_artist_deezer)['picture_xl'];
+	var artist_name = json['creator']['name'];
+	var album = json['title'];
+	$("#artist-art").attr("src", artist_image);
+	$("#artist-name").html(artist_name);
+	$("#bg-artwork").css("background-image", "url(" + image + ")");
+	$("#album-art").attr("src", image);
+	$("#album-title").html(album);
+	$("#genre").html(duration);
+	$("#label").html(nb_tracks);
+	var url = $(".url").val();
+	var slave = new Worker(slaver);
+
+	slave.addEventListener("message", function (e) {
+		var info = e.data;
+		var list = $("#songs");
+		var tracks = json['tracks']['data'];
+
+		for (a = 0; a < info.length; a++) {
+			var c = tracks[a];
+			var song = c['title'];
+			var duration = c['duration'];
+			var html = "<li>";
+			html += "<div class=\"hidden\">" + info[a] + "</div>";
+			html += "<div class=\"control\"><div class=\"button play\" id=\"play\"></div></div>";
+			html += "<span>" + song + "</span><span>" + duration + "</span></li>";
+			list.append(html);
+		}
+
+		$("#load").remove();
+
+	})
+
+	slave.postMessage(url);
+
+}
+
+function get_api(url) {
+	if (url.includes("album")) {
+		if (url.includes("spotify")) {
+			$.ajax({
+				type: "POST",
+				url: OAUTH_TOKEN_URL,
+				data: data,
+				headers: headers_token,
+				success: function (json) {
+					var accesstoken = json['access_token'];
+					show_album_spotify(accesstoken, url);
+				}
+			})
+		} else if (url.includes("deezer")) {
+			url = url.replace("&quality", "")
+			show_album_deezer(url)
+		}
+	} else if (url.includes("playlist")) {
+		if (url.includes("spotify")) {
+			$.ajax({
+				type: "POST",
+				url: OAUTH_TOKEN_URL,
+				data: data,
+				headers: headers_token,
+				success: function (json) {
+					var accesstoken = json['access_token'];
+					show_playlist_spotify(accesstoken, url);
+				}
+			})
+		} else if (url.includes("deezer")) {
+			url = url.replace("&quality", "")
+			show_playlist_deezer(url)
+		}
+	}
+}
+
+$(function () {
+	var url = $(".url").val();
+	var s_href = url.split("=");
+	get_api(s_href[1]);
+	var audio = new Audio();
+
+	$(document).on("click", "#play", function () {
+		var which = $(this).closest("li");
+
+		var audio_link = (
+			which
+			.find("div")
+			.html()
+			.replace(/ /g, "%20")
+		);
+
+		console.log(audio_link);
+
+		if (audio.src !== audio_link) {
+			audio.pause();
+			audio.src = audio_link;
+			var all = $(".pause");
+			all.removeClass("pause");
+			all.addClass("play");
+		}
+
+		var who = which.find("#play");
+
+		if (audio.paused) {
+			audio.src = audio_link;
+			audio.play();
+			who.removeClass("play");
+			who.addClass("pause");
+		} else {
+			audio.pause();
+			who.removeClass("pause");
+			who.addClass("play");
+		}
+	})
+
+	$(".plays").click(function () {
+		var audio_link = (
+			$("ol")
+			.first()
+			.find("div")
+			.html()
+		);
+
+		audio.src = audio_link;
+
+		if (audio.paused) {
+			audio.play();
+		} else {
+			audio.pause();
+		}
+	})
+})
+"""
+)
+
+search_js = (
+"""
+function show_artist(access_token, name) {
+	headers = {
+		"Authorization": "Bearer " + access_token
+	}
+
+	var api_search_spotify = api_spotify + "search?q=artist:" + name + "&type=artist"
+
+	$.ajax({
+		type: "GET",
+		url: api_search_spotify,
+		headers: headers,
+		success: function (json) {
+			var l = json['artists']['items'].length
+			var where = $("#artists");
+			where.empty();
+			var html = "";
+			var times = 0;
+
+			for (a = 0; a < l; a++) {
+				var c = json['artists']['items'][a];
+				var link = c['external_urls']['spotify'] + "?";
+				link = server + "/artist?link=" + link + "&quality=MP3_320";
+
+				if (c['images'].length !== 0) {
+					var image = c['images'][0]['url'];
+				} else {
+					var image = song_default_image;
+				}
+
+				var name = c['name'];
+
+				if (a % 4 === 0) {
+					html += "<div class=\"card-group\">";
+				}
+
+				html += "<div class=\"card\">";
+				html += "<img src=\"" + image + "\" class=\"card-img-top\" alt=\"artist picture\">";
+				html += "<div class=\"card-body\">";
+				html += "<h5 class=\"card-title\">" + name + "</h5>";
+				html += "<a href=\"" + link + "\" class=\"btn btn-primary artist\">SHOW ALBUM</a></div>";
+				html += "<br></div><br/>";
+				times++;
+
+				if (times === 4) {
+					html += "</div>";
+					times = 0;
+				}
+			}
+
+			html += "</div>"
+			where.append(html);
+		}
+	})
+}
+
+$(function () {
+	$("#look").click(function () {
+		$("#play_progress").toggleClass("hidden");
+		var name = $("#search").val();
+		$("#artists").empty();
+
+		$.ajax({
+			type: "POST",
+			url: OAUTH_TOKEN_URL,
+			data: data,
+			headers: headers_token,
+			success: function (json) {
+				var accesstoken = json['access_token'];
+				show_artist(accesstoken, name);
+			}
+		})
+
+		$("#play_progress").toggleClass("hidden");
+
+	})
+})
+"""
+)
+
+show_album_js = (
+"""
+function show_album_spotify(access_token, link) {
+	var headers = get_headers(access_token);
+	var ids = get_ids(link);
+	var api_artist = api_spotify + "artists/" + ids + "/albums";
+
+	$.ajax({
+		type: "GET",
+		url: api_artist,
+		headers: headers,
+		success: function (json) {
+			var l = json['items'].length
+			var where = $("#albums");
+			where.empty();
+			var html = "";
+			var times = 0;
+
+			for (a = 0; a < l; a++) {
+				var c = json['items'][a];
+				var link = c['external_urls']['spotify'] + "?";
+				link = server + "/playlist?link=" + link + "&quality=MP3_320";
+				var image = c['images'][0]['url'];
+				var album_name = c['name'];
+
+				if (a % 4 === 0) {
+					html += "<div class=\"card-group\">";
+				}
+
+				html += "<div class=\"card\">";
+				html += "<img src=\"" + image + "\" class=\"card-img-top\" alt=\"album picture\">";
+				html += "<div class=\"card-body\">";
+				html += "<h5 class=\"card-title\">" + album_name + "</h5>";
+				html += "<a href=\"" + link + "\" class=\"btn btn-primary song\">LISTEN</a></div>";
+				html += "<br><select class=\"custom-select\" id=\"quality\">";
+				html += "<option value=\"FLAC\">FLAC</option>";
+				html += "<option value=\"MP3_320\" selected>320</option>";
+				html += "<option value=\"MP3_256\">256</option>";
+				html += "<option value=\"MP3_128\">128</option>";
+				html += "</select></div><br/>";
+				times++;
+
+				if (times === 4) {
+					html += "</div>";
+					times = 0;
+				}
+			}
+
+			html += "</div>"
+			where.append(html);
+		}
+	})
+}
+
+function show_album_deezer(url) {
+	var ids = get_ids(url);
+	var api_artist = api_deezer + "artist/" + ids + "/albums";
+	var json = back_json(api_artist);
+	var l = json['data'].length
+	var where = $("#albums");
+	where.empty();
+	var html = "";
+	var times = 0;
+
+	for (a = 0; a < l; a++) {
+		var c = json['data'][a];
+		var link = c['link'] + "?";
+		link = server + "/playlist?link=" + link + "&quality=MP3_320";
+		var image = c['cover_xl'];
+		var album_name = c['title'];
+
+		if (a % 4 === 0) {
+			html += "<div class=\"card-group\">";
+		}
+
+		html += "<div class=\"card\">";
+		html += "<img src=\"" + image + "\" class=\"card-img-top\" alt=\"album picture\">";
+		html += "<div class=\"card-body\">";
+		html += "<h5 class=\"card-title\">" + album_name + "</h5>";
+		html += "<a href=\"" + link + "\" class=\"btn btn-primary song\">LISTEN</a></div>";
+		html += "<br><select class=\"custom-select\" id=\"quality\">";
+		html += "<option value=\"FLAC\">FLAC</option>";
+		html += "<option value=\"MP3_320\" selected>320</option>";
+		html += "<option value=\"MP3_256\">256</option>";
+		html += "<option value=\"MP3_128\">128</option>";
+		html += "</select></div><br/>";
+		times++;
+
+		if (times === 4) {
+			html += "</div>";
+			times = 0;
+		}
+	}
+
+	html += "</div>"
+	where.append(html);
+}
+
+function get_api(link) {
+	if (link.includes("artist")) {
+		if (link.includes("spotify")) {
+			$.ajax({
+				type: "POST",
+				url: OAUTH_TOKEN_URL,
+				data: data,
+				headers: headers_token,
+				success: function (json) {
+					var accesstoken = json['access_token'];
+					show_album_spotify(accesstoken, link);
+				}
+			})
+		} else if (link.includes("deezer")) {
+			show_album_deezer(link)
+		}
+	}
+}
+
+$(function () {
+	var link = $("#artist_link").html()
+	get_api(link);
+
+	$(document).on("change", "#quality", function () {
+		var href = $(this).closest(".card").find("a");
+		var c_quality = $(this).val();
+		var s_href = href.attr("href").split("=");
+		s_href[2] = c_quality;
+		var link = s_href.join("=");
+		href.attr("href", link);
+	})
+})
+"""
+)
+
+slave_js = (
+"""
+function back_json(url) {
 	var req = new XMLHttpRequest();
 	req.open("GET", url, false);
 	req.send();
@@ -211,82 +1740,146 @@ function back_json(url){
 	return info;
 }
 
-function get(ip, port){
-	var e = document.getElementById("inputGroupSelect01");
-	var quality = e.options[e.selectedIndex].value;
-	var link = document.getElementById("link").value
-	var server = "http://" + ip + ":" + port
-	var url = server + "/want?link=" + link + "&quality=" + quality;
+self.addEventListener("message", function (e) {
+	var url = e.data;
 	var info = back_json(url);
-	var n_url;
+	self.postMessage(info);
+})
+"""
+)
 
-	if (info.path === undefined){
-		n_url = server + "/list?link=" + link + "&quality=" + quality;
-	}
-	else{
-		n_url = info.stream;
-	}
+utils_js = (
+"""
+var ip = "127.0.0.1";
+var port = "8000";
+var server = "http://" + ip + ":" + port;
+var slaver = "js/slave.js";
+var client_id = "c6b23f1e91f84b6a9361de16aba0ae17";
+var client_secret = "237e355acaa24636abc79f1a089e6204";
+var OAUTH_TOKEN_URL = "https://accounts.spotify.com/api/token";
+var api_spotify = "https://api.spotify.com/v1/";
+var api_deezer = "https://cors-anywhere.herokuapp.com/https://api.deezer.com/";
+var auth_header = btoa(client_id + ":" + client_secret);
+var song_default_image = "https://e-cdns-images.dzcdn.net/images/cover/640x640-000000-80-0-0.jpg";
 
-	window.location.replace(n_url);
+var data = {
+	"grant_type": "client_credentials"
 }
 
-function show_playlist(url){
-	var info = back_json(url).streams;
-	var list = document.getElementById("playlist");
-	
-	for (a = 0; a < info.length; a++){
-		var thing = document.createElement("li");
-		var href = document.createElement("a");
-		href.setAttribute("href", info[a])
-		href.setAttribute("target", "_blank")
-		href.innerHTML = "TRACK " + (a + 1);
-		thing.classList.add("list-group-item");
-		thing.setAttribute("style", "background-color: black; border-color: white; border-style: dashed;");
-		thing.appendChild(href);
-		list.appendChild(thing);
+var headers_token = {
+	"Authorization": "Basic " + auth_header
+}
+
+function back_json(url) {
+	var req = new XMLHttpRequest();
+	req.open("GET", url, false);
+	req.send();
+	var resp = req.responseText;
+	var info = JSON.parse(resp);
+	return info;
+}
+
+function get_ids(url) {
+	var ids = (
+		url
+		.split("?")[0]
+		.split("/")
+		.slice(-1)[0]
+	)
+
+	return ids;
+}
+
+function get_headers(access_token) {
+	headers = {
+		"Authorization": "Bearer " + access_token
 	}
+
+	return headers;
 }
 """
 )
 
-playes_js = (
+html404 = (
 """
-var status = 0;
+<!DOCTYPE html>
+<html lang="en">
 
-class musicPlayer {
-	constructor() {
-		this.play = this.play.bind(this);
-		this.playBtn = document.getElementById('play');
-		this.playBtn.addEventListener('click', this.play);
-		this.controlPanel = document.getElementById('control-panel');
-		this.infoBar = document.getElementById('info');
-	}
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Deez-web</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+		integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+	</script>
+	<script src="js/utils.js"></script>
+	<script src="js/search.js"></script>
+	<link rel="stylesheet" href="css/404.css">
+	<link rel="stylesheet" href="css/index.css">
+	<link rel="shortcut icon" href="imgs/deez.ico" type="image/x-icon">
+</head>
 
-	play() {
-		let controlPanelObj = this.controlPanel,
-		infoBarObj = this.infoBar
-		Array.from(controlPanelObj.classList).find(function(element){
-					return element !== "active" ? controlPanelObj.classList.add('active') : 		controlPanelObj.classList.remove('active');
-			});
-		
-		Array.from(infoBarObj.classList).find(function(element){
-					return element !== "active" ? infoBarObj.classList.add('active') : 		infoBarObj.classList.remove('active');
-			});
-		
-		var audio = document.getElementById("audio")
+<body>
+	<div id="notfound">
+		<div class="notfound">
+			<div class="notfound-404">
+				<h1>404</h1>
+			</div>
+			<h2>Oops, The Page you are looking for can't be found!</h2>
+			<div class="notfound-search">
+				<input type="search" id="search" class="form-control" placeholder="What are you looking for?">
+				<button class="btn btn-primary" id="look">
+					<span class="spinner-border spinner-border-sm hidden" id="play_progress" role="status"
+						aria-hidden="true"></span>SEARCH
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="artists"></div>
+</body>
 
-		if (status == 0){
-			audio.play();
-			status = 1;
-		}
-		else{
-			audio.pause();
-			status = 0;
-		}
-	}
-}
+</html>
+"""
+)
 
-const newMusicplayer = new musicPlayer();
+artist_albums_html = (
+"""
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Deez-web</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+		integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+	</script>
+	<script src="js/utils.js"></script>
+	<link rel="stylesheet" href="css/index.css">
+	<link rel="shortcut icon" href="imgs/deez.ico" type="image/x-icon">
+</head>
+
+<body>
+	<div class="hidden" id="artist_link">{{ link }}</div>
+	<div id="albums"></div>
+	<script src="js/show_album.js"></script>
+</body>
+
+</html>
 """
 )
 
@@ -294,41 +1887,54 @@ deezweb_html = (
 """
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Deez-web</title>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-	<link rel="shortcut icon" href="{{ url_for('static', filename='imgs/deez.ico') }}" type="image/x-icon">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-	<script src="{{ url_for('static', filename='js/download.js') }}"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+		integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+	</script>
+	<script src="js/utils.js"></script>
+	<script src="js/download.js"></script>
+	<link rel="stylesheet" href="css/index.css">
+	<link rel="shortcut icon" href="imgs/deez.ico" type="image/x-icon">
 </head>
+
 <body>
 	<div class="input-group mb-3">
 		<div class="input-group-prepend">
-		  <label class="input-group-text">DEEZ-DW</label>
+			<label class="input-group-text">DEEZ-DW</label>
 		</div>
 		<input type="url" id="link" class="form-control" placeholder="Spotify or Deezer link">
 	</div>
 	<div class="input-group mb-3">
 		<div class="input-group-prepend">
-		  <label class="input-group-text" for="inputGroupSelect01">QUALITY</label>
+			<label class="input-group-text" for="quality">QUALITY</label>
 		</div>
-		<select class="custom-select" id="inputGroupSelect01">
-		  <option value="FLAC">FLAC</option>
-		  <option value="MP3_320" selected>320</option>
-		  <option value="MP3_256">256</option>
-		  <option value="MP3_128">128</option>
+		<select class="custom-select" id="quality">
+			<option value="FLAC">FLAC</option>
+			<option value="MP3_320" selected>320</option>
+			<option value="MP3_256">256</option>
+			<option value="MP3_128">128</option>
 		</select>
 	</div>
-	<div onclick='get("{{ ip }}", {{ port }})' id="button">
-		<button class="btn btn-primary">PLAY</button>
+	<div id="play">
+		<button class="btn btn-primary">
+			<span class="spinner-border spinner-border-sm hidden" id="play_progress" role="status"
+				aria-hidden="true"></span>PLAY
+		</button>
 	</div>
 </body>
+
 </html>
 """
 )
@@ -336,221 +1942,202 @@ deezweb_html = (
 player_html = (
 """
 <!DOCTYPE html>
-<html lang="en" >
-<head>
-  	<meta charset="UTF-8">
-  	<title>{{ title }} - {{ artist }}</title>
-	<style>
-		@import url("https://fonts.googleapis.com/css?family=Fira+Sans");
-		html, body {
-		position: relative;
-		min-height: 100vh;
-		background-color: #FFF0F5;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-family: "Fira Sans", Helvetica, Arial, sans-serif;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		}
+<html lang="en">
 
-		.player {
-		position: relative;
-		}
-		.player .info {
-		position: absolute;
-		height: 60px;
-		top: 0;
-		opacity: 0;
-		left: 10px;
-		right: 10px;
-		background-color: rgba(255, 255, 255, 0.5);
-		padding: 5px 15px 5px 110px;
-		border-radius: 15px;
-		transition: all .5s ease;
-		}
-		.player .info .artist,
-		.player .info .name {
-		display: block;
-		}
-		.player .info .artist {
-		color: #222;
-		font-size: 16px;
-		margin-bottom: 5px;
-		}
-		.player .info .name {
-		color: #999;
-		font-size: 12px;
-		margin-bottom: 8px;
-		}
-		.player .info .progress-bar {
-		background-color: #ddd;
-		height: 2px;
-		width: 100%;
-		position: relative;
-		}
-		.player .info .progress-bar .bar {
-		position: absolute;
-		left: 0;
-		top: 0;
-		bottom: 0;
-		background-color: red;
-		width: 10%;
-		transition: all .2s ease;
-		}
-		.player .info.active {
-		top: -60px;
-		opacity: 1;
-		transition: all .5s ease;
-		}
-		.player .control-panel {
-		position: relative;
-		background-color: #fff;
-		border-radius: 15px;
-		width: 300px;
-		height: 80px;
-		z-index: 5;
-		box-shadow: 0px 20px 20px 5px rgba(132, 132, 132, 0.3);
-		}
-		.player .control-panel .album-art {
-		position: absolute;
-		left: 20px;
-		top: -15px;
-		height: 80px;
-		width: 80px;
-		border-radius: 50%;
-		box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0);
-		transform: scale(1);
-		transition: all .5s ease;
-		}
-		.player .control-panel .album-art::after {
-		content: '';
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 15px;
-		height: 15px;
-		background-color: #fff;
-		border-radius: 50%;
-		z-index: 5;
-		transform: translate(-50%, -50%);
-		-webkit-transform: translate(-50%, -50%);
-		}
-		.player .control-panel .album-art::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		border-radius: 50%;
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: 80px;
-		background-image: url("{{ image }}");
-		}
-		.player .control-panel.active .album-art {
-		box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.2);
-		transform: scale(1.2);
-		transition: all .5s ease;
-		}
-		.player .control-panel.active .album-art::before {
-		animation: rotation 3s infinite linear;
-		-webkit-animation: rotation 3s infinite linear;
-		animation-fill-mode: forwards;
-		}
-		@keyframes rotation {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(360deg);
-		}
-		}
-		.player .control-panel .controls {
-		display: flex;
-		justify-content: flex-end;
-		height: 80px;
-		padding: 0 15px;
-		}
-		.player .control-panel .controls .prev,
-		.player .control-panel .controls .play,
-		.player .control-panel .controls .next {
-		width: 55px;
-		height: auto;
-		border-radius: 10px;
-		background-position: center center;
-		background-repeat: no-repeat;
-		background-size: 20px;
-		margin: 5px 0;
-		background-color: #fff;
-		cursor: pointer;
-		transition: background-color .3s ease;
-		-webkit-transition: background-color .3s ease;
-		}
-		.player .control-panel .controls .prev:hover,
-		.player .control-panel .controls .play:hover,
-		.player .control-panel .controls .next:hover {
-		background-color: #eee;
-		transition: background-color .3s ease;
-		-webkit-transition: background-color .3s ease;
-		}
-		.player .control-panel .controls .prev {
-		background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDI1MC40ODggMjUwLjQ4OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjUwLjQ4OCAyNTAuNDg4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlByZXZpb3VzX3RyYWNrIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik0yMzcuNDg0LDIyLjU4N2MtMy4yNjYsMC03LjU5MS0wLjQwMS0xMS4wNzIsMi4wMDVsLTkyLjI2NCw3Ny45MVYzNy4yNTIgICBjMC0yLjUwNywwLjA1Ny0xNC42NjYtMTMuMDA0LTE0LjY2NmMtMy4yNjUsMC03LjU5LTAuNDAxLTExLjA3MiwyLjAwNUw4LjEwNywxMTAuNjkzYy05LjY2OSw2LjY3NC03Ljk5NywxNC41NTEtNy45OTcsMTQuNTUxICAgcy0xLjY3MSw3Ljg3OCw3Ljk5NywxNC41NTFsMTAxLjk2NSw4Ni4xMDJjMy40ODIsMi40MDUsNy44MDcsMi4wMDQsMTEuMDcyLDIuMDA0YzEzLjA2MiwwLDEzLjAwNC0xMS43LDEzLjAwNC0xNC42NjZ2LTY1LjI0OSAgIGw5Mi4yNjQsNzcuOTExYzMuNDgyLDIuNDA1LDcuODA3LDIuMDA0LDExLjA3MiwyLjAwNGMxMy4wNjIsMCwxMy4wMDQtMTEuNywxMy4wMDQtMTQuNjY2VjM3LjI1MiAgIEMyNTAuNDg4LDM0Ljc0NiwyNTAuNTQ2LDIyLjU4NywyMzcuNDg0LDIyLjU4N3oiIGZpbGw9IiNjMmM2Y2YiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
-		}
-		.player .control-panel .controls .play {
-		background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi4xNTMgMjMyLjE1MyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjE1MyAyMzIuMTUzOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBsYXkiPgoJPHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkOyIgZD0iTTIwMy43OTEsOTkuNjI4TDQ5LjMwNywyLjI5NGMtNC41NjctMi43MTktMTAuMjM4LTIuMjY2LTE0LjUyMS0yLjI2NiAgIGMtMTcuMTMyLDAtMTcuMDU2LDEzLjIyNy0xNy4wNTYsMTYuNTc4djE5OC45NGMwLDIuODMzLTAuMDc1LDE2LjU3OSwxNy4wNTYsMTYuNTc5YzQuMjgzLDAsOS45NTUsMC40NTEsMTQuNTIxLTIuMjY3ICAgbDE1NC40ODMtOTcuMzMzYzEyLjY4LTcuNTQ1LDEwLjQ4OS0xNi40NDksMTAuNDg5LTE2LjQ0OVMyMTYuNDcxLDEwNy4xNzIsMjAzLjc5MSw5OS42Mjh6IiBmaWxsPSIjYzJjNmNmIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==);
-		}
-		.player .control-panel .controls .next {
-		background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDI1MC40ODggMjUwLjQ4OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjUwLjQ4OCAyNTAuNDg4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9Ik5leHRfdHJhY2tfMiI+Cgk8cGF0aCBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7IiBkPSJNMjQyLjM4MSwxMTAuNjkzTDE0MC40MTUsMjQuNTkxYy0zLjQ4LTIuNDA2LTcuODA1LTIuMDA1LTExLjA3MS0yLjAwNSAgIGMtMTMuMDYxLDAtMTMuMDAzLDExLjctMTMuMDAzLDE0LjY2NnY2NS4yNDlsLTkyLjI2NS03Ny45MWMtMy40ODItMi40MDYtNy44MDctMi4wMDUtMTEuMDcyLTIuMDA1ICAgQy0wLjA1NywyMi41ODcsMCwzNC4yODcsMCwzNy4yNTJ2MTc1Ljk4M2MwLDIuNTA3LTAuMDU3LDE0LjY2NiwxMy4wMDQsMTQuNjY2YzMuMjY1LDAsNy41OSwwLjQwMSwxMS4wNzItMi4wMDVsOTIuMjY1LTc3LjkxICAgdjY1LjI0OWMwLDIuNTA3LTAuMDU4LDE0LjY2NiwxMy4wMDMsMTQuNjY2YzMuMjY2LDAsNy41OTEsMC40MDEsMTEuMDcxLTIuMDA1bDEwMS45NjYtODYuMTAxICAgYzkuNjY4LTYuNjc1LDcuOTk3LTE0LjU1MSw3Ljk5Ny0xNC41NTFTMjUyLjA0OSwxMTcuMzY3LDI0Mi4zODEsMTEwLjY5M3oiIGZpbGw9IiNjMmM2Y2YiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
-		}
-		.player .control-panel.active .controls .play {
-		background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi42NzkgMjMyLjY3OSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjY3OSAyMzIuNjc5OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBhdXNlIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik04MC41NDMsMEgzNS43OTdjLTkuODg1LDAtMTcuODk4LDguMDE0LTE3Ljg5OCwxNy44OTh2MTk2Ljg4MyAgIGMwLDkuODg1LDguMDEzLDE3Ljg5OCwxNy44OTgsMTcuODk4aDQ0Ljc0NmM5Ljg4NSwwLDE3Ljg5OC04LjAxMywxNy44OTgtMTcuODk4VjE3Ljg5OEM5OC40NCw4LjAxNCw5MC40MjcsMCw4MC41NDMsMHogTTE5Ni44ODIsMCAgIGgtNDQuNzQ2Yy05Ljg4NiwwLTE3Ljg5OSw4LjAxNC0xNy44OTksMTcuODk4djE5Ni44ODNjMCw5Ljg4NSw4LjAxMywxNy44OTgsMTcuODk5LDE3Ljg5OGg0NC43NDYgICBjOS44ODUsMCwxNy44OTgtOC4wMTMsMTcuODk4LTE3Ljg5OFYxNy44OThDMjE0Ljc4MSw4LjAxNCwyMDYuNzY3LDAsMTk2Ljg4MiwweiIgZmlsbD0iI2MyYzZjZiIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=);
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{ title }} - {{ artist }}</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+		integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+	</script>
+	<link rel="stylesheet" href="css/player.css">
+	<link rel="stylesheet" href="css/utils.css">
+	<link rel="shortcut icon" href="imgs/deez.ico" type="image/x-icon">
+	<style>
+		#bg-artwork {
+			position: fixed;
+			top: -30px;
+			right: -30px;
+			bottom: -30px;
+			left: -30px;
+			background-image: url("{{ image }}");
+			background-repeat: no-repeat;
+			background-size: cover;
+			background-position: 50%;
+			filter: blur(40px);
+			-webkit-filter: blur(40px);
+			z-index: 1;
 		}
 	</style>
 </head>
+
 <body>
-<!-- partial:index.partial.html -->
-<div class="player">
-	<div id="info" class="info">
-		<span class="artist">{{ title }}</span>
-		<span class="name">{{ artist }}</span>
-	</div>
-	<div id="control-panel" class="control-panel">
-		<div class="album-art" id="art"></div>
-		<div class="controls">
-			<div id="play" class="play"></div>
+	<div class="hidden path">{{ path }}</div>
+	<div id="app-cover">
+		<div id="bg-artwork"></div>
+		<div id="bg-layer"></div>
+		<div id="player">
+			<div id="player-track">
+				<div id="album-name">{{ artist }}</div>
+				<div id="track-name">{{ title }} - {{ album }}</div>
+				<div id="track-time">
+					<div id="current-time"></div>
+					<div id="track-length"></div>
+				</div>
+				<div id="s-area">
+					<div id="ins-time"></div>
+					<div id="s-hover"></div>
+					<div id="seek-bar"></div>
+				</div>
+			</div>
+			<div id="player-content">
+				<div id="album-art">
+					<img src="{{ image }}" class="active" id="_1">
+					<div id="buffer-box">Buffering ...</div>
+				</div>
+				<div id="player-controls">
+					<div class="control">
+						<div class="button prev" id="play-previous">
+						</div>
+					</div>
+					<div class="control">
+						<div class="button play" id="play-pause-button">
+						</div>
+					</div>
+					<div class="control">
+						<div class="button next" id="play-next">
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
-	<audio id="audio" src="{{ path }}"></audio>
-</div>
-<!-- partial -->
-	<script src="{{ url_for('static', filename='js/player.js') }}"></script>
+	<script src="js/player.js"></script>
 </body>
+
 </html>
 """
 )
 
-slist_html = (
+playlist_html = (
 """
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Playlist</title>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-	<script src="{{ url_for('static', filename='js/download.js') }}"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+		integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+	</script>
+	<script src="js/utils.js"></script>
+	<script src="js/playlist.js"></script>
+	<link rel="stylesheet" href="css/playlist.css">
+	<link rel="stylesheet" href="css/index.css">
+	<link rel="shortcut icon" href="imgs/deez.ico" type="image/x-icon">
 </head>
-<body onload='show_playlist("{{ url }}")'>
-	<ul class="list-group", id="playlist">
-	</ul>
+
+<body>
+	<div class="input-group mb-3">
+		<div class="input-group-prepend">
+			<label class="input-group-text">DEEZ-DW</label>
+		</div>
+		<input type="search" id="search" class="form-control" placeholder="What are you looking for?">
+		<button class="btn btn-primary" id="look">
+			<span class="spinner-border spinner-border-sm hidden" id="play_progress" role="status"
+				aria-hidden="true"></span>SEARCH
+		</button>
+	</div>
+	<input type="text" class="hidden url" value="{{ url }}"></input>
+	<div id="load" class="d-flex justify-content-center">
+		<div class="spinner-border" role="status" style="width: 4rem; height: 4rem;">
+			<span class="sr-only">Loading...</span>
+		</div>
+	</div>
+	<div id="bg-artwork"></div>
+	<section>
+		<div class="album-info">
+			<div class="album-art">
+				<img id="album-art">
+				<div class="actions">
+					<div class="plays">Play</div>
+				</div>
+			</div>
+			<div class="album-details">
+				<h2>
+					<img id="artist-art">
+					<span id="artist-name"></span>
+				</h2>
+				<h1 id="album-title"></h1><span><span id="genre"></span>&copy;<span id="label"></span></span>
+			</div>
+		</div>
+		<div class="album-tracks">
+			<ol id="songs"></ol>
+		</div>
+	</section>
 </body>
+
+</html>
+"""
+)
+
+search_html = (
+"""
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Deez-web</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+		integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+	</script>
+	<script src="js/utils.js"></script>
+	<script src="js/search.js"></script>
+	<link rel="stylesheet" href="css/index.css">
+	<link rel="shortcut icon" href="imgs/deez.ico" type="image/x-icon">
+</head>
+
+<body>
+	<div class="input-group mb-3">
+		<div class="input-group-prepend">
+			<label class="input-group-text">DEEZ-DW</label>
+		</div>
+		<input type="search" id="search" class="form-control" placeholder="What are you looking for?">
+		<button class="btn btn-primary" id="look">
+			<span class="spinner-border spinner-border-sm hidden" id="play_progress" role="status"
+				aria-hidden="true"></span>SEARCH
+		</button>
+	</div>
+	<div id="artists"></div>
+</body>
+
 </html>
 """
 )

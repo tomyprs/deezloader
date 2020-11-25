@@ -1,0 +1,340 @@
+
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700");
+
+:root {
+	--color: #faa700;
+	--color-light: #f5ede1;
+	--dark: #a7a7a7;
+	--dark: #8a8a8a;
+	--darker: #303030;
+	--sans-serif: 'Roboto', sans-serif;
+}
+
+body {
+	background: #0a1a24;
+}
+
+#bg-artwork {
+	position: fixed;
+	top: -30px;
+	right: -30px;
+	bottom: -30px;
+	left: -30px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: 50%;
+	filter: blur(40px);
+	-webkit-filter: blur(40px);
+	z-index: -1;
+}
+
+.background img {
+	max-width: 100%;
+	max-height: 100vh;
+	box-shadow: inset 0px -17vw 30vw 1vw #131313;
+}
+
+.background+section {
+	margin-top: 60vmin;
+	background: transparent;
+	--dark: rgba(white, .5);
+	--dark: rgba(white, .6);
+	--darker: rgba(white, .8);
+}
+
+.background+section .bookmark {
+	border-color: rgba(255, 255, 255, 0.2);
+}
+
+.background+section .bookmark svg {
+	fill: #fff;
+}
+
+.background+section .album-tracks {
+	background: rgba(255, 255, 255, 0.1);
+	border: none;
+}
+
+section {
+	background: #fafafa;
+	margin: 100px 56px;
+	padding: 20px 56px;
+	color: var(--darker);
+}
+
+section .album-info:after {
+	content: " ";
+	display: block;
+	height: 0;
+	clear: both;
+}
+
+section .album-art {
+	float: left;
+	width: 220px;
+	margin-right: 20px;
+	margin-bottom: 20px;
+}
+
+section .album-art * {
+	border-radius: 3px;
+}
+
+section .album-art img {
+	width: 100%;
+	margin-bottom: 10px;
+	margin-top: -80px;
+	box-shadow: 0 5px 60px -3px rgba(0, 0, 0, 0.18);
+}
+
+section .plays {
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	align-items: center;
+	align-content: initial;
+	color: white;
+	background: var(--color);
+	padding: 10px;
+	text-transform: uppercase;
+	-webkit-box-flex: 1;
+	flex: 1 0 50%;
+}
+
+section .bookmark {
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	align-items: center;
+	align-content: initial;
+	width: 48px;
+	height: 48px;
+	border: 3px solid var(--color-light);
+	margin-left: 10px;
+}
+
+section .album-details>* {
+	padding: 10px 0;
+}
+
+section h2 {
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: initial;
+	justify-content: initial;
+	-webkit-box-align: center;
+	align-items: center;
+	align-content: initial;
+	color: var(--dark);
+	font-size: 16px;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+section h2 img {
+	width: 60px;
+	border-radius: 50%;
+	margin-right: 10px;
+}
+
+section h1 {
+	font-size: 50px;
+	font-weight: 300;
+	word-wrap: break-word;
+}
+
+section h1+span {
+	color: var(--dark);
+}
+
+section h1+span span:first-child {
+	padding-right: 20px;
+}
+
+section p {
+	margin-top: 15px;
+}
+
+section .album-tracks {
+	background: #f8f8f8;
+	border: 1px solid #efefef;
+	margin-top: 20px;
+}
+
+@media (max-width: 800px) {
+	section {
+		margin: 100px 36px 36px 36px;
+	}
+}
+
+@media (max-width: 700px) {
+	section .album-art {
+		width: 100%;
+	}
+
+	section .album-art img {
+		width: auto;
+		max-width: 100%;
+		margin: -100px auto 10px auto;
+		display: block;
+	}
+
+	section .album-details {
+		float: left;
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 550px) {
+	section {
+		margin: 100px 20px 20px 20px;
+		padding: 20px 16px;
+	}
+
+	section ol {
+		padding: 16px;
+	}
+}
+
+ol {
+	list-style-type: none;
+	padding: 20px 36px;
+	font-weight: 500;
+}
+
+ol li {
+	counter-increment: number;
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: justify;
+	justify-content: space-between;
+	-webkit-box-align: center;
+	align-items: center;
+	align-content: initial;
+	height: 45px;
+	color: var(--dark);
+}
+
+ol li span:not(:last-child) {
+	margin-right: 2em;
+}
+
+@media (max-width: 700px) {
+	ol li span:not(:last-child) {
+		margin-right: 1em;
+	}
+}
+
+ol li span:first-child {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	color: var(--darker);
+}
+
+ol li span:first-child:before {
+	content: counter(number);
+	margin-right: 2em;
+	color: var(--dark);
+	display: inline-block;
+	text-align: end;
+	width: 20px;
+}
+
+.actions {
+	display: -webkit-box;
+	display: flex;
+	flex-wrap: initial;
+	-webkit-box-pack: initial;
+	justify-content: initial;
+	-webkit-box-align: initial;
+	align-items: initial;
+	align-content: initial;
+	-webkit-box-flex: 1;
+	flex: 1 1 100%;
+}
+
+.control {
+	width: 33.333%;
+	float: left;
+	padding: 12px 0;
+}
+
+.button {
+	width: 26px;
+	height: 26px;
+	padding: 25px;
+	background-color: #fff;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.button i {
+	display: block;
+	color: #d6dee7;
+	font-size: 26px;
+	text-align: center;
+	line-height: 1;
+}
+
+.button,
+.button i {
+	transition: 0.2s ease all;
+}
+
+.button:hover {
+	background-color: #d6d6de;
+}
+
+.button:hover i {
+	color: #fff;
+}
+
+.play,
+.pause {
+	width: 55px;
+	height: auto;
+	border-radius: 10px;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 20px;
+	margin: 5px 0;
+	background-color: #fff;
+	cursor: pointer;
+	transition: background-color .3s ease;
+	-webkit-transition: background-color .3s ease;
+}
+
+.play:hover,
+.pause:hover {
+	background-color: #eee;
+	transition: background-color .3s ease;
+	-webkit-transition: background-color .3s ease;
+}
+
+.play {
+	background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi4xNTMgMjMyLjE1MyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjE1MyAyMzIuMTUzOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBsYXkiPgoJPHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkOyIgZD0iTTIwMy43OTEsOTkuNjI4TDQ5LjMwNywyLjI5NGMtNC41NjctMi43MTktMTAuMjM4LTIuMjY2LTE0LjUyMS0yLjI2NiAgIGMtMTcuMTMyLDAtMTcuMDU2LDEzLjIyNy0xNy4wNTYsMTYuNTc4djE5OC45NGMwLDIuODMzLTAuMDc1LDE2LjU3OSwxNy4wNTYsMTYuNTc5YzQuMjgzLDAsOS45NTUsMC40NTEsMTQuNTIxLTIuMjY3ICAgbDE1NC40ODMtOTcuMzMzYzEyLjY4LTcuNTQ1LDEwLjQ4OS0xNi40NDksMTAuNDg5LTE2LjQ0OVMyMTYuNDcxLDEwNy4xNzIsMjAzLjc5MSw5OS42Mjh6IiBmaWxsPSIjYzJjNmNmIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==);
+}
+
+.pause {
+	background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi42NzkgMjMyLjY3OSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjY3OSAyMzIuNjc5OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBhdXNlIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik04MC41NDMsMEgzNS43OTdjLTkuODg1LDAtMTcuODk4LDguMDE0LTE3Ljg5OCwxNy44OTh2MTk2Ljg4MyAgIGMwLDkuODg1LDguMDEzLDE3Ljg5OCwxNy44OTgsMTcuODk4aDQ0Ljc0NmM5Ljg4NSwwLDE3Ljg5OC04LjAxMywxNy44OTgtMTcuODk4VjE3Ljg5OEM5OC40NCw4LjAxNCw5MC40MjcsMCw4MC41NDMsMHogTTE5Ni44ODIsMCAgIGgtNDQuNzQ2Yy05Ljg4NiwwLTE3Ljg5OSw4LjAxNC0xNy44OTksMTcuODk4djE5Ni44ODNjMCw5Ljg4NSw4LjAxMywxNy44OTgsMTcuODk5LDE3Ljg5OGg0NC43NDYgICBjOS44ODUsMCwxNy44OTgtOC4wMTMsMTcuODk4LTE3Ljg5OFYxNy44OThDMjE0Ljc4MSw4LjAxNCwyMDYuNzY3LDAsMTk2Ljg4MiwweiIgZmlsbD0iI2MyYzZjZiIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=);
+}
+
+#redirect-artist,
+#redirect-player {
+	color: black;
+}
+
+#redirect-artist:hover,
+#redirect-player:hover {
+	color: red;
+	text-decoration: none;
+}

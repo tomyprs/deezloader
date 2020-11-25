@@ -18,7 +18,7 @@
 		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
 	</script>
 	<script src="js/utils.js"></script>
-	<script src="js/download.js"></script>
+	<script src="js/search.js"></script>
 	<link rel="stylesheet" href="css/index.css">
 	<link rel="shortcut icon" href="imgs/deez.ico" type="image/x-icon">
 </head>
@@ -28,25 +28,13 @@
 		<div class="input-group-prepend">
 			<label class="input-group-text">DEEZ-DW</label>
 		</div>
-		<input type="url" id="link" class="form-control" placeholder="Spotify or Deezer link">
-	</div>
-	<div class="input-group mb-3">
-		<div class="input-group-prepend">
-			<label class="input-group-text" for="quality">QUALITY</label>
-		</div>
-		<select class="custom-select" id="quality">
-			<option value="FLAC">FLAC</option>
-			<option value="MP3_320" selected>320</option>
-			<option value="MP3_256">256</option>
-			<option value="MP3_128">128</option>
-		</select>
-	</div>
-	<div id="play">
-		<button class="btn btn-primary">
+		<input type="search" id="search" class="form-control" placeholder="What are you looking for?">
+		<button class="btn btn-primary" id="look">
 			<span class="spinner-border spinner-border-sm hidden" id="play_progress" role="status"
-				aria-hidden="true"></span>PLAY
+				aria-hidden="true"></span>SEARCH
 		</button>
 	</div>
+	<div id="artists"></div>
 </body>
 
 </html>

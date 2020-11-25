@@ -239,10 +239,11 @@ class Login:
 			nams = tracking2(infos, datas)
 			return nams
 
-		elif "album" in link:
+		zip_name = ""
+
+		if "album" in link:
 			nams = []
 			detas = {}
-			zip_name = ""
 			quali = ""
 
 			json_data = {
@@ -313,11 +314,13 @@ class Login:
 				)
 
 			if zips:
+				album = utils.var_excape(datas['album'])
+
 				directory = (
 					"%s%s %s/"
 					% (
 						"%s/" % output,
-						datas['album'],
+						album,
 						datas['upc']
 					)
 				)
@@ -326,12 +329,17 @@ class Login:
 					"%s%s (%s).zip"
 					% (
 						directory,
-						datas['album'],
+						album,
 						quali
 					)
 				)
 
-				utils.create_zip(zip_name, nams)
+				try:
+					utils.create_zip(zip_name, nams)
+				except FileNotFoundError:
+					raise exceptions.QualityNotFound(
+						"Can't download album \"{}\" in {} quality".format(album, details['quality'])
+					)
 
 		elif "playlist" in link:
 			json_data = {
@@ -345,9 +353,14 @@ class Login:
 			for a in range(
 				len(infos)
 			):
-				nams.append(
-					tracking2(infos[a], datas[a])
-				)
+				try:
+					nams.append(
+						tracking2(infos[a], datas[a])
+					)
+				except TypeError:
+					c = infos[a]
+					song = "{} - {}".format(c['SNG_TITLE'], c['ART_NAME'])
+					nams.append("Track not found")
 
 			quali = "ALL"
 
@@ -483,8 +496,12 @@ class Login:
 
 		for a in playlist_json:
 			URL3 = self.api_track % str(a['id'])
-			detas = utils.tracking(URL3)
-			datas.append(detas)
+
+			try:
+				detas = utils.tracking(URL3)
+				datas.append(detas)
+			except exceptions.NoDataApi:
+				datas.append(None)
 
 		details = {
 			"datas": datas,

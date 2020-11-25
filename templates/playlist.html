@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Deez-web</title>
+	<title>Playlist</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
 		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
@@ -18,7 +18,8 @@
 		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
 	</script>
 	<script src="js/utils.js"></script>
-	<script src="js/download.js"></script>
+	<script src="js/playlist.js"></script>
+	<link rel="stylesheet" href="css/playlist.css">
 	<link rel="stylesheet" href="css/index.css">
 	<link rel="shortcut icon" href="imgs/deez.ico" type="image/x-icon">
 </head>
@@ -28,25 +29,39 @@
 		<div class="input-group-prepend">
 			<label class="input-group-text">DEEZ-DW</label>
 		</div>
-		<input type="url" id="link" class="form-control" placeholder="Spotify or Deezer link">
-	</div>
-	<div class="input-group mb-3">
-		<div class="input-group-prepend">
-			<label class="input-group-text" for="quality">QUALITY</label>
-		</div>
-		<select class="custom-select" id="quality">
-			<option value="FLAC">FLAC</option>
-			<option value="MP3_320" selected>320</option>
-			<option value="MP3_256">256</option>
-			<option value="MP3_128">128</option>
-		</select>
-	</div>
-	<div id="play">
-		<button class="btn btn-primary">
+		<input type="search" id="search" class="form-control" placeholder="What are you looking for?">
+		<button class="btn btn-primary" id="look">
 			<span class="spinner-border spinner-border-sm hidden" id="play_progress" role="status"
-				aria-hidden="true"></span>PLAY
+				aria-hidden="true"></span>SEARCH
 		</button>
 	</div>
+	<input type="text" class="hidden url" value="{{ url }}"></input>
+	<div id="load" class="d-flex justify-content-center">
+		<div class="spinner-border" role="status" style="width: 4rem; height: 4rem;">
+			<span class="sr-only">Loading...</span>
+		</div>
+	</div>
+	<div id="bg-artwork"></div>
+	<section>
+		<div class="album-info">
+			<div class="album-art">
+				<img id="album-art">
+				<div class="actions">
+					<div class="plays">Play</div>
+				</div>
+			</div>
+			<div class="album-details">
+				<h2>
+					<img id="artist-art">
+					<span id="artist-name"></span>
+				</h2>
+				<h1 id="album-title"></h1><span><span id="genre"></span>&copy;<span id="label"></span></span>
+			</div>
+		</div>
+		<div class="album-tracks">
+			<ol id="songs"></ol>
+		</div>
+	</section>
 </body>
 
 </html>

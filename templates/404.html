@@ -5,7 +5,6 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Deez-web</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
 		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -18,35 +17,29 @@
 		integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
 	</script>
 	<script src="js/utils.js"></script>
-	<script src="js/download.js"></script>
+	<script src="js/search.js"></script>
+	<link rel="stylesheet" href="css/404.css">
 	<link rel="stylesheet" href="css/index.css">
 	<link rel="shortcut icon" href="imgs/deez.ico" type="image/x-icon">
 </head>
 
 <body>
-	<div class="input-group mb-3">
-		<div class="input-group-prepend">
-			<label class="input-group-text">DEEZ-DW</label>
+	<div id="notfound">
+		<div class="notfound">
+			<div class="notfound-404">
+				<h1>404</h1>
+			</div>
+			<h2>Oops, The Page you are looking for can't be found!</h2>
+			<div class="notfound-search">
+				<input type="search" id="search" class="form-control" placeholder="What are you looking for?">
+				<button class="btn btn-primary" id="look">
+					<span class="spinner-border spinner-border-sm hidden" id="play_progress" role="status"
+						aria-hidden="true"></span>SEARCH
+				</button>
+			</div>
 		</div>
-		<input type="url" id="link" class="form-control" placeholder="Spotify or Deezer link">
 	</div>
-	<div class="input-group mb-3">
-		<div class="input-group-prepend">
-			<label class="input-group-text" for="quality">QUALITY</label>
-		</div>
-		<select class="custom-select" id="quality">
-			<option value="FLAC">FLAC</option>
-			<option value="MP3_320" selected>320</option>
-			<option value="MP3_256">256</option>
-			<option value="MP3_128">128</option>
-		</select>
-	</div>
-	<div id="play">
-		<button class="btn btn-primary">
-			<span class="spinner-border spinner-border-sm hidden" id="play_progress" role="status"
-				aria-hidden="true"></span>PLAY
-		</button>
-	</div>
+	<div id="artists"></div>
 </body>
 
 </html>

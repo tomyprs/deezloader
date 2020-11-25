@@ -1,5 +1,8 @@
+
 body {
 	background-image: url("../imgs/deez.jpg");
+	margin-left: 20%;
+	margin-right: 20%;
 }
 
 ul {
@@ -10,4 +13,13 @@ ul {
 
 #button {
 	text-align: center;
+}
+
+.hidden {
+	display: none;
+}
+
+#load {
+	color: green;
+	margin-top: 25%;
 }

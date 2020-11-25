@@ -129,6 +129,7 @@ def var_excape(string):
 		.replace("<", "")
 		.replace(">", "")
 		.replace("|", "")
+		.replace("&", "")
 	)
 
 	return string
@@ -156,7 +157,7 @@ def song_exist(n, song_hash):
 	return crypted_audio
 
 def tracking(URL, album = None):
-	datas= {}
+	datas = {}
 	json_track = request(URL, True).json()
 
 	if not album:
@@ -269,3 +270,7 @@ def write_tags(song, data):
 		audio.save()
 	except ID3NoHeaderError:
 		pass
+
+def what_kind(link):
+	url = request(link).url
+	return url
