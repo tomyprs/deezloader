@@ -17,123 +17,122 @@ logo = """
 
 print(logo)
 
+
 def download_link(
-	link, output,
-	quality, recursive_quality,
-	recursive_download, not_gui, zips
+    link, output, quality, recursive_quality, recursive_download, not_gui, zips
 ):
-	link = what_kind(link)
+    link = what_kind(link)
 
-	if "track/" in link:
-		if "spotify" in link:
-			func = downloa.download_trackspo
-		elif "deezer" in link:
-			func = downloa.download_trackdee
-		else:
-			return
+    if "track/" in link:
+        if "spotify" in link:
+            func = downloa.download_trackspo
+        elif "deezer" in link:
+            func = downloa.download_trackdee
+        else:
+            return
 
-		func(
-			link, output,
-			quality, recursive_quality,
-			recursive_download, not_gui
-		)
+        func(
+            link,
+            output,
+            quality,
+            recursive_quality,
+            recursive_download,
+            not_gui,
+        )
 
-	elif "album/" in link:
-		if "spotify" in link:
-			func = downloa.download_albumspo
-		elif "deezer" in link:
-			func = downloa.download_albumdee
-		else:
-			return
+    elif "album/" in link:
+        if "spotify" in link:
+            func = downloa.download_albumspo
+        elif "deezer" in link:
+            func = downloa.download_albumdee
+        else:
+            return
 
-		func(
-			link, output,
-			quality, recursive_quality,
-			recursive_download, not_gui, zips
-		)
+        func(
+            link,
+            output,
+            quality,
+            recursive_quality,
+            recursive_download,
+            not_gui,
+            zips,
+        )
 
-	elif "playlist/" in link:
-		if "spotify" in link:
-			func = downloa.download_playlistspo
-		elif "deezer" in link:
-			func = downloa.download_playlistdee
-		else:
-			return
-		
-		func(
-			link, output,
-			quality, recursive_quality,
-			recursive_download, not_gui, zips
-		)
+    elif "playlist/" in link:
+        if "spotify" in link:
+            func = downloa.download_playlistspo
+        elif "deezer" in link:
+            func = downloa.download_playlistdee
+        else:
+            return
 
-parser = ArgumentParser(description = "Deezloader downloader")
+        func(
+            link,
+            output,
+            quality,
+            recursive_quality,
+            recursive_download,
+            not_gui,
+            zips,
+        )
+
+
+parser = ArgumentParser(description="Deezloader downloader")
 
 if not isfile("setting.ini"):
-	parser.add_argument(
-		"setting",
-		help = "Path for the setting file"
-	)
+    parser.add_argument("setting", help="Path for the setting file")
+
+parser.add_argument("-l", "--link", help="Deezer or Spotify link for download")
+
+parser.add_argument("-s", "--song", help="song name")
+
+parser.add_argument("-a", "--artist", help="artist song")
+
+parser.add_argument("-o", "--output", help="Output folder")
 
 parser.add_argument(
-	"-l", "--link",
-	help = "Deezer or Spotify link for download"
+    "-q",
+    "--quality",
+    help="Select download quality between FLAC, 320, 256, 128",
 )
 
 parser.add_argument(
-	"-s", "--song",
-	help = "song name"
+    "-rq",
+    "--recursive_quality",
+    help="If choosen quality doesn't exist download with best possible quality (True or False)",
 )
 
 parser.add_argument(
-	"-a", "--artist",
-	help = "artist song"
+    "-rd",
+    "--recursive_download",
+    help="If the song has already downloaded skip (True or False)",
 )
 
 parser.add_argument(
-	"-o", "--output",
-	help = "Output folder"
+    "-g", "--not_gui", help="Show the little not_gui (True or False)"
 )
 
 parser.add_argument(
-	"-q", "--quality",
-	help = "Select download quality between FLAC, 320, 256, 128"
-)
-
-parser.add_argument(
-	"-rq", "--recursive_quality",
-	help = "If choosen quality doesn't exist download with best possible quality (True or False)"
-)
-
-parser.add_argument(
-	"-rd", "--recursive_download",
-	help = "If the song has already downloaded skip (True or False)"
-)
-
-parser.add_argument(
-	"-g", "--not_gui",
-	help = "Show the little not_gui (True or False)"
-)
-
-parser.add_argument(
-	"-z", "--zip",
-	help = "If is an album or playlist link create a zip archive (True or False)"
+    "-z",
+    "--zip",
+    help="If is an album or playlist link create a zip archive (True or False)",
 )
 
 args = parser.parse_args()
 
 try:
-	ini_file = args.setting
+    ini_file = args.setting
 except AttributeError:
-	ini_file = "setting.ini"
+    ini_file = "setting.ini"
 
 config = ConfigParser()
 config.read(ini_file)
 
 try:
-	token = config['login']['token']
+    token = config["login"]["token"]
 except KeyError:
-	print("Something went wrong with configuration file")
-	exit()
+    print("Something went wrong with configuration file")
+    exit()
 
 downloa = Login(token)
 link = args.link
@@ -141,7 +140,7 @@ output = args.output
 quality = args.quality
 
 if quality and quality != "FLAC":
-	quality = "MP3_%s" % quality
+    quality = "MP3_%s" % quality
 
 recursive_quality = bool(args.recursive_quality)
 recursive_download = bool(args.recursive_download)
@@ -151,33 +150,41 @@ artist = args.artist
 not_gui = bool(args.not_gui)
 
 if not output:
-	output = "Songs"
+    output = "Songs"
 
 if not quality:
-	quality = "MP3_320"
+    quality = "MP3_320"
 
 if not recursive_quality:
-	recursive_quality = False
+    recursive_quality = False
 
 if not recursive_download:
-	recursive_download = False
+    recursive_download = False
 
 if not zips:
-	zips = False
+    zips = False
 
 if not not_gui:
-	not_gui = False
+    not_gui = False
 
 if link:
-	download_link(
-		link, output, 
-		quality, recursive_quality,
-		recursive_download, not_gui, zips
-	)
+    download_link(
+        link,
+        output,
+        quality,
+        recursive_quality,
+        recursive_download,
+        not_gui,
+        zips,
+    )
 
 if song and artist:
-	downloa.download_name(
-		artist, song,
-		output, quality,
-		recursive_quality, recursive_download, not_gui
-	)
+    downloa.download_name(
+        artist,
+        song,
+        output,
+        quality,
+        recursive_quality,
+        recursive_download,
+        not_gui,
+    )

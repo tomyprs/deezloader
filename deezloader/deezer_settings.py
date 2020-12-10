@@ -9,32 +9,11 @@ private_api_link = "https://www.deezer.com/ajax/gw-light.php"
 songs_server = "https://e-cdns-proxy-{}.dzcdn.net/mobile/1/{}"
 cover = "https://e-cdns-images.dzcdn.net/images/cover/%s/1200x1200-000000-80-0-0.jpg"
 
-header = {
-	"Accept-Language": "en-US,en;q=0.5"
-}
+header = {"Accept-Language": "en-US,en;q=0.5"}
 
 qualities = {
-	"FLAC": {
-		"n_quality": "9",
-		"f_format": ".flac",
-		"s_quality": "FLAC"
-	},
-
-	"MP3_320": {
-		"n_quality": "3",
-		"f_format": ".mp3",
-		"s_quality": "320"
-	},
-
-	"MP3_256": {
-		"n_quality": "5",
-		"f_format": ".mp3",
-		"s_quality": "256"
-	},
-
-	"MP3_128": {
-		"n_quality": "1",
-		"f_format": ".mp3",
-		"s_quality": "128"
-	}
+    "FLAC": {"n_quality": "9", "f_format": ".flac", "s_quality": "FLAC"},
+    "MP3_320": {"n_quality": "3", "f_format": ".mp3", "s_quality": "320"},
+    "MP3_256": {"n_quality": "5", "f_format": ".mp3", "s_quality": "256"},
+    "MP3_128": {"n_quality": "1", "f_format": ".mp3", "s_quality": "128"},
 }
