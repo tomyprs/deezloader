@@ -108,9 +108,7 @@ parser.add_argument(
     help="If the song has already downloaded skip (True or False)",
 )
 
-parser.add_argument(
-    "-g", "--not_gui", help="Show the little not_gui (True or False)"
-)
+parser.add_argument("-g", "--not_gui", help="Show the little not_gui (True or False)")
 
 parser.add_argument(
     "-z",

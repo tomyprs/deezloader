@@ -25,7 +25,7 @@ stock_zip = False
 
 class Login:
     def __init__(self, token):
-        self.spo = Spotify(utils.generate_token())
+        self.spo = utils.generate_token()
 
         self.req = Session()
         self.req.cookies["arl"] = token
@@ -55,8 +55,11 @@ class Login:
         }
 
         return self.req.post(
-                self.private_api_link, params=params, json=json_data, timeout=20,
-            ).json()["results"]
+            self.private_api_link,
+            params=params,
+            json=json_data,
+            timeout=20,
+        ).json()["results"]
 
     def download(
         self,
@@ -88,9 +91,7 @@ class Login:
             file_format = self.qualities[quality]["f_format"]
             song_quality = self.qualities[quality]["s_quality"]
             song_md5, version = utils.check_md5_song(infos)
-            song_hash = download_utils.genurl(
-                song_md5, num_quality, ids, version
-            )
+            song_hash = download_utils.genurl(song_md5, num_quality, ids, version)
 
             try:
                 crypted_audio = utils.song_exist(song_md5[0], song_hash)
@@ -112,13 +113,9 @@ class Login:
                     )
 
                     try:
-                        crypted_audio = utils.song_exist(
-                            song_md5[0], song_hash
-                        )
+                        crypted_audio = utils.song_exist(song_md5[0], song_hash)
                     except exceptions.TrackNotFound:
-                        raise exceptions.TrackNotFound(
-                            "Error with this song %s" % link
-                        )
+                        raise exceptions.TrackNotFound("Error with this song %s" % link)
 
             album = utils.var_excape(datas["album"])
 
@@ -162,23 +159,17 @@ class Login:
             json_data = {"sng_id": ids}
 
             try:
-                datas["author"] = " & ".join(
-                    infos["SNG_CONTRIBUTORS"]["author"]
-                )
+                datas["author"] = " & ".join(infos["SNG_CONTRIBUTORS"]["author"])
             except:
                 datas["author"] = ""
 
             try:
-                datas["composer"] = " & ".join(
-                    infos["SNG_CONTRIBUTORS"]["composer"]
-                )
+                datas["composer"] = " & ".join(infos["SNG_CONTRIBUTORS"]["composer"])
             except:
                 datas["composer"] = ""
 
             try:
-                datas["lyricist"] = " & ".join(
-                    infos["SNG_CONTRIBUTORS"]["lyricist"]
-                )
+                datas["lyricist"] = " & ".join(infos["SNG_CONTRIBUTORS"]["lyricist"])
             except:
                 datas["lyricist"] = ""
 
@@ -214,9 +205,7 @@ class Login:
                 try:
                     ids = utils.not_found(song, datas["music"])
                 except IndexError:
-                    raise exceptions.TrackNotFound(
-                        "Track not found: %s" % song
-                    )
+                    raise exceptions.TrackNotFound("Track not found: %s" % song)
 
                 json_data = {"sng_id": ids}
 
@@ -253,9 +242,7 @@ class Login:
             detas["label"] = datas["label"]
             detas["upc"] = datas["upc"]
 
-            t = tqdm(
-                range(len(infos)), desc=detas["album"], disable=not_interface
-            )
+            t = tqdm(range(len(infos)), desc=detas["album"], disable=not_interface)
 
             for a in t:
                 detas["music"] = datas["music"][a]
@@ -307,9 +294,7 @@ class Login:
         elif "playlist" in link:
             json_data = {"playlist_id": ids, "nb": -1}
 
-            infos = get_infos(methods.method_get_playlist_data, json_data)[
-                "data"
-            ]
+            infos = get_infos(methods.method_get_playlist_data, json_data)["data"]
             nams = []
 
             for a in range(len(infos)):
@@ -484,7 +469,7 @@ class Login:
             if not "The access token expired" in str(a):
                 raise exceptions.InvalidLink("Invalid link ;)")
 
-            self.spo = Spotify(utils.generate_token())
+            self.spo = utils.generate_token()
 
             url = self.spo.track(URL)
 
@@ -521,7 +506,7 @@ class Login:
             if not "The access token expired" in str(a):
                 raise exceptions.InvalidLink("Invalid link ;)")
 
-            self.spo = Spotify(utils.generate_token())
+            self.spo = utils.generate_token()
 
             tracks = self.spo.album(URL)
 
@@ -558,7 +543,7 @@ class Login:
                         "external_ids"
                     ]["isrc"]
                 except:
-                    self.spo = Spotify(utils.generate_token())
+                    self.spo = utils.generate_token()
 
                     isrc = self.spo.track(a["external_urls"]["spotify"])[
                         "external_ids"
@@ -567,13 +552,11 @@ class Login:
                 try:
                     isrc = "isrc:%s" % isrc
 
-                    ids = utils.request(self.api_track % isrc, True).json()[
-                        "album"
-                    ]["id"]
+                    ids = utils.request(self.api_track % isrc, True).json()["album"][
+                        "id"
+                    ]
 
-                    tracks = utils.request(
-                        self.api_album % str(ids), True
-                    ).json()
+                    tracks = utils.request(self.api_album % str(ids), True).json()
 
                     if tot == tracks["nb_tracks"]:
                         break
@@ -618,7 +601,7 @@ class Login:
             if not "The access token expired" in str(a):
                 raise exceptions.InvalidLink("Invalid link ;)")
 
-            self.spo = Spotify(utils.generate_token())
+            self.spo = utils.generate_token()
 
             tracks = self.spo.user_playlist_tracks(URL[-3], URL[-1])
 
@@ -646,7 +629,7 @@ class Login:
             try:
                 tracks = self.spo.next(tracks)
             except:
-                self.spo = Spotify(utils.generate_token())
+                self.spo = utils.generate_token()
 
                 tracks = self.spo.next(tracks)
 
@@ -674,7 +657,7 @@ class Login:
         try:
             search = self.spo.search(query)
         except:
-            self.spo = Spotify(utils.generate_token())
+            self.spo = utils.generate_token()
 
             search = self.spo.search(query)
 

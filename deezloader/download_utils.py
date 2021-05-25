@@ -35,9 +35,7 @@ def calcbfkey(songid):
 
 
 def blowfishDecrypt(data, key):
-    c = Blowfish.new(
-        key.encode(), Blowfish.MODE_CBC, a2b_hex("0001020304050607")
-    )
+    c = Blowfish.new(key.encode(), Blowfish.MODE_CBC, a2b_hex("0001020304050607"))
 
     return c.decrypt(data)
 
